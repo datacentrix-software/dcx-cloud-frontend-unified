@@ -3,8 +3,8 @@ import { Providers } from "@/store/providers";
 import MyApp from "./app";
 
 export const metadata = {
-  title: "Modernize Demo",
-  description: "Modernize kit",
+  title: "Datacentrix Cloud",
+  description: "Datacentrix Cloud",
 };
 
 export default function RootLayout({
