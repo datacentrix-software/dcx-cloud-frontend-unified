@@ -11,10 +11,13 @@ import * as dropdownData from './data';
 
 import { IconMail, IconBriefcase, IconBuilding } from '@tabler/icons-react';
 import { Stack } from '@mui/system';
-import Image from 'next/image';
-
+import { useAuthStore } from '@/store';
+import { getUserInitials } from '@/app/(DashboardLayout)/utilities/helpers/user';
+import { IUser } from '@/types/IUser';
+import { useRouter } from 'next/navigation';
 
 const Profile = () => {
+  const router = useRouter();
   const [anchorEl2, setAnchorEl2] = useState(null);
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
@@ -22,6 +25,17 @@ const Profile = () => {
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
+
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    handleClose2();
+
+    setTimeout(() => {
+      router.push('/auth/login');
+      logout();
+    }, 1500);
+  }
 
   return (
     <Box>
@@ -48,7 +62,7 @@ const Profile = () => {
             fontSize: 16,
           }}
         >
-          MA
+          {getUserInitials(user as IUser)}
         </Avatar>
       </IconButton>
       {/* ------------------------------------------- */}
@@ -72,15 +86,15 @@ const Profile = () => {
         <Typography variant="h5">User Profile</Typography>
         <Stack direction="column" py={3} spacing={1} alignItems="flex-start">
           <Typography variant="subtitle2" color="textPrimary" fontWeight={600}>
-            Mathew Anderson
+            {user?.firstName} {user?.lastName}
           </Typography>
           <Typography variant="subtitle2" color="textSecondary" display="flex" alignItems="center" gap={1}>
             <IconBriefcase width={15} height={15} />
-            Designer
+            {user?.userRoles.map(({ role }) => role.name).join(' | ')}
           </Typography>
           <Typography variant="subtitle2" color="textSecondary" display="flex" alignItems="center" gap={1}>
             <IconBuilding width={15} height={15} />
-            Modernize Organisation
+            {user?.userOrganisations?.map(({ organisation }) => organisation.organisation_name).join(' | ')}
           </Typography>
           <Typography
             variant="subtitle2"
@@ -90,7 +104,7 @@ const Profile = () => {
             gap={1}
           >
             <IconMail width={15} height={15} />
-            info@modernize.com
+            {user?.email}
           </Typography>
         </Stack>
         <Divider />
@@ -130,7 +144,14 @@ const Profile = () => {
         ))}
         <Box mt={2}>
 
-          <Button href="/auth/auth1/login" variant="outlined" color="primary" component={Link} fullWidth>
+          <Button
+            href="/auth/login"
+            variant="outlined"
+            color="primary"
+            component={Link}
+            fullWidth
+            onClick={handleLogout}
+          >
             Logout
           </Button>
         </Box>

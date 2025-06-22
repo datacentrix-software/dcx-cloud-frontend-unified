@@ -1,32 +1,18 @@
 import { create } from 'zustand';
-import { decoder } from '@/utils/';
 import Cookies from 'js-cookie';
-
-interface Role {
-    name: string;
-}
-
-interface UserData {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: Role;
-    status: string;
-    organisation: string;
-    organisationId: number;
-    vcenterOrg_id: string | null;
-}
+import { decoder } from '@/utils';
+import { IUser } from '@/types/IUser';
+import { getOrganisationDisplay } from '@/app/(DashboardLayout)/utilities/helpers/user';
 
 interface AuthState {
     token: string | null;
-    user: UserData | null;
+    user: IUser | null;
     isAuthenticated: boolean;
-    role: string | null;
+    roles: string | null;
     refresh_token: string | null;
     setToken: (token: string, refresh_token?: string | null) => void;
-    setUser: (user: UserData) => void;
-    setRole: (role: string) => void;
+    setUser: (user: IUser) => void;
+    setRoles: (roles: string) => void;
     logout: () => void;
     syncWithCookies: () => void;
 }
@@ -37,7 +23,7 @@ const COOKIE_OPTIONS = {
     expires: 1 // 1 day
 };
 
-const getUserFromCookie = (): UserData | null => {
+const getUserFromCookie = (): IUser | null => {
     try {
         const raw = Cookies.get('user');
         return raw ? JSON.parse(raw) : null;
@@ -48,20 +34,20 @@ const getUserFromCookie = (): UserData | null => {
 
 const useAuthStore = create<AuthState>()((set) => {
     let initialToken: string | null = null;
-    let initialUser: UserData | null = null;
-    let initialRole: string | null = null;
+    let initialUser: IUser | null = null;
+    let initialRoles: string | null = null;
 
     if (typeof window !== 'undefined') {
         initialToken = Cookies.get('token') || null;
         initialUser = getUserFromCookie();
-        initialRole = Cookies.get('role') || initialUser?.role?.name || null;
+        initialRoles = getOrganisationDisplay(initialUser);
     }
 
     return {
         token: initialToken,
         user: initialUser,
         isAuthenticated: !!initialToken,
-        role: initialRole,
+        roles: initialRoles,
         refresh_token: null,
 
         setToken: (token, refresh_token = null) => {
@@ -73,40 +59,41 @@ const useAuthStore = create<AuthState>()((set) => {
                 token,
                 refresh_token,
                 isAuthenticated: true,
-                role: decodedToken?.role || null
+                roles: decodedToken?.role || null
             });
         },
 
         setUser: (user) => {
             Cookies.set('user', JSON.stringify(user), COOKIE_OPTIONS);
 
-            const userRole = user.role?.name || null;
+            const userRole = getOrganisationDisplay(user);
+
             if (userRole) {
-                Cookies.set('role', userRole, COOKIE_OPTIONS);
+                Cookies.set('roles', userRole, COOKIE_OPTIONS);
             }
 
             set({
                 user,
-                role: userRole,
+                roles: userRole,
                 isAuthenticated: true
             });
         },
 
-        setRole: (role) => {
-            Cookies.set('role', role, COOKIE_OPTIONS);
-            set({ role });
+        setRoles: (roles) => {
+            Cookies.set('roles', roles, COOKIE_OPTIONS);
+            set({ roles });
         },
 
         logout: () => {
             Cookies.remove('token');
             Cookies.remove('user');
-            Cookies.remove('role');
+            Cookies.remove('roles');
 
             set({
                 token: null,
                 user: null,
                 isAuthenticated: false,
-                role: null
+                roles: null
             });
         },
 
@@ -115,13 +102,13 @@ const useAuthStore = create<AuthState>()((set) => {
 
             const token = Cookies.get('token') || null;
             const user = getUserFromCookie();
-            const role = Cookies.get('role') || user?.role?.name || null;
+            const roles = getOrganisationDisplay(user);
 
             set({
                 token,
                 user,
                 isAuthenticated: !!token,
-                role
+                roles
             });
         }
     };
