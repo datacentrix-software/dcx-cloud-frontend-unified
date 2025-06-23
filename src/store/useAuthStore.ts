@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import Cookies from 'js-cookie';
 import { decoder } from '@/utils';
 import { IUser } from '@/types/IUser';
-import { getUserRoleDisplay } from '@/app/(DashboardLayout)/utilities/helpers/user';
+import { getUserRoleDisplay } from '@/app/(DashboardLayout)/utilities/helpers/user.helper';
 
 interface AuthState {
     token: string | null;
