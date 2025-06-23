@@ -1,3 +1,4 @@
 import { IToken } from "./IToken";
-
-export type { IToken };
+import { IUser } from "./IUser";
+import { IPaymentCard, ICardStore } from "./iPayments";
+export type { IToken, IPaymentCard, ICardStore };
