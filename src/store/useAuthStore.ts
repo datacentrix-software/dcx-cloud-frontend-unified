@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import Cookies from 'js-cookie';
 import { decoder } from '@/utils';
 import { IUser } from '@/types/IUser';
-import { getOrganisationDisplay } from '@/app/(DashboardLayout)/utilities/helpers/user';
+import { getUserRoleDisplay } from '@/app/(DashboardLayout)/utilities/helpers/user';
 
 interface AuthState {
     token: string | null;
@@ -40,7 +40,7 @@ const useAuthStore = create<AuthState>()((set) => {
     if (typeof window !== 'undefined') {
         initialToken = Cookies.get('token') || null;
         initialUser = getUserFromCookie();
-        initialRoles = getOrganisationDisplay(initialUser);
+        initialRoles = getUserRoleDisplay(initialUser);
     }
 
     return {
@@ -66,7 +66,7 @@ const useAuthStore = create<AuthState>()((set) => {
         setUser: (user) => {
             Cookies.set('user', JSON.stringify(user), COOKIE_OPTIONS);
 
-            const userRole = getOrganisationDisplay(user);
+            const userRole = getUserRoleDisplay(user);
 
             if (userRole) {
                 Cookies.set('roles', userRole, COOKIE_OPTIONS);
@@ -102,7 +102,7 @@ const useAuthStore = create<AuthState>()((set) => {
 
             const token = Cookies.get('token') || null;
             const user = getUserFromCookie();
-            const roles = getOrganisationDisplay(user);
+            const roles = getUserRoleDisplay(user);
 
             set({
                 token,
