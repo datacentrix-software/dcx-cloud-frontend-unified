@@ -12,7 +12,7 @@ import * as dropdownData from './data';
 import { IconMail, IconBriefcase, IconBuilding } from '@tabler/icons-react';
 import { Stack } from '@mui/system';
 import { useAuthStore } from '@/store';
-import { getUserInitials } from '@/app/(DashboardLayout)/utilities/helpers/user';
+import { getUserInitials } from '@/app/(DashboardLayout)/utilities/helpers/user.helper';
 import { IUser } from '@/types/IUser';
 import { useRouter } from 'next/navigation';
 

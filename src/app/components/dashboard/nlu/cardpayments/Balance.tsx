@@ -1,0 +1,99 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { CreditCard } from '@mui/icons-material';
+import {
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  Alert,
+  Stack
+} from '@mui/material';
+import Swal from 'sweetalert2';
+import { useAuthStore } from '@/store';
+import axios from 'axios';
+import { useQuoteStore } from '@/store/useQuoteStore';
+
+const BalanceCard: React.FC = () => {
+  const { token, roles } = useAuthStore();
+  const [amount, setAmount] = useState('');
+
+  const [message, setMessage] = useState('');
+  const authUser: any = useAuthStore((state) => state.user);
+  const { formatCurrency, } = useQuoteStore()
+
+  const fetchCardDetails = async () => {
+    try {
+
+      const orgId = authUser?.userOrganisations[0]?.organisation.id;
+      const walletResponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/wallet/${orgId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(walletResponse.data.balance)
+      // if (!walletResponse) {
+
+      //   throw new Error('An error occurred while fetching card details');
+      // }
+      setAmount(walletResponse.data.balance)
+
+
+    } catch (error: any) {
+      console.error("Card details error", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'API Error',
+        text: error?.response.data.message || 'An error occurred while fetching card details',
+
+        showConfirmButton: true
+      });
+
+    }
+
+  };
+
+  useEffect(() => {
+    fetchCardDetails()
+  }, [])
+  return (
+    <Card variant="outlined">
+      <CardContent>
+        <Stack spacing={2}>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Your balance </Typography>
+            <Typography variant="h5" fontWeight="bold" sx={{ color: 'green' }}>
+              {formatCurrency(Number(amount) / 100)}
+            </Typography>
+
+
+          </Box>
+          <Typography variant="body2" color="text.secondary">
+            No balance
+          </Typography>
+          <Box display="flex" alignItems="center">
+            <CreditCard sx={{ mr: 1, color: 'text.secondary' }} />
+            <Typography color="primary" fontWeight={500}>
+              Automatic payments
+            </Typography>
+          </Box>
+          <Typography variant="body2" color="text.secondary">
+            You won’t be charged until there’s a balance due.
+          </Typography>
+          <Divider />
+          {/* <Button variant="text" color="primary" fullWidth onClick={handlePayment}>
+            Make a payment
+          </Button> */}
+          {message && <Alert severity={message.includes('successful') ? 'success' : 'error'}>{message}</Alert>}
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default BalanceCard;
