@@ -19,7 +19,7 @@ const BackupDRPage = () => {
           Protect Your Business-Critical Data with Daily, Automated Backups
         </Typography>
         <Typography variant="body1" paragraph>
-          Keep your workloads safe with a robust, policy-driven backup and DR solution powered by Rubrik. Whether you're running virtual machines,
+          Keep your workloads safe with a robust, policy-driven backup and DR solution powered by Rubrik. Whether you&apos;re running virtual machines,
         </Typography>
       </Box>
 
@@ -36,7 +36,7 @@ const BackupDRPage = () => {
                 <Typography variant="h6">Immutable Backups</Typography>
               </Box>
               <Typography variant="body1">
-                Ensure backups can't be modified or deleted by attackers, thanks to Rubrik's write-once technology. This is your first line of defense against ransomware.
+                Ensure backups can&apos;t be modified or deleted by attackers, thanks to Rubrik&apos;s write-once technology. This is your first line of defense against ransomware.
               </Typography>
             </CardContent>
           </Card>

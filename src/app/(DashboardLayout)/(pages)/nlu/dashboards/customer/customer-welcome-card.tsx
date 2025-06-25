@@ -11,8 +11,6 @@ import {
   Stack,
   useTheme,
 } from "@mui/material";
-import { IconArrowUpRight, IconUser } from "@tabler/icons-react";
-import Image from "next/image";
 import { useAuthStore } from '@/store';
 import axios from "axios";
 

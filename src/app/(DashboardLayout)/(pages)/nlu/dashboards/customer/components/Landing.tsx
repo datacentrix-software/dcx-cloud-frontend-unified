@@ -264,7 +264,7 @@ const Landing: React.FC<LandingProps> = ({
                             </Typography>
                             <Typography variant="h6" color="textSecondary" sx={{ maxWidth: '800px', mx: 'auto' }}>
                                 Get started with our cloud platform by choosing one of the options below.
-                                We're here to help you every step of the way.
+                                We&apos;re here to help you every step of the way.
                             </Typography>
                         </Box>
 
@@ -417,7 +417,7 @@ const Landing: React.FC<LandingProps> = ({
                                 </Select>
                             </FormControl>
                             <Typography variant="body2" ml={2} fontSize={12} mb={3} mt={1}>
-                                This will be your virtual machine's deployment region
+                                This will be your virtual machine&apos;s deployment region
                             </Typography>
                             <Paper
                                 elevation={0}

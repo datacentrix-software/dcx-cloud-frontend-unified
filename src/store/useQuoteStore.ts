@@ -1,7 +1,6 @@
 // store/useQuoteStore.ts
 import { create } from "zustand";
-import { QuoteStore, VM, QuoteFields } from "../../app/(DashboardLayout)/types/Quote/quoteInterface";
-import { ViewMode } from "@react-pdf-viewer/core";
+import { QuoteStore, VM, QuoteFields } from "@/types";
 import axiosServices from "@/utils/axios";
 
 const defaultEditingVm: VM = {
@@ -66,7 +65,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
   isIpChecked: false,
   errors: {},
 
-  
+
 
   handleEditProductTitle: (title) => set({ editingProductTitle: title }),
   handleSaveEdit: () => set({ editingProductTitle: "" }),
@@ -79,64 +78,65 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
       },
     })),
 
-    addSelectedService: (service: any) =>
-      set((state: any) => {
-        const subCategoryName = service.SubCategory.name; 
-        const existingServices = state.selectedServices[subCategoryName] || [];
+  addSelectedService: (service: any) =>
+    set((state: any) => {
+      const subCategoryName = service.SubCategory.name;
+      const existingServices = state.selectedServices[subCategoryName] || [];
 
 
-        if (existingServices.some((s: any) => s.id === service.id)) {
-          console.warn("Service with the same name already selected.");
-          return state;
+      if (existingServices.some((s: any) => s.id === service.id)) {
+        console.warn("Service with the same name already selected.");
+        return state;
+      }
+
+      return {
+        selectedServices: {
+          ...state.selectedServices,
+          [subCategoryName]: [...existingServices, service],
+        },
+      };
+    }),
+
+  updateSelectedServices: (id: any, subcategory: any, updatedFields: Partial<any>) =>
+    set((state) => {
+      const servicesInSubcategory = state.selectedServices[subcategory] || [];
+
+      const updatedSubcategoryServices = servicesInSubcategory.map((service: any) => {
+        if (service.id === id) {
+          return {
+            ...service,
+            ...updatedFields,
+          };
         }
+        return service;
+      });
 
-        return {
-          selectedServices: {
-            ...state.selectedServices,
-            [subCategoryName]: [...existingServices, service],
-          },
-        };
-      }),
+      return {
+        selectedServices: {
+          ...state.selectedServices,
+          [subcategory]: updatedSubcategoryServices,
+        },
+      };
+    }),
 
-    updateSelectedServices: (id: any, subcategory: any, updatedFields: Partial<any>) =>
-      set((state) => {
-        const servicesInSubcategory = state.selectedServices[subcategory] || [];
+  setSelectedServices: (products: any) => {
+    const prev = get().selectedServices;
 
-        const updatedSubcategoryServices = servicesInSubcategory.map((service: any) => {
-          if (service.id === id) {
-            return {
-              ...service,
-              ...updatedFields,
-            };
-          }
-          return service;
-        });
+    const updatedServices = products.reduce((acc: any, product: any) => {
+      const subcategoryName = product.SubCategory.name;
+      acc[subcategoryName] = [...(acc[subcategoryName] || prev[subcategoryName] || []), product];
+      return acc;
+    }, {});
 
-        return {
-          selectedServices: {
-            ...state.selectedServices,
-            [subcategory]: updatedSubcategoryServices,
-          },
-        };
-      }),
-           
-    setSelectedServices: (products: any) => {
-        const prev = get().selectedServices;
-
-        const updatedServices = products.reduce((acc: any, product: any) => {
-          const subcategoryName = product.SubCategory.name;
-          acc[subcategoryName] = [...(acc[subcategoryName] || prev[subcategoryName] || []), product];
-          return acc;
-        }, {});
-
-        set({ selectedServices: updatedServices });
-      },
+    set({ selectedServices: updatedServices });
+  },
 
 
-  removeSelectedService: (subcategory: any,serviceId: any) =>
+  removeSelectedService: (subcategory: any, serviceId: any) =>
     set((state) => ({
-      selectedServices: {...state.selectedServices,
-           [subcategory]: state.selectedServices[subcategory].filter((service: any) => service.id !== serviceId),
+      selectedServices: {
+        ...state.selectedServices,
+        [subcategory]: state.selectedServices[subcategory].filter((service: any) => service.id !== serviceId),
       }
     })),
 
@@ -158,7 +158,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
       isEditing: false,
     })),
 
- 
+
   handleProductClick: (vm = null) =>
     set((state) => {
       if (vm) {
@@ -182,7 +182,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
 
   addVM: (vm) => set((state) => ({ vms: [...state.vms, vm] })),
 
-  setVms: (newVMs:any) => {
+  setVms: (newVMs: any) => {
     const prevVms = get().vms;
 
     const combinedVms = [...prevVms, ...newVMs];
@@ -192,19 +192,19 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
 
     set({ vms: uniqueVms });
   },
-  
+
   removeVM: (vm) =>
     set((state) => ({ vms: state.vms.filter((vmState) => vmState.id !== vm.id) })),
 
-      setConnectServices: (newConnect: any) => {
-        set((state) => ({
-          connectServices: state.connectServices.map((service) =>
-            service.connectService === newConnect.connectService ? newConnect : service
-          ),
-        }));
-      },
+  setConnectServices: (newConnect: any) => {
+    set((state) => ({
+      connectServices: state.connectServices.map((service) =>
+        service.connectService === newConnect.connectService ? newConnect : service
+      ),
+    }));
+  },
 
-   addConnectServiceState: (newConnect) =>
+  addConnectServiceState: (newConnect) =>
     set((state) => ({
       connectServices: [...state.connectServices, newConnect],
     })),
@@ -249,7 +249,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
       );
       set({ businessUnitsList: response.data });
       // return response.data;
-    } catch (error) {}
+    } catch (error) { }
   },
   handleFetchDataSubcategories: async () => {
     try {
@@ -257,7 +257,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
         `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/subcategories/getall`
       );
       set({ subCategories: response.data });
-    } catch (error) {}
+    } catch (error) { }
   },
   formatCurrency: (value: number) =>
     `R${value.toLocaleString("en-ZA", {
@@ -265,7 +265,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
       maximumFractionDigits: 2,
     })}`,
 
-    addDiscussion: (newDiscussion, authUser) =>
+  addDiscussion: (newDiscussion, authUser) =>
     set((state) => ({
       discussions: [
         ...state.discussions,
@@ -277,7 +277,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
       ],
     })),
 
-  setDiscussions: (responseData : any) => {
+  setDiscussions: (responseData: any) => {
     const formatted = (responseData?.data?.discussions || []).map((d: { createdAt: string; content: string; name: string }) => ({
       dateTime: d.createdAt,
       words: d.content,
@@ -321,13 +321,13 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
   },
   selectedCustomerViewProducts: {},
   setSelectedCustomerViewProduct: (selected: any, subCat: string) => {
-  set((state) => ({
-    selectedCustomerViewProducts: {
-      ...state.selectedCustomerViewProducts,
-      [subCat]: selected,
-    },
-  }));
-},
+    set((state) => ({
+      selectedCustomerViewProducts: {
+        ...state.selectedCustomerViewProducts,
+        [subCat]: selected,
+      },
+    }));
+  },
 
   editingCustomerViewVm: {},
   setEditingCustomerViewVm: (field, value) =>
@@ -337,7 +337,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
         [field]: value,
       },
     })),
-      showTip: true,
+  showTip: true,
   setShowTip: (value: any) => set({ showTip: value }),
   vmOptionConfig: [],
   loading: false,

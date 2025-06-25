@@ -1,10 +1,11 @@
 import { Card, CardHeader, CardContent, Divider } from '@mui/material';
 import { useSelector } from '@/store/hooks';
 import { AppState } from '@/store/store';
+import React from 'react';
 
 type Props = {
   title: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode| React.ReactNode[];
 };
 
 const BaseCard = ({ title, children }: Props) => {

@@ -12,10 +12,10 @@ import { IconCircle } from "@tabler/icons-react";
 import Image from "next/image";
 
 interface BreadCrumbType {
-  subtitle?: string;
-  items?: any[];
-  title: string;
-  children?: JSX.Element;
+  subtitle?: string
+  items?: any[]
+  title: string
+  children?: any
 }
 
 const Breadcrumb = ({ subtitle, items, title, children }: BreadCrumbType) => (

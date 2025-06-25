@@ -19,7 +19,7 @@ const ColocationPage = () => {
           Enterprise-Grade Hosting in Teraco Data Centres
         </Typography>
         <Typography variant="body1" paragraph>
-          Deploy your critical infrastructure in South Africa's most secure, connected data centre ecosystem. Datacentrix colocation services offer the power, resilience, and flexibility your business needs - all with integrated access to our cloud, DRaaS, and network offerings.
+          Deploy your critical infrastructure in South Africa&apos;s most secure, connected data centre ecosystem. Datacentrix colocation services offer the power, resilience, and flexibility your business needs - all with integrated access to our cloud, DRaaS, and network offerings.
         </Typography>
       </Box>
 
