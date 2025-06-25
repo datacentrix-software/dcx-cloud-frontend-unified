@@ -372,7 +372,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Typography variant="body2" gutterBottom>
                                                     <b>Health Score:</b> Indicates the overall health and stability of the VM. Higher is better. <br/>
                                                     <b>Workload Score:</b> Shows how efficiently the VM is using its resources. Lower scores may mean over-provisioning.<br/>
-                                                    <b>Efficiency Score:</b> Reflects how well the VM's resources are being utilized for its workload.
+                                                    <b>Efficiency Score:</b> Reflects how well the VM&apos;s resources are being utilized for its workload.
                                                 </Typography>
                                                 <Box sx={{ mt: 1 }}>
                                                     <Typography variant="body2" fontWeight={600}>Color Codes:</Typography>
