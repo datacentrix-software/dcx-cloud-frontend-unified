@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import useVirtualMachineStore, { useVirtualMachineOptions } from '@/store/useVirtualMachineStore';
 import { Box, Container, Typography, Button, Paper, Stepper, Step, StepLabel, Dialog, DialogTitle, DialogContent, DialogActions, Table, TableHead, TableRow, TableCell, TableBody, IconButton, FormControlLabel, Checkbox } from '@mui/material';
 import CreateVirtualMachine from './components/CreateVirtualMachine';
 import BackupServices from './components/BackupServices';
@@ -17,10 +18,8 @@ import Swal from 'sweetalert2';
 import Link from 'next/link';
 import { InputVM, transformVMs } from '@/app/(DashboardLayout)/utilities/helpers/vm.helper';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
-import useVirtualMachineStore, { useVirtualMachineOptions } from '@/store/useVirtualMachineStore';
 
-const steps = ['Create a Virtual Machine', 'Backup Services and Recovery', 'Software Licensing', 'Additional Services'
-];
+const steps = ['Create a Virtual Machine'];
 
 export default function VirtualMachinesPage() {
   const { activeStep, setActiveStep } = useVirtualMachineStore();
@@ -171,6 +170,8 @@ export default function VirtualMachinesPage() {
       collocation: [],
     });
     setBackupServicesSelected({ baas: [], draas: [] });
+    // Clear the created VMs from the VM options store
+    setCreatedVMs([]);
     setTotalCost(0);
   };
 
@@ -256,22 +257,44 @@ export default function VirtualMachinesPage() {
     setTotalCost(newTotal);
   };
 
+  const handleAdditionalProductsUpdate = (newProducts: any[]) => {
+    // Handle additional products separately from VMs
+    // Separate products by their SubCategory and update the appropriate state
+    const backupServices = newProducts.filter(product => 
+      product.SubCategory?.name?.includes('Backup as a Service') ||
+      product.SubCategory?.name?.includes('Disaster Recovery')
+    );
+    
+    const softwareLicensing = newProducts.filter(product => 
+      product.SubCategory?.name?.includes('M365')
+    );
+    
+    const additionalServices = newProducts.filter(product => 
+      product.SubCategory?.name?.includes('Professional Services') ||
+      product.SubCategory?.name?.includes('Network as a Service') ||
+      product.SubCategory?.name?.includes('Firewall as a Service') ||
+      product.SubCategory?.name?.includes('Collocation')
+    );
+    
+    // Update the selectedOptions state for each category
+    setSelectedOptions({
+      virtualMachine: selectedOptions.virtualMachine,
+      backupServices,
+      softwareLicensing,
+      additionalServices
+    });
+  };
 
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
         return <CreateVirtualMachine
           onSelect={(options) => handleOptionSelect('virtualMachine', options)}
+          onAdditionalProductsUpdate={handleAdditionalProductsUpdate}
           vmTemplates={vmTemplates}
           products={products}
           selectedVMs={selectedVMs}
         />;
-      case 1:
-        return <BackupServices onSelect={(options) => handleOptionSelect('backupServices', options)} products={backupServiceProducts} selected={backupServicesSelected} setSelected={setBackupServicesSelected} />;
-      case 2:
-        return <SoftwareLicensing onSelect={(options) => handleOptionSelect('softwareLicensing', options)} products={softwareLicensingProducts} selected={softwareLicensingSelected} setSelected={setSoftwareLicensingSelected} />;
-      case 3:
-        return <AdditionalServices onSelect={(options) => handleOptionSelect('additionalServices', options)} products={additionalServicesProducts} selected={additionalServicesSelected} setSelected={setAdditionalServicesSelected} />;
       default:
         return null;
     }
@@ -323,7 +346,7 @@ export default function VirtualMachinesPage() {
     const { ip } = await res.json();
 
     try {
-      const orgId = authUser?.userOrganisations[0]?.organisation.id
+      const orgId = authUser?.userOrganisations?.[0]?.organisation?.id
       const payload = {
         customer: {
           organisationId: orgId,
@@ -451,20 +474,6 @@ export default function VirtualMachinesPage() {
               <Button variant="contained" color="primary" onClick={() => setQuoteDialogOpen(true)}>
                 View Quote
               </Button>
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                variant="outlined"
-              >
-                Previous
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleNext}
-                disabled={activeStep === steps.length - 1}
-              >
-                Next
-              </Button>
             </Box>
           </Box>
         </Container>
@@ -472,117 +481,283 @@ export default function VirtualMachinesPage() {
       <Dialog
         open={quoteDialogOpen}
         onClose={() => setQuoteDialogOpen(false)}
-        maxWidth="md"
+        maxWidth="lg"
         fullWidth
         keepMounted
         disablePortal
+        PaperProps={{
+          sx: {
+            maxHeight: '90vh',
+            minHeight: '70vh'
+          }
+        }}
       >
-        <DialogTitle>
-          Estimate Overview
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
+          <Typography variant="h4" fontWeight={700}>
+            Estimate Overview
+          </Typography>
           <IconButton
             aria-label="close"
             onClick={() => setQuoteDialogOpen(false)}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
+            size="large"
           >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>Quantity</TableCell>
-                <TableCell>Unit</TableCell>
-                <TableCell>Price</TableCell>
-                <TableCell>Total</TableCell>
-                <TableCell>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {uniqueProducts.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.title}</TableCell>
-                  <TableCell>
-                    {item.type === 'virtualMachine' ? (
-                      <Box>
-                        <Typography variant="body2">
-                          <strong>Region:</strong> {item.details.region}
+        <DialogContent sx={{ pb: 2 }}>
+          {/* Virtual Machines Section */}
+          {uniqueProducts.filter(item => item.type === 'virtualMachine').length > 0 && (
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h5" fontWeight={600} sx={{ mb: 2, color: 'primary.main' }}>
+                Virtual Machines ({uniqueProducts.filter(item => item.type === 'virtualMachine').length})
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {uniqueProducts.filter(item => item.type === 'virtualMachine').map((item) => (
+                  <Paper key={item.id} variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
+                          {item.title}
                         </Typography>
-                        <Typography variant="body2">
-                          <strong>OS:</strong> {item.details.os}
-                        </Typography>
-                        <Typography variant="body2">
-                          <strong>Tier:</strong> {item.details.tier}
-                        </Typography>
-                        {item.details.configuration.type === 'custom' ? (
-                          <>
-                            <Typography variant="body2">
-                              <strong>vCPUs:</strong> {item.details.configuration.specs.vcpus}
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>RAM:</strong> {item.details.configuration.specs.memory}GB
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>Storage:</strong> {item.details.configuration.specs.storage}GB
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>GHz:</strong> {item.details.configuration.specs.ghz}
-                            </Typography>
-                          </>
-                        ) : (
-                          <>
-                            <Typography variant="body2">
-                              <strong>vCPUs:</strong> {item.details.configuration.vcpus}
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>RAM:</strong> {item.details.configuration.memory}GB
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>Storage:</strong> {item.details.configuration.storage}GB
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>GHz:</strong> {item.details.configuration.ghz}
-                            </Typography>
-                          </>
-                        )}
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 2 }}>
+                          <Typography variant="body2">
+                            <strong>Region:</strong> {item.details.region}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>OS:</strong> {item.details.os}
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Tier:</strong> {item.details.tier}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                          {item.details.configuration.type === 'custom' ? (
+                            <>
+                              <Typography variant="body2">
+                                <strong>vCPUs:</strong> {item.details.configuration.specs.vcpus}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>RAM:</strong> {item.details.configuration.specs.memory}GB
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Storage:</strong> {item.details.configuration.specs.storage}GB
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>GHz:</strong> {item.details.configuration.specs.ghz}
+                              </Typography>
+                            </>
+                          ) : (
+                            <>
+                              <Typography variant="body2">
+                                <strong>vCPUs:</strong> {item.details.configuration.vcpus}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>RAM:</strong> {item.details.configuration.memory}GB
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Storage:</strong> {item.details.configuration.storage}GB
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>GHz:</strong> {item.details.configuration.ghz}
+                              </Typography>
+                            </>
+                          )}
+                        </Box>
                       </Box>
-                    ) : (
-                      item.description
-                    )}
-                  </TableCell>
-                  <TableCell>{item.units || 1}</TableCell>
-                  <TableCell>{item.unit || '-'}</TableCell>
-                  <TableCell>{item.price ? `R${item.price.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '-'}</TableCell>
-                  <TableCell>{item.price ? `R${(item.price * (item.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '-'}</TableCell>
-                  <TableCell>
-                    <IconButton
-                      color="error"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveProduct(item.id);
-                      }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {/* Total row */}
-              <TableRow>
-                <TableCell colSpan={5} align="right" sx={{ fontWeight: 700 }}>
-                  Total
-                </TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>
-                  R{uniqueProducts.reduce((sum, item) => sum + (item.price ? item.price * (item.units || 1) : 0), 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </TableCell>
-                <TableCell />
-              </TableRow>
-            </TableBody>
-          </Table>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, ml: 2 }}>
+                        <Typography variant="h6" color="primary" fontWeight={700}>
+                          R{(item.price * (item.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                        </Typography>
+                        <IconButton
+                          color="error"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveProduct(item.id);
+                          }}
+                          size="small"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </Box>
+                  </Paper>
+                ))}
+              </Box>
+            </Box>
+          )}
+
+          {/* Additional Products Section */}
+          {uniqueProducts.filter(item => item.type !== 'virtualMachine').length > 0 && (
+            <Box>
+              <Typography variant="h5" fontWeight={600} sx={{ mb: 2, color: 'primary.main' }}>
+                Additional Products ({uniqueProducts.filter(item => item.type !== 'virtualMachine').length})
+              </Typography>
+              
+              {/* Backup Services Subsection */}
+              {uniqueProducts.filter(item => 
+                item.type !== 'virtualMachine' && 
+                (item.SubCategory?.name?.includes('Backup as a Service') || item.SubCategory?.name?.includes('Disaster Recovery'))
+              ).length > 0 && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
+                    Backup Services & Recovery
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    {uniqueProducts.filter(item => 
+                      item.type !== 'virtualMachine' && 
+                      (item.SubCategory?.name?.includes('Backup as a Service') || item.SubCategory?.name?.includes('Disaster Recovery'))
+                    ).map((item) => (
+                      <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Box>
+                            <Typography variant="body1" fontWeight={500}>
+                              {item.title}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {item.description}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Typography variant="body1" fontWeight={600}>
+                              R{(item.price * (item.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                            </Typography>
+                            <IconButton
+                              color="error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveProduct(item.id);
+                              }}
+                              size="small"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+
+              {/* Software Licensing Subsection */}
+              {uniqueProducts.filter(item => 
+                item.type !== 'virtualMachine' && 
+                item.SubCategory?.name?.includes('M365')
+              ).length > 0 && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
+                    Software Licensing
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    {uniqueProducts.filter(item => 
+                      item.type !== 'virtualMachine' && 
+                      item.SubCategory?.name?.includes('M365')
+                    ).map((item) => (
+                      <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Box>
+                            <Typography variant="body1" fontWeight={500}>
+                              {item.title}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {item.description}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Typography variant="body1" fontWeight={600}>
+                              R{(item.price * (item.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                            </Typography>
+                            <IconButton
+                              color="error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveProduct(item.id);
+                              }}
+                              size="small"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+
+              {/* Additional Services Subsection */}
+              {uniqueProducts.filter(item => 
+                item.type !== 'virtualMachine' && 
+                (item.SubCategory?.name?.includes('Professional Services') || 
+                 item.SubCategory?.name?.includes('Network as a Service') || 
+                 item.SubCategory?.name?.includes('Firewall as a Service') || 
+                 item.SubCategory?.name?.includes('Collocation'))
+              ).length > 0 && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
+                    Additional Services
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    {uniqueProducts.filter(item => 
+                      item.type !== 'virtualMachine' && 
+                      (item.SubCategory?.name?.includes('Professional Services') || 
+                       item.SubCategory?.name?.includes('Network as a Service') || 
+                       item.SubCategory?.name?.includes('Firewall as a Service') || 
+                       item.SubCategory?.name?.includes('Collocation'))
+                    ).map((item) => (
+                      <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Box>
+                            <Typography variant="body1" fontWeight={500}>
+                              {item.title}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {item.description}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Typography variant="body1" fontWeight={600}>
+                              R{(item.price * (item.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                            </Typography>
+                            <IconButton
+                              color="error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveProduct(item.id);
+                              }}
+                              size="small"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+            </Box>
+          )}
+
+          {/* Total Section */}
+          <Box sx={{ 
+            mt: 4, 
+            pt: 3, 
+            borderTop: '2px solid', 
+            borderColor: 'divider',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <Typography variant="h5" fontWeight={700}>
+              Total Monthly Cost
+            </Typography>
+            <Typography variant="h4" color="primary" fontWeight={700}>
+              R{uniqueProducts.reduce((sum, item) => sum + (item.price ? item.price * (item.units || 1) : 0), 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </Typography>
+          </Box>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ p: 3, pt: 0 }}>
           <FormControlLabel
             control={
               <Checkbox

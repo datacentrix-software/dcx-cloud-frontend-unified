@@ -10,7 +10,7 @@ import {
   Box,
   Stack,
 } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import { IconBellRinging } from '@tabler/icons-react';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 import dayjs from 'dayjs';
@@ -42,16 +42,22 @@ export default function NotificationPopover({ alerts, onDismiss }: Props) {
 
   return (
     <>
-      <IconButton
-        color="inherit"
-        aria-describedby={id}
+      <Stack
+        direction="column"
+        alignItems="center"
+        spacing={0.5}
+        sx={{ cursor: 'pointer' }}
         onClick={handleClick}
+        aria-describedby={id}
         aria-label="notifications"
       >
         <Badge badgeContent={visibleAlerts.length} color="info">
-          <NotificationsIcon />
+          <IconBellRinging size={20} stroke={1.5} />
         </Badge>
-      </IconButton>
+        <Typography variant="caption" sx={{ fontSize: '0.7rem', lineHeight: 1 }}>
+          Notifications
+        </Typography>
+      </Stack>
 
       <Popover
         id={id}

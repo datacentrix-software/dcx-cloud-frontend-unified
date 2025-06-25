@@ -26,7 +26,8 @@ import {
     InputLabel,
     TextField,
     CircularProgress,
-    Tooltip
+    Tooltip,
+    LinearProgress
 } from '@mui/material';
 import { 
     IconServer, 
@@ -115,7 +116,7 @@ interface TabPanelProps {
     value: number;
 }
 
-function TabPanel(props: TabPanelProps) {
+const TabPanel = (props: TabPanelProps) => {
     const { children, value, index, ...other } = props;
     return (
         <div
@@ -132,7 +133,7 @@ function TabPanel(props: TabPanelProps) {
             )}
         </div>
     );
-}
+};
 
 interface ServiceCategory {
     value: string;
@@ -193,6 +194,7 @@ interface VMTelemetry {
     systemattributes_alert_count_warning: string;
     systemattributes_total_alert_count: string;
     systemattributes_health: string;
+    vcenter_region: string;
 }
 
 interface VMNetworkData {
@@ -208,9 +210,8 @@ interface VMCpuRamData {
     identity_instance_uuid: string;
     identity_name: string;
     interval_start: string;
-    cpu_usage_avg: string;
-    memory_usage_avg: string;
-    memory_consumed_avg: string;
+    avg_cpu_usage_percent: string;
+    avg_memory_usage_percent: string;
 }
 
 interface VMDiskData {
@@ -243,6 +244,7 @@ interface VMHealthWindow {
 }
 
 interface VMFilter {
+    search: string;
     os: string;
     minMemory: string;
     maxMemory: string;
@@ -297,6 +299,19 @@ const CustomerDashboard = () => {
     const [loadingLineItems, setLoadingLineItems] = useState(false);
     const [isPowerActionLoading, setIsPowerActionLoading] = useState(false);
 
+    // State for progress tracking
+    const [loadingProgress, setLoadingProgress] = useState(0);
+    const [loadingStep, setLoadingStep] = useState('');
+    const [loadingSteps] = useState([
+        'Initializing...',
+        'Fetching organization data...',
+        'Loading products...',
+        'Retrieving metrics...',
+        'Loading VM data...',
+        'Fetching billing history...',
+        'Finalizing...'
+    ]);
+
     // State for UI
     const [currentTab, setCurrentTab] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState('all');
@@ -308,6 +323,7 @@ const CustomerDashboard = () => {
     const [vmRowsPerPage, setVmRowsPerPage] = useState(5);
     const [vmSortConfig, setVmSortConfig] = useState<VMSortConfig>({ key: 'identity_name', direction: 'asc' });
     const [vmFilter, setVmFilter] = useState<VMFilter>({
+        search: '',
         os: '',
         minMemory: '',
         maxMemory: '',
@@ -334,15 +350,27 @@ const CustomerDashboard = () => {
     const router = useRouter();
     const isNewCustomer = !vcenterOrgId;
 
+    // Initialize loading progress
+    useEffect(() => {
+        if (loading) {
+            setLoadingStep(loadingSteps[0]); // "Initializing..."
+            setLoadingProgress(5);
+        }
+    }, [loading, loadingSteps]);
+
     // Fetch organization data
     useEffect(() => {
         const fetchOrganizationData = async () => {
-            if (!user?.userOrganisations[0]?.organisation.id) return;
+            const organisationId = user?.userOrganisations?.[0]?.organisation?.id;
+            if (!organisationId) return;
+            
+            setLoadingStep(loadingSteps[1]); // "Fetching organization data..."
+            setLoadingProgress(15);
             
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/organisations/getorg`, {
                     headers: { Authorization: `Bearer ${token}` },
-                    params: { id: user?.userOrganisations[0]?.organisation.id }
+                    params: { id: organisationId }
                 });
                 
                 if (response.data) {
@@ -355,7 +383,7 @@ const CustomerDashboard = () => {
         };
 
         fetchOrganizationData();
-    }, [user?.userOrganisations[0]?.organisation.id, token]);
+    }, [user?.userOrganisations, token, loadingSteps]);
 
     // Fetch initial data
     useEffect(() => {
@@ -364,6 +392,10 @@ const CustomerDashboard = () => {
             
             try {
                 console.log('Fetching data...');
+                
+                // Step 2: Loading products
+                setLoadingStep(loadingSteps[2]);
+                setLoadingProgress(30);
                 const productsResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/products/getproducts`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -373,7 +405,9 @@ const CustomerDashboard = () => {
                 }
 
                 try {
-                    // Fetch metrics aggregation
+                    // Step 3: Retrieving metrics
+                    setLoadingStep(loadingSteps[3]);
+                    setLoadingProgress(45);
                     const metricsResponse = await axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/metricAggregation`, {
                         headers: { Authorization: `Bearer ${token}` },
                         params: { customer: customerName }
@@ -382,7 +416,9 @@ const CustomerDashboard = () => {
                         setBillingData(metricsResponse.data[0]);
                     }
 
-                    // Fetch current bill data
+                    // Step 4: Loading VM data
+                    setLoadingStep(loadingSteps[4]);
+                    setLoadingProgress(60);
                     const billingResponse = await axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/currentBill`, {
                         headers: { Authorization: `Bearer ${token}` },
                         params: { customer: customerName }
@@ -391,7 +427,9 @@ const CustomerDashboard = () => {
                         setVmData(billingResponse.data);
                     }
 
-                    // Fetch past bills
+                    // Step 5: Fetching billing history
+                    setLoadingStep(loadingSteps[5]);
+                    setLoadingProgress(75);
                     const pastBillsResponse = await axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/afgriPastBills`, {
                         headers: { Authorization: `Bearer ${token}` },
                         params: { customer: customerName }
@@ -403,7 +441,15 @@ const CustomerDashboard = () => {
                     console.error('Error fetching data:', error);
                 }
 
-                setLoading(false);
+                // Step 6: Finalizing
+                setLoadingStep(loadingSteps[6]);
+                setLoadingProgress(100);
+                
+                // Small delay to show the final step
+                setTimeout(() => {
+                    setLoading(false);
+                }, 500);
+                
             } catch (error) {
                 console.error('Error fetching products:', error);
                 setLoading(false);
@@ -413,7 +459,7 @@ const CustomerDashboard = () => {
         if (token && customerName) {
             fetchData();
         }
-    }, [token, customerName]);
+    }, [token, customerName, loadingSteps]);
 
     // Event handlers
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -641,6 +687,21 @@ const CustomerDashboard = () => {
 
         let filtered = [...vmData];
 
+        // Search across multiple fields
+        if (vmFilter.search) {
+            const searchTerm = vmFilter.search.toLowerCase();
+            filtered = filtered.filter(vm => 
+                (vm.identity_name?.toLowerCase() || '').includes(searchTerm) ||
+                (vm.os?.toLowerCase() || '').includes(searchTerm) ||
+                (vm.vcenter_region?.toLowerCase() || '').includes(searchTerm) ||
+                (vm.memory?.toLowerCase() || '').includes(searchTerm) ||
+                (vm.cpu?.toString() || '').includes(searchTerm) ||
+                (vm["Powered on hours"]?.toLowerCase() || '').includes(searchTerm) ||
+                (vm.cost_estimate?.toLowerCase() || '').includes(searchTerm) ||
+                (vm.license_cost?.toLowerCase() || '').includes(searchTerm)
+            );
+        }
+
         if (vmFilter.os) {
             filtered = filtered.filter(vm => 
                 vm.os.toLowerCase().includes(vmFilter.os.toLowerCase())
@@ -678,6 +739,12 @@ const CustomerDashboard = () => {
             if (vmSortConfig.key === 'memory') {
                 const aNum = parseInt(aValue as string);
                 const bNum = parseInt(bValue as string);
+                return vmSortConfig.direction === 'asc' ? aNum - bNum : bNum - aNum;
+            }
+
+            if (vmSortConfig.key === 'cost_estimate' || vmSortConfig.key === 'license_cost') {
+                const aNum = Number(aValue);
+                const bNum = Number(bValue);
                 return vmSortConfig.direction === 'asc' ? aNum - bNum : bNum - aNum;
             }
 
@@ -772,8 +839,84 @@ const CustomerDashboard = () => {
 
     if (loading) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <Typography>Loading...</Typography>
+            <Box 
+                sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    height: '100vh',
+                    gap: 3,
+                    p: 4
+                }}
+            >
+                <Card 
+                    sx={{ 
+                        maxWidth: 500, 
+                        width: '100%',
+                        p: 4,
+                        textAlign: 'center',
+                        boxShadow: 3
+                    }}
+                >
+                    <Box sx={{ mb: 3 }}>
+                        <CircularProgress 
+                            size={60} 
+                            thickness={4}
+                            sx={{ 
+                                color: 'primary.main',
+                                mb: 2
+                            }} 
+                        />
+                        <Typography 
+                            variant="h5" 
+                            component="h2" 
+                            gutterBottom
+                            sx={{ fontWeight: 600 }}
+                        >
+                            Loading Dashboard
+                        </Typography>
+                        <Typography 
+                            variant="body1" 
+                            color="text.secondary"
+                            sx={{ mb: 3 }}
+                        >
+                            {loadingStep}
+                        </Typography>
+                    </Box>
+                    
+                    <Box sx={{ width: '100%', mb: 2 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                            <Typography variant="body2" color="text.secondary">
+                                Progress
+                            </Typography>
+                            <Typography variant="body2" color="primary.main" fontWeight={600}>
+                                {loadingProgress}%
+                            </Typography>
+                        </Box>
+                        <LinearProgress 
+                            variant="determinate" 
+                            value={loadingProgress}
+                            sx={{ 
+                                height: 8, 
+                                borderRadius: 4,
+                                backgroundColor: 'grey.200',
+                                '& .MuiLinearProgress-bar': {
+                                    borderRadius: 4,
+                                    background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)'
+                                }
+                            }}
+                        />
+                    </Box>
+                    
+                    <Typography 
+                        variant="caption" 
+                        color="text.secondary"
+                        sx={{ fontStyle: 'italic' }}
+                    >
+                        Please wait while we prepare your dashboard...
+                    </Typography>
+                </Card>
             </Box>
         );
     }

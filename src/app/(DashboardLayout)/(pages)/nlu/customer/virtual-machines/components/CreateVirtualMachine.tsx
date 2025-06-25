@@ -1,4 +1,4 @@
-import { Box, Typography, Button, TextField, Alert, Divider, Tooltip, Grid, RadioGroup, FormControlLabel, Radio, Card, CardContent, ToggleButtonGroup, ToggleButton, Select, MenuItem, FormControl, InputLabel, FormHelperText, IconButton } from '@mui/material';
+import { Box, Typography, Button, TextField, Alert, Divider, Tooltip, Grid, RadioGroup, FormControlLabel, Radio, Card, CardContent, ToggleButtonGroup, ToggleButton, Select, MenuItem, FormControl, InputLabel, FormHelperText, IconButton, Fade } from '@mui/material';
 import { useState, useEffect, useRef } from 'react';
 import ParentCard from '@/app/components/shared/ParentCard';
 import MemoryIcon from '@mui/icons-material/Memory';
@@ -8,7 +8,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
-import { useVirtualMachineOptions } from '@/store/useVirtualMachineStore'; 
+import AdditionalProductsDialog from './AdditionalProductsDialog';
+import { useVirtualMachineOptions } from '@/store/useVirtualMachineStore';
 
 // SVG flag icons for regions
 const FlagIcon = ({ code, alt }: { code: string; alt: string }) => (
@@ -50,8 +51,8 @@ const LinuxSVGIcon = ({ fontSize = 32 }: { fontSize?: number }) => (
 );
 
 const regions = [
-  { label: 'Cape Town', value: 'CPT3', flag: 'za', alt: 'South Africa' },
   { label: 'Johannesburg', value: 'JHB3', flag: 'za', alt: 'South Africa' },
+  { label: 'Cape Town', value: 'CPT3', flag: 'za', alt: 'South Africa' },
 ];
 
 const osOptions = [
@@ -72,6 +73,7 @@ interface VMConfig {
 
 interface CreateVirtualMachineProps {
   onSelect: (options: any) => void;
+  onAdditionalProductsUpdate?: (products: any[]) => void;
   vmTemplates: any[];
   products: Array<{
     id: number;
@@ -83,7 +85,7 @@ interface CreateVirtualMachineProps {
   selectedVMs?: VMConfig[];
 }
 
-export default function CreateVirtualMachine({ onSelect, vmTemplates, products, selectedVMs = [] }: CreateVirtualMachineProps) {
+export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpdate, vmTemplates, products, selectedVMs = [] }: CreateVirtualMachineProps) {
 
 
   // Use selectedVMs from props instead of local state
@@ -225,11 +227,10 @@ export default function CreateVirtualMachine({ onSelect, vmTemplates, products, 
       return product;
     });
 
-
     // Ensure we're always passing an array
     onSelect(Array.isArray(vmProductsForQuote) ? vmProductsForQuote : [vmProductsForQuote]);
 
-    // Reset form
+    // Reset form and go back to step 1
     setServerName('');
     setDescription('');
     setSelectedTemplate(null);
@@ -240,6 +241,9 @@ export default function CreateVirtualMachine({ onSelect, vmTemplates, products, 
       storage: 50,
       ghz: 2.0,
     });
+    setTouched({ serverName: false });
+    setErrors(prev => ({ ...prev, serverName: false }));
+    setStep(0);
   };
 
   // Update migrateVMConfig to be more defensive
@@ -465,26 +469,39 @@ export default function CreateVirtualMachine({ onSelect, vmTemplates, products, 
   const notifyParent = (next: any = {}) => {
     if (buildType === 'custom') {
       const specs = customSpecs;
-      onSelect({
-        region: next.region ?? region,
-        os: next.os ?? os,
-        serverName: next.serverName ?? serverName,
-        description: next.description ?? description,
-        tier: next.tier ?? tier,
-        template: [{
-          id: 'custom',
-          title: 'Custom Build',
-          vcpus: specs.vcpus,
-          memory: specs.memory,
-          storage: specs.storage,
-          ghz: specs.ghz,
-          price: calculatePrice(specs),
-          description: `${specs.vcpus} vCPU, ${specs.memory}GB RAM, ${specs.storage}GB Storage, ${specs.ghz}GHz`
-        }]
-      });
+      // Validate specs before calculating price
+      if (specs && specs.vcpus > 0 && specs.memory > 0 && specs.storage > 0 && specs.ghz > 0) {
+        onSelect({
+          region: next.region ?? region,
+          os: next.os ?? os,
+          serverName: next.serverName ?? serverName,
+          description: next.description ?? description,
+          tier: next.tier ?? tier,
+          template: [{
+            id: 'custom',
+            title: 'Custom Build',
+            vcpus: specs.vcpus,
+            memory: specs.memory,
+            storage: specs.storage,
+            ghz: specs.ghz,
+            price: calculatePrice(specs),
+            description: `${specs.vcpus} vCPU, ${specs.memory}GB RAM, ${specs.storage}GB Storage, ${specs.ghz}GHz`
+          }]
+        });
+      } else {
+        // If specs are invalid, send empty template array
+        onSelect({
+          region: next.region ?? region,
+          os: next.os ?? os,
+          serverName: next.serverName ?? serverName,
+          description: next.description ?? description,
+          tier: next.tier ?? tier,
+          template: []
+        });
+      }
     } else {
       const template = next.template ?? selectedTemplate;
-      if (template) {
+      if (template && template.vcpus > 0 && template.memory > 0 && template.storage > 0 && template.ghz > 0) {
         const specs = {
           vcpus: template.vcpus,
           memory: template.memory,
@@ -503,6 +520,16 @@ export default function CreateVirtualMachine({ onSelect, vmTemplates, products, 
           tier: next.tier ?? tier,
           template: [templateWithPrice]
         });
+      } else {
+        // If template is invalid or null, send empty template array
+        onSelect({
+          region: next.region ?? region,
+          os: next.os ?? os,
+          serverName: next.serverName ?? serverName,
+          description: next.description ?? description,
+          tier: next.tier ?? tier,
+          template: []
+        });
       }
     }
   };
@@ -514,6 +541,12 @@ export default function CreateVirtualMachine({ onSelect, vmTemplates, products, 
 
   // Get templates for selected size
   const getTemplatesForSize = (size: string) => {
+    // At step 2, we don't have OS and tier selected yet, so only filter by size
+    if (step < 2) {
+      return vmTemplates.filter(template => template.group === size);
+    }
+    
+    // At later steps, filter by all criteria
     return vmTemplates.filter(template =>
       template.group === size &&
       template.osType.toLowerCase().includes(os.toLowerCase()) &&
@@ -523,760 +556,981 @@ export default function CreateVirtualMachine({ onSelect, vmTemplates, products, 
 
   const [showTierTip, setShowTierTip] = useState(true);
 
+  // Additional Products Dialog state
+  const [additionalProductsDialogOpen, setAdditionalProductsDialogOpen] = useState(false);
+
+  // Step state and refs
+  const [step, setStep] = useState(0);
+  const regionRef = useRef<HTMLDivElement>(null);
+  const templateRef = useRef<HTMLDivElement>(null);
+  // Add refs for all steps (future-proof)
+  const tierRef = useRef<HTMLDivElement>(null);
+  const osRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLDivElement>(null);
+
+  // Step labels
+  const stepLabels = [
+    'Region',
+    'Template/Custom',
+    'Tier',
+    'Operating System',
+    'Name & Description',
+  ];
+
+  // Scroll to step when step changes
+  useEffect(() => {
+    const refs = [regionRef, templateRef, tierRef, osRef, nameRef];
+    const currentRef = refs[step];
+    if (currentRef && currentRef.current) {
+      currentRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [step]);
+
+  // Stepper click handler
+  const handleStepClick = (idx: number) => {
+    if (idx <= step) setStep(idx);
+  };
+
+  // Additional Products Dialog handlers
+  const handleOpenAdditionalProducts = () => {
+    setAdditionalProductsDialogOpen(true);
+  };
+
+  const handleCloseAdditionalProducts = () => {
+    setAdditionalProductsDialogOpen(false);
+  };
+
+  const handleAdditionalProductsUpdate = (newProducts: any[]) => {
+    // Use the dedicated callback for additional products if provided
+    if (onAdditionalProductsUpdate) {
+      onAdditionalProductsUpdate(newProducts);
+    } else {
+      // Fallback to the old behavior
+      onSelect(newProducts);
+    }
+  };
+
   return (
     <>
-      <Typography variant="h3" fontWeight={800} mb={1}>
-        Set Up Your Cloud Server
-      </Typography>
-      <Typography variant="h6" color="text.secondary" mb={4}>
-        Launch a high-performance VM in minutes. Choose your location, OS, and specs to get started.
-      </Typography>
+      {/* Step 1: Select Data Centre Region */}
+      <div ref={regionRef} id="region-step">
+        <Fade in={step === 0} timeout={500} unmountOnExit>
+          <div>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h4" fontWeight={700} color="primary">
+                Step 1 of 5: {stepLabels[0]}
+              </Typography>
+              <Tooltip 
+                title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
+                placement="top"
+              >
+                <span>
+                  <Button
+                    variant="outlined"
+                    disabled={createdVMs.length === 0}
+                    sx={{ textTransform: 'none' }}
+                    onClick={handleOpenAdditionalProducts}
+                  >
+                    Add Additional Products
+                  </Button>
+                </span>
+              </Tooltip>
+            </Box>
+            <ParentCard sx={{ mb: 3, bgcolor: '#fafbfc', '& .MuiCardContent-root': { pt: 0, px: 2 } }} id="region">
+              <Typography variant="h6" fontWeight={600} mb={1}>
+                Select Data Centre Region
+              </Typography>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                Select the closest region for low-latency and compliance.
+              </Typography>
+              {errors.region && (
+                <FormHelperText error>Please select a region</FormHelperText>
+              )}
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                {regions.map((r) => (
+                  <Button
+                    key={r.value}
+                    variant={region === r.value ? 'contained' : 'outlined'}
+                    color={region === r.value ? 'primary' : 'inherit'}
+                    sx={{
+                      flex: 1,
+                      minWidth: 180,
+                      height: '55px',
+                      borderRadius: 2,
+                      boxShadow: region === r.value ? 2 : 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                      fontWeight: 600,
+                      fontSize: '1.1rem',
+                      borderColor: region === r.value ? 'primary.main' : 'grey.300',
+                      transition: 'all 0.2s',
+                      textTransform: 'none',
+                      background: region === r.value ? 'primary.main' : undefined,
+                      color: region === r.value ? 'white' : 'inherit',
+                      '&:hover': {
+                        background: region === r.value ? 'primary.dark' : undefined,
+                      }
+                    }}
+                    onClick={() => {
+                      setRegion(r.value);
+                      notifyParent({ region: r.value });
+                      setTimeout(() => setStep(1), 400); // Delay for animation
+                    }}
+                    startIcon={<FlagIcon code={r.flag} alt={r.alt} />}
+                  >
+                    {r.label}
+                  </Button>
+                ))}
+              </Box>
+            </ParentCard>
+          </div>
+        </Fade>
+      </div>
 
-      {/* Row 1: Select Data Centre Region */}
-      <ParentCard sx={{ mb: 3, bgcolor: '#fafbfc', '& .MuiCardContent-root': { pt: 0, px: 2 } }} id="region">
-        <Typography variant="h6" fontWeight={600} mb={1}>
-          Select Data Centre Region
-        </Typography>
-        <Typography variant="body2" color="text.secondary" mb={2}>
-          Select the closest region for low-latency and compliance.
-        </Typography>
-        {errors.region && (
-          <FormHelperText error>Please select a region</FormHelperText>
-        )}
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          {regions.map((r) => (
-            <Button
-              key={r.value}
-              variant={region === r.value ? 'contained' : 'outlined'}
-              color={region === r.value ? 'primary' : 'inherit'}
-              sx={{
-                flex: 1,
-                minWidth: 180,
-                height: '55px',
-                borderRadius: 2,
-                boxShadow: region === r.value ? 2 : 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                fontWeight: 600,
-                fontSize: '1.1rem',
-                borderColor: region === r.value ? 'primary.main' : 'grey.300',
-                transition: 'all 0.2s',
-                textTransform: 'none',
-                background: region === r.value ? 'primary.main' : undefined,
-                color: region === r.value ? 'white' : 'inherit',
-                '&:hover': {
-                  background: region === r.value ? 'primary.dark' : undefined,
-                }
-              }}
-              onClick={() => {
-                setRegion(r.value);
-                notifyParent({ region: r.value });
-              }}
-              startIcon={<FlagIcon code={r.flag} alt={r.alt} />}
-            >
-              {r.label}
-            </Button>
-          ))}
-        </Box>
-      </ParentCard>
+      {/* Step 2: Choose VM Template */}
+      <div ref={templateRef} id="template-step">
+        <Fade in={step === 1} timeout={500} unmountOnExit>
+          <div>
+            {/* Back button for step 2 and onward */}
+            <Box sx={{ mb: 2 }}>
+              {step > 0 && (
+                <Button variant="outlined" onClick={() => setStep(step - 1)}>
+                  Back
+                </Button>
+              )}
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h4" fontWeight={700} color="primary">
+                Step 2 of 5: {stepLabels[1]}
+              </Typography>
+              <Tooltip 
+                title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
+                placement="top"
+              >
+                <span>
+                  <Button
+                    variant="outlined"
+                    disabled={createdVMs.length === 0}
+                    sx={{ textTransform: 'none' }}
+                    onClick={handleOpenAdditionalProducts}
+                  >
+                    Add Additional Products
+                  </Button>
+                </span>
+              </Tooltip>
+            </Box>
+            <ParentCard id="template" sx={{ '& .MuiCardContent-root': { pt: 0, px: 2 } }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Box>
+                  <Typography variant="h6" fontWeight={600} mb={1}>
+                    Choose VM Template
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Select a size category and then choose your specific configuration.
+                  </Typography>
+                </Box>
+              </Box>
 
-      {/* Row 2: OS, Tier, and Give Your Server a Name */}
-      <Grid container spacing={3} sx={{ mb: 1 }}>
-        {/* OS and Tier Selection */}
-        <Grid item xs={12} md={6} id="os">
-          <ParentCard sx={{ '& .MuiCardContent-root': { pt: 0, px: 2 } }}>
-            <Typography variant="h6" fontWeight={600} mb={1}>
-              Choose Operating System
-            </Typography>
-            <Typography variant="body2" color="text.secondary" mb={2}>
-              Run your workload on the platform you prefer.
-            </Typography>
-            {errors.os && (
-              <FormHelperText error>Please select an operating system</FormHelperText>
-            )}
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
-              {osOptions.map((o) => (
+              {/* Build Type Toggle */}
+              <Box sx={{ mb: 3 }}>
+                <ToggleButtonGroup
+                  value={buildType}
+                  exclusive
+                  onChange={(e, value) => {
+                    if (value !== null) {
+                      setBuildType(value);
+                      setSelectedTemplate(null);
+                      setSelectedSize(null);
+                      setErrors(prev => ({ ...prev, template: false, customSpecs: false }));
+                      setCustomSpecs({
+                        vcpus: 2,
+                        memory: 8,
+                        storage: 50,
+                        ghz: 2.0,
+                      });
+                      notifyParent({ template: [] });
+                    }
+                  }}
+                  sx={{
+                    '& .MuiToggleButton-root': {
+                      px: 4,
+                      py: 1.5,
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      borderRadius: '8px !important',
+                      '&.Mui-selected': {
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: 'primary.dark',
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <ToggleButton value="template">
+                    Predefined Templates
+                  </ToggleButton>
+                  <ToggleButton value="custom">
+                    Custom Build
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+
+              {buildType === 'template' ? (
+                <>
+                  {/* Size Selection */}
+                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
+                    {sizes.map((size) => {
+                      const sizeTemplates = getTemplatesForSize(size);
+                      return (
+                        <Button
+                          key={size}
+                          variant={selectedSize === size ? 'contained' : 'outlined'}
+                          color={selectedSize === size ? 'primary' : 'inherit'}
+                          sx={{
+                            flex: 1,
+                            minWidth: 180,
+                            py: 3,
+                            borderRadius: 2,
+                            boxShadow: selectedSize === size ? 2 : 0,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            fontWeight: 600,
+                            fontSize: '1.1rem',
+                            borderColor: selectedSize === size ? 'primary.main' : 'grey.300',
+                            transition: 'all 0.2s',
+                            textTransform: 'none',
+                            background: selectedSize === size ? 'primary.main' : undefined,
+                            color: selectedSize === size ? 'white' : 'inherit',
+                            '&:hover': {
+                              background: selectedSize === size ? 'primary.dark' : undefined,
+                            },
+                            gap: 1,
+                          }}
+                          onClick={() => {
+                            setSelectedSize(size);
+                            setSelectedTemplate(null);
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <MemoryIcon />
+                            <Typography variant="h6" fontWeight={700}>{size}</Typography>
+                          </Box>
+                          <Typography variant="body2" color="text.secondary" align="center">
+                            {size === 'Small' ? '2 vCPUs, 8GB RAM' :
+                              size === 'Medium' ? '4 vCPUs, 16GB RAM' :
+                                '8 vCPUs, 32GB RAM'}
+                          </Typography>
+                        </Button>
+                      );
+                    })}
+                  </Box>
+
+                  {/* Template Options */}
+                  {selectedSize && (
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      {getTemplatesForSize(selectedSize).map((template) => {
+                        const templatePrice = calculatePrice({
+                          vcpus: template.vcpus,
+                          memory: template.memory,
+                          storage: template.storage,
+                          ghz: template.ghz
+                        });
+
+                        return (
+                          <Card
+                            key={template.id}
+                            sx={{
+                              cursor: 'pointer',
+                              border: selectedTemplate?.id === template.id ? '2px solid' : '1px solid',
+                              borderColor: selectedTemplate?.id === template.id ? 'primary.main' : 'grey.300',
+                              transition: 'all 0.2s',
+                              '&:hover': {
+                                borderColor: 'primary.main',
+                                boxShadow: 2,
+                              },
+                            }}
+                            onClick={() => {
+                              setSelectedTemplate(template);
+                              notifyParent({ template });
+                            }}
+                          >
+                            <CardContent>
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Box>
+                                  <Typography variant="h6" fontWeight={600}>
+                                    {template.ghz} Configuration
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary">
+                                    {template.description}
+                                  </Typography>
+                                  <Typography variant="h6" color="primary" fontWeight={700} mt={1}>
+                                    R{templatePrice.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                                  </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', gap: 3 }}>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <MemoryIcon color="action" />
+                                    <Typography variant="body1" fontWeight={500}>
+                                      {template.vcpus} vCPUs
+                                    </Typography>
+                                  </Box>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <StorageIcon color="action" />
+                                    <Typography variant="body1" fontWeight={500}>
+                                      {template.memory}GB RAM
+                                    </Typography>
+                                  </Box>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <SpeedIcon color="action" />
+                                    <Typography variant="body1" fontWeight={500}>
+                                      {template.storage}GB Storage
+                                    </Typography>
+                                  </Box>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <SpeedIcon color="action" />
+                                    <Typography variant="body1" fontWeight={500}>
+                                      {template.ghz}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              </Box>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </Box>
+                  )}
+                </>
+              ) : (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="vCPUs"
+                        type="number"
+                        fullWidth
+                        value={customSpecs.vcpus}
+                        onChange={(e) => {
+                          const value = Math.max(1, Math.min(32, parseInt(e.target.value) || 1));
+                          setCustomSpecs({ ...customSpecs, vcpus: value });
+                          notifyParent();
+                        }}
+                        InputProps={{
+                          inputProps: { min: 1, max: 32 }
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <FormControl fullWidth>
+                        <InputLabel id="ram-select-label">RAM (GB)</InputLabel>
+                        <Select
+                          labelId="ram-select-label"
+                          value={customSpecs.memory}
+                          label="RAM (GB)"
+                          onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setCustomSpecs({ ...customSpecs, memory: value });
+                            notifyParent();
+                          }}
+                        >
+                          {[4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 128].map((ram) => (
+                            <MenuItem key={ram} value={ram}>{ram} GB</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Storage (GB)"
+                        type="number"
+                        fullWidth
+                        value={customSpecs.storage}
+                        onChange={(e) => {
+                          const value = Math.max(10, Math.min(2000, parseInt(e.target.value) || 10));
+                          setCustomSpecs({ ...customSpecs, storage: value });
+                          notifyParent();
+                        }}
+                        InputProps={{
+                          inputProps: { min: 10, max: 2000 }
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <FormControl fullWidth>
+                        <InputLabel id="ghz-select-label">GHz</InputLabel>
+                        <Select
+                          labelId="ghz-select-label"
+                          value={customSpecs.ghz}
+                          label="GHz"
+                          onChange={(e) => {
+                            const value = Number(e.target.value);
+                            setCustomSpecs({ ...customSpecs, ghz: value });
+                            notifyParent();
+                          }}
+                        >
+                          <MenuItem value={1}>1 GHz</MenuItem>
+                          <MenuItem value={2}>2 GHz</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                  <Card sx={{ mt: 2 }}>
+                    <CardContent>
+                      <Typography variant="h6" fontWeight={600} mb={2}>
+                        Custom Build Summary
+                      </Typography>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box>
+                          <Typography variant="body1" color="text.secondary">
+                            Estimated Monthly Cost
+                          </Typography>
+                          <Typography variant="h5" color="primary" fontWeight={700}>
+                            R{calculatePrice(customSpecs).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', gap: 3 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <MemoryIcon color="action" />
+                            <Typography variant="body1" fontWeight={500}>
+                              {customSpecs.vcpus} vCPUs
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <StorageIcon color="action" />
+                            <Typography variant="body1" fontWeight={500}>
+                              {customSpecs.memory}GB RAM
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <SpeedIcon color="action" />
+                            <Typography variant="body1" fontWeight={500}>
+                              {customSpecs.storage}GB Storage
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <SpeedIcon color="action" />
+                            <Typography variant="body1" fontWeight={500}>
+                              {customSpecs.ghz}GHz
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Box>
+              )}
+
+              {/* Continue button */}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
                 <Button
-                  key={o.value}
-                  variant={os === o.value ? 'contained' : 'outlined'}
-                  color={os === o.value ? 'primary' : 'inherit'}
+                  variant="contained"
+                  size="large"
+                  onClick={() => setStep(2)}
+                  disabled={!buildType || (buildType === 'template' && !selectedTemplate) || (buildType === 'custom' && (!customSpecs.vcpus || !customSpecs.memory || !customSpecs.storage || !customSpecs.ghz))}
+                  sx={{
+                    px: 4,
+                    py: 1.5,
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    borderRadius: 2,
+                  }}
+                >
+                  Continue
+                </Button>
+              </Box>
+            </ParentCard>
+          </div>
+        </Fade>
+      </div>
+
+      {/* Step 3: Select Tier */}
+      <div ref={tierRef} id="tier-step">
+        <Fade in={step === 2} timeout={500} unmountOnExit>
+          <div>
+            {/* Back button */}
+            <Box sx={{ mb: 2 }}>
+              <Button variant="outlined" onClick={() => setStep(1)}>
+                Back
+              </Button>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h4" fontWeight={700} color="primary">
+                Step 3 of 5: {stepLabels[2]}
+              </Typography>
+              <Tooltip 
+                title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
+                placement="top"
+              >
+                <span>
+                  <Button
+                    variant="outlined"
+                    disabled={createdVMs.length === 0}
+                    sx={{ textTransform: 'none' }}
+                    onClick={handleOpenAdditionalProducts}
+                  >
+                    Add Additional Products
+                  </Button>
+                </span>
+              </Tooltip>
+            </Box>
+            <ParentCard sx={{ '& .MuiCardContent-root': { pt: 0, px: 2 } }}>
+              <Typography variant="h6" fontWeight={600} mb={1}>
+                Select Tier
+              </Typography>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                Choose the performance tier that best suits your workload.
+              </Typography>
+              {errors.tier && (
+                <FormHelperText error>Please select a tier</FormHelperText>
+              )}
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
+                <Button
+                  variant={tier === 'Standard SSD' ? 'contained' : 'outlined'}
+                  color={tier === 'Standard SSD' ? 'primary' : 'inherit'}
                   sx={{
                     flex: 1,
                     minWidth: 180,
                     height: '45px',
                     borderRadius: 2,
-                    boxShadow: os === o.value ? 2 : 0,
+                    boxShadow: tier === 'Standard SSD' ? 2 : 0,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'flex-start',
                     fontWeight: 600,
                     fontSize: '1rem',
-                    borderColor: os === o.value ? 'primary.main' : 'grey.300',
+                    borderColor: tier === 'Standard SSD' ? 'primary.main' : 'grey.300',
                     transition: 'all 0.2s',
                     textTransform: 'none',
-                    background: os === o.value ? 'primary.main' : undefined,
-                    color: os === o.value ? 'white' : 'inherit',
+                    backgroundColor: tier === 'Standard SSD' ? 'primary.main' : undefined,
+                    color: tier === 'Standard SSD' ? 'white' : 'inherit',
                     '&:hover': {
-                      background: os === o.value ? 'primary.dark' : undefined,
+                      backgroundColor: tier === 'Standard SSD' ? 'primary.dark' : undefined,
                     },
                     gap: 1,
                     px: 2
                   }}
                   onClick={() => {
-                    setOs(o.value);
-                    notifyParent({ os: o.value });
+                    setTier('Standard SSD');
+                    notifyParent({ tier: 'Standard SSD' });
+                    setTimeout(() => setStep(3), 400);
                   }}
-                  startIcon={o.icon}
+                  startIcon={<StarBorderIcon />}
                 >
-                  {o.label}
+                  Standard
                 </Button>
-              ))}
-            </Box>
 
-            {/* Info box for Tier selection */}
-            {showTierTip && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 2,
-                  mb: 2,
-                  px: 2,
-                  py: 1.5,
-                  borderRadius: 2,
-                  background: 'linear-gradient(90deg, #fffbe7 0%, #fff7c2 100%)',
-                  boxShadow: 1,
-                  position: 'relative',
-                }}
-              >
-                <LightbulbOutlinedIcon sx={{ color: '#fbc02d', mt: 0.5 }} />
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle2" fontWeight={700} color="#7a5d00" mb={0.5}>
-                    Not sure what to choose?
-                  </Typography>
-                  <Typography variant="body2" color="#7a5d00">
-                    Linux is lightweight, free and works for most apps. Pick Windows if your software depends on it.
-                  </Typography>
-                </Box>
-                {/* <IconButton
-                  size="small"
-                  onClick={() => setShowTierTip(false)}
-                  sx={{ position: 'absolute', top: 4, right: 4 }}
-                  aria-label="Close tier tip"
+                <Button
+                  variant={tier === 'Premium SSD' ? 'contained' : 'outlined'}
+                  color={tier === 'Premium SSD' ? 'primary' : 'inherit'}
+                  sx={{
+                    flex: 1,
+                    minWidth: 180,
+                    height: '45px',
+                    borderRadius: 2,
+                    boxShadow: tier === 'Premium SSD' ? 2 : 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    fontWeight: 600,
+                    fontSize: '1rem',
+                    borderColor: tier === 'Premium SSD' ? 'primary.main' : 'grey.300',
+                    transition: 'all 0.2s',
+                    textTransform: 'none',
+                    backgroundColor: tier === 'Premium SSD' ? 'primary.main' : undefined,
+                    color: tier === 'Premium SSD' ? 'white' : 'inherit',
+                    '&:hover': {
+                      backgroundColor: tier === 'Premium SSD' ? 'primary.dark' : undefined,
+                    },
+                    gap: 1,
+                    px: 2
+                  }}
+                  onClick={() => {
+                    setTier('Premium SSD');
+                    notifyParent({ tier: 'Premium SSD' });
+                    setTimeout(() => setStep(3), 400);
+                  }}
+                  startIcon={<StarIcon />}
                 >
-                  ×
-                </IconButton> */}
+                  Premium
+                </Button>
               </Box>
-            )}
-            <Typography variant="subtitle1" fontWeight={600} mt={3} mb={1}>
-              Select Tier
-            </Typography>
-            {errors.tier && (
-              <FormHelperText error>Please select a tier</FormHelperText>
-            )}
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
-              <Button
-                variant={tier === 'Standard SSD' ? 'contained' : 'outlined'}
-                color={tier === 'Standard SSD' ? 'primary' : 'inherit'}
-                sx={{
-                  flex: 1,
-                  minWidth: 180,
-                  height: '45px',
-                  borderRadius: 2,
-                  boxShadow: tier === 'Standard SSD' ? 2 : 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                  borderColor: tier === 'Standard SSD' ? 'primary.main' : 'grey.300',
-                  transition: 'all 0.2s',
-                  textTransform: 'none',
-                  backgroundColor: tier === 'Standard SSD' ? 'primary.main' : undefined,
-                  color: tier === 'Standard SSD' ? 'white' : 'inherit',
-                  '&:hover': {
-                    backgroundColor: tier === 'Standard SSD' ? 'primary.dark' : undefined,
-                  },
-                  gap: 1,
-                  px: 2
-                }}
-                onClick={() => {
-                  setTier('Standard SSD');
-                  notifyParent({ tier: 'Standard SSD' });
-                }}
-                startIcon={<StarBorderIcon />}
-              >
-                Standard
-              </Button>
+              {/* Info box for Tier selection */}
+              {showTierTip && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    mb: 2,
+                    px: 2,
+                    py: 1.5,
+                    borderRadius: 2,
+                    background: 'linear-gradient(90deg, #fffbe7 0%, #fff7c2 100%)',
+                    boxShadow: 1,
+                    position: 'relative',
+                  }}
+                >
+                  <LightbulbOutlinedIcon sx={{ color: '#fbc02d', mt: 0.5 }} />
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="subtitle2" fontWeight={700} color="#7a5d00" mb={0.5}>
+                      Not sure what to choose?
+                    </Typography>
+                    <Typography variant="body2" color="#7a5d00">
+                      Standard SSD tier is perfect for development and testing. Choose Premium SSD for production workloads that need guaranteed performance and priority support.
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+            </ParentCard>
+          </div>
+        </Fade>
+      </div>
 
-              <Button
-                variant={tier === 'Premium SSD' ? 'contained' : 'outlined'}
-                color={tier === 'Premium SSD' ? 'primary' : 'inherit'}
-                sx={{
-                  flex: 1,
-                  minWidth: 180,
-                  height: '45px',
-                  borderRadius: 2,
-                  boxShadow: tier === 'Premium SSD' ? 2 : 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                  borderColor: tier === 'Premium SSD' ? 'primary.main' : 'grey.300',
-                  transition: 'all 0.2s',
-                  textTransform: 'none',
-                  backgroundColor: tier === 'Premium SSD' ? 'primary.main' : undefined,
-                  color: tier === 'Premium SSD' ? 'white' : 'inherit',
-                  '&:hover': {
-                    backgroundColor: tier === 'Premium SSD' ? 'primary.dark' : undefined,
-                  },
-                  gap: 1,
-                  px: 2
-                }}
-                onClick={() => {
-                  setTier('Premium SSD');
-                  notifyParent({ tier: 'Premium SSD' });
-                }}
-                startIcon={<StarIcon />}
-              >
-                Premium
+      {/* Step 4: Select Operating System */}
+      <div ref={osRef} id="os-step">
+        <Fade in={step === 3} timeout={500} unmountOnExit>
+          <div>
+            {/* Back button */}
+            <Box sx={{ mb: 2 }}>
+              <Button variant="outlined" onClick={() => setStep(2)}>
+                Back
               </Button>
             </Box>
-            {/* Info box for Tier selection */}
-            {showTierTip && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 2,
-                  mb: 2,
-                  px: 2,
-                  py: 1.5,
-                  borderRadius: 2,
-                  background: 'linear-gradient(90deg, #fffbe7 0%, #fff7c2 100%)',
-                  boxShadow: 1,
-                  position: 'relative',
-                }}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h4" fontWeight={700} color="primary">
+                Step 4 of 5: {stepLabels[3]}
+              </Typography>
+              <Tooltip 
+                title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
+                placement="top"
               >
-                <LightbulbOutlinedIcon sx={{ color: '#fbc02d', mt: 0.5 }} />
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle2" fontWeight={700} color="#7a5d00" mb={0.5}>
-                    Not sure what to choose?
-                  </Typography>
-                  <Typography variant="body2" color="#7a5d00">
-                    Standard SSD tier is perfect for development and testing. Choose Premium SSD for production workloads that need guaranteed performance and priority support.
-                  </Typography>
-                </Box>
-                {/* <IconButton
-                  size="small"
-                  onClick={() => setShowTierTip(false)}
-                  sx={{ position: 'absolute', top: 4, right: 4 }}
-                  aria-label="Close tier tip"
-                >
-                  ×
-                </IconButton> */}
-              </Box>
-            )}
-          </ParentCard>
-        </Grid>
-
-        {/* Give Your Server a Name */}
-        <Grid item xs={12} md={6} id="serverName">
-          <ParentCard sx={{ '& .MuiCardContent-root': { pt: 0, px: 2 } }}>
-            <Typography variant="h6" fontWeight={600} mb={1}>
-              Give Your Server a Name
-            </Typography>
-            <Typography variant="body2" color="text.secondary" mb={2}>
-              Optional: Add a short description to help you identify this VM later.
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TextField
-                label="Machine Name"
-                placeholder="e.g., web-server-01, app-server-prod"
-                fullWidth
-                size="small"
-                value={serverName}
-                onChange={e => {
-                  setServerName(e.target.value);
-                  setTouched(prev => ({ ...prev, serverName: true }));
-                  setErrors(prev => ({ ...prev, serverName: false }));
-                  notifyParent({ serverName: e.target.value });
-                }}
-                onBlur={() => setTouched(prev => ({ ...prev, serverName: true }))}
-                error={errors.serverName}
-                helperText={errors.serverName ? "Please enter a machine name" : "Enter a unique name for your virtual machine"}
-                variant="outlined"
-                InputLabelProps={{
-                  shrink: true,
-                  sx: { 
-                    position: 'relative',
-                    transform: 'none',
-                    marginBottom: '8px',
-                    color: 'text.primary',
-                    fontWeight: 600
-                  }
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    marginTop: '0px',
-                    '& fieldset': {
-                      border: '1px solid rgba(0, 0, 0, 0.23)'
-                    },
-                    '&:hover fieldset': {
-                      border: '1px solid rgba(0, 0, 0, 0.23)'
-                    },
-                    '&.Mui-focused fieldset': {
-                      border: '2px solid #1976d2'
-                    }
-                  }
-                }}
-              />
-              <TextField
-                label="Description"
-                placeholder="e.g., Production web server for customer portal, Development environment for testing"
-                fullWidth
-                size="small"
-                multiline
-                minRows={2}
-                value={description}
-                onChange={e => {
-                  setDescription(e.target.value);
-                  notifyParent({ description: e.target.value });
-                }}
-                variant="outlined"
-                InputLabelProps={{
-                  shrink: true,
-                  sx: { 
-                    position: 'relative',
-                    transform: 'none',
-                    marginBottom: '8px',
-                    color: 'text.primary',
-                    fontWeight: 600
-                  }
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    marginTop: '0px',
-                    '& fieldset': {
-                      border: '1px solid rgba(0, 0, 0, 0.23)'
-                    },
-                    '&:hover fieldset': {
-                      border: '1px solid rgba(0, 0, 0, 0.23)'
-                    },
-                    '&.Mui-focused fieldset': {
-                      border: '2px solid #1976d2'
-                    }
-                  }
-                }}
-              />
-            </Box>
-          </ParentCard>
-        </Grid>
-      </Grid>
-
-      {/* Row 3: VM Template Selection */}
-      <ParentCard id="template" sx={{ '& .MuiCardContent-root': { pt: 0, px: 2 } }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Box>
-            <Typography variant="h6" fontWeight={600} mb={1}>
-              Choose VM Template
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Select a size category and then choose your specific configuration.
-            </Typography>
-          </Box>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={handleCreateResource}
-            disabled={!isFormValid || createdVMs.length >= 5}
-            sx={{
-              px: 4,
-              py: 1.5,
-              fontWeight: 600,
-              textTransform: 'none',
-              borderRadius: 2,
-            }}
-          >
-            {createdVMs.length >= 5 ? 'Maximum VMs Reached' : 'Create Resource'}
-          </Button>
-        </Box>
-
-        {/* Build Type Toggle */}
-        <Box sx={{ mb: 3 }}>
-          <ToggleButtonGroup
-            value={buildType}
-            exclusive
-            onChange={(e, value) => {
-              if (value !== null) {
-                setBuildType(value);
-                setSelectedTemplate(null);
-                setSelectedSize(null);
-                setErrors(prev => ({ ...prev, template: false, customSpecs: false }));
-                setCustomSpecs({
-                  vcpus: 2,
-                  memory: 8,
-                  storage: 50,
-                  ghz: 2.0,
-                });
-                notifyParent({ template: [] });
-              }
-            }}
-            sx={{
-              '& .MuiToggleButton-root': {
-                px: 4,
-                py: 1.5,
-                fontWeight: 600,
-                textTransform: 'none',
-                borderRadius: '8px !important',
-                '&.Mui-selected': {
-                  backgroundColor: 'primary.main',
-                  color: 'white',
-                  '&:hover': {
-                    backgroundColor: 'primary.dark',
-                  },
-                },
-              },
-            }}
-          >
-            <ToggleButton value="template">
-              Predefined Templates
-            </ToggleButton>
-            <ToggleButton value="custom">
-              Custom Build
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
-
-        {buildType === 'template' ? (
-          <>
-            {/* Size Selection */}
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
-              {sizes.map((size) => {
-                const sizeTemplates = getTemplatesForSize(size);
-                return (
+                <span>
                   <Button
-                    key={size}
-                    variant={selectedSize === size ? 'contained' : 'outlined'}
-                    color={selectedSize === size ? 'primary' : 'inherit'}
+                    variant="outlined"
+                    disabled={createdVMs.length === 0}
+                    sx={{ textTransform: 'none' }}
+                    onClick={handleOpenAdditionalProducts}
+                  >
+                    Add Additional Products
+                  </Button>
+                </span>
+              </Tooltip>
+            </Box>
+            <ParentCard sx={{ '& .MuiCardContent-root': { pt: 0, px: 2 } }}>
+              <Typography variant="h6" fontWeight={600} mb={1}>
+                Choose Operating System
+              </Typography>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                Run your workload on the platform you prefer.
+              </Typography>
+              {errors.os && (
+                <FormHelperText error>Please select an operating system</FormHelperText>
+              )}
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
+                {osOptions.map((o) => (
+                  <Button
+                    key={o.value}
+                    variant={os === o.value ? 'contained' : 'outlined'}
+                    color={os === o.value ? 'primary' : 'inherit'}
                     sx={{
                       flex: 1,
                       minWidth: 180,
-                      py: 3,
+                      height: '45px',
                       borderRadius: 2,
-                      boxShadow: selectedSize === size ? 2 : 0,
+                      boxShadow: os === o.value ? 2 : 0,
                       display: 'flex',
-                      flexDirection: 'column',
                       alignItems: 'center',
+                      justifyContent: 'flex-start',
                       fontWeight: 600,
-                      fontSize: '1.1rem',
-                      borderColor: selectedSize === size ? 'primary.main' : 'grey.300',
+                      fontSize: '1rem',
+                      borderColor: os === o.value ? 'primary.main' : 'grey.300',
                       transition: 'all 0.2s',
                       textTransform: 'none',
-                      background: selectedSize === size ? 'primary.main' : undefined,
-                      color: selectedSize === size ? 'white' : 'inherit',
+                      background: os === o.value ? 'primary.main' : undefined,
+                      color: os === o.value ? 'white' : 'inherit',
                       '&:hover': {
-                        background: selectedSize === size ? 'primary.dark' : undefined,
+                        background: os === o.value ? 'primary.dark' : undefined,
                       },
                       gap: 1,
+                      px: 2
                     }}
                     onClick={() => {
-                      setSelectedSize(size);
-                      setSelectedTemplate(null);
+                      setOs(o.value);
+                      notifyParent({ os: o.value });
+                      setTimeout(() => setStep(4), 400);
                     }}
+                    startIcon={o.icon}
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <MemoryIcon />
-                      <Typography variant="h6" fontWeight={700}>{size}</Typography>
-                    </Box>
-                    <Typography variant="body2" color="text.secondary" align="center">
-                      {size === 'Small' ? '2 vCPUs, 8GB RAM' :
-                        size === 'Medium' ? '4 vCPUs, 16GB RAM' :
-                          '8 vCPUs, 32GB RAM'}
-                    </Typography>
+                    {o.label}
                   </Button>
-                );
-              })}
-            </Box>
-
-            {/* Template Options */}
-            {selectedSize && (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {getTemplatesForSize(selectedSize).map((template) => {
-
-                  const templatePrice = calculatePrice({
-                    vcpus: template.vcpus,
-                    memory: template.memory,
-                    storage: template.storage,
-                    ghz: template.ghz
-                  });
-
-                  return (
-                    <Card
-                      key={template.id}
-                      sx={{
-                        cursor: 'pointer',
-                        border: selectedTemplate?.id === template.id ? '2px solid' : '1px solid',
-                        borderColor: selectedTemplate?.id === template.id ? 'primary.main' : 'grey.300',
-                        transition: 'all 0.2s',
-                        '&:hover': {
-                          borderColor: 'primary.main',
-                          boxShadow: 2,
-                        },
-                      }}
-                      onClick={() => {
-                        setSelectedTemplate(template);
-                        notifyParent({ template });
-                      }}
-                    >
-                      <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Box>
-                            <Typography variant="h6" fontWeight={600}>
-                              {template.ghz} Configuration
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {template.description}
-                            </Typography>
-                            <Typography variant="h6" color="primary" fontWeight={700} mt={1}>
-                              R{templatePrice.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', gap: 3 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <MemoryIcon color="action" />
-                              <Typography variant="body1" fontWeight={500}>
-                                {template.vcpus} vCPUs
-                              </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <StorageIcon color="action" />
-                              <Typography variant="body1" fontWeight={500}>
-                                {template.memory}GB RAM
-                              </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <SpeedIcon color="action" />
-                              <Typography variant="body1" fontWeight={500}>
-                                {template.storage}GB Storage
-                              </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <SpeedIcon color="action" />
-                              <Typography variant="body1" fontWeight={500}>
-                                {template.ghz}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                ))}
               </Box>
-            )}
-          </>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mb: "75px" }}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="vCPUs"
-                  type="number"
-                  fullWidth
-                  value={customSpecs.vcpus}
-                  onChange={(e) => {
-                    const value = Math.max(1, Math.min(32, parseInt(e.target.value) || 1));
-                    setCustomSpecs({ ...customSpecs, vcpus: value });
-                    notifyParent();
+              {/* Info box for OS selection */}
+              {showTierTip && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    mb: 2,
+                    px: 2,
+                    py: 1.5,
+                    borderRadius: 2,
+                    background: 'linear-gradient(90deg, #fffbe7 0%, #fff7c2 100%)',
+                    boxShadow: 1,
+                    position: 'relative',
                   }}
-                  InputProps={{
-                    inputProps: { min: 1, max: 32 }
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <FormControl fullWidth>
-                  <InputLabel id="ram-select-label">RAM (GB)</InputLabel>
-                  <Select
-                    labelId="ram-select-label"
-                    value={customSpecs.memory}
-                    label="RAM (GB)"
-                    onChange={(e) => {
-                      const value = Number(e.target.value);
-                      setCustomSpecs({ ...customSpecs, memory: value });
-                      notifyParent();
-                    }}
-                  >
-                    {[4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 128].map((ram) => (
-                      <MenuItem key={ram} value={ram}>{ram} GB</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Storage (GB)"
-                  type="number"
-                  fullWidth
-                  value={customSpecs.storage}
-                  onChange={(e) => {
-                    const value = Math.max(10, Math.min(2000, parseInt(e.target.value) || 10));
-                    setCustomSpecs({ ...customSpecs, storage: value });
-                    notifyParent();
-                  }}
-                  InputProps={{
-                    inputProps: { min: 10, max: 2000 }
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <FormControl fullWidth>
-                  <InputLabel id="ghz-select-label">GHz</InputLabel>
-                  <Select
-                    labelId="ghz-select-label"
-                    value={customSpecs.ghz}
-                    label="GHz"
-                    onChange={(e) => {
-                      const value = Number(e.target.value);
-                      setCustomSpecs({ ...customSpecs, ghz: value });
-                      notifyParent();
-                    }}
-                  >
-                    <MenuItem value={1}>1 GHz</MenuItem>
-                    <MenuItem value={2}>2 GHz</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Card sx={{ mt: 2 }}>
-              <CardContent>
-                <Typography variant="h6" fontWeight={600} mb={2}>
-                  Custom Build Summary
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Box>
-                    <Typography variant="body1" color="text.secondary">
-                      Estimated Monthly Cost
+                >
+                  <LightbulbOutlinedIcon sx={{ color: '#fbc02d', mt: 0.5 }} />
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="subtitle2" fontWeight={700} color="#7a5d00" mb={0.5}>
+                      Not sure what to choose?
                     </Typography>
-                    <Typography variant="h5" color="primary" fontWeight={700}>
-                      R{calculatePrice(customSpecs).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    <Typography variant="body2" color="#7a5d00">
+                      Linux is lightweight, free and works for most apps. Pick Windows if your software depends on it.
                     </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', gap: 3 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <MemoryIcon color="action" />
-                      <Typography variant="body1" fontWeight={500}>
-                        {customSpecs.vcpus} vCPUs
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <StorageIcon color="action" />
-                      <Typography variant="body1" fontWeight={500}>
-                        {customSpecs.memory}GB RAM
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <SpeedIcon color="action" />
-                      <Typography variant="body1" fontWeight={500}>
-                        {customSpecs.storage}GB Storage
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <SpeedIcon color="action" />
-                      <Typography variant="body1" fontWeight={500}>
-                        {customSpecs.ghz}GHz
-                      </Typography>
-                    </Box>
                   </Box>
                 </Box>
-              </CardContent>
-            </Card>
-          </Box>
-        )}
+              )}
+            </ParentCard>
+          </div>
+        </Fade>
+      </div>
 
-        {/* Created VMs Summary */}
-        {createdVMs.length > 0 && (
-          <ParentCard sx={{ mt: 4 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h6" fontWeight={600}>
-                Created Virtual Machines ({createdVMs.length}/5)
-              </Typography>
-              <Typography variant="h6" color="primary" fontWeight={700}>
-                Total: R{totalPrice.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
-              </Typography>
+      {/* Step 5: Name & Description */}
+      <div ref={nameRef} id="name-step">
+        <Fade in={step === 4} timeout={500} unmountOnExit>
+          <div>
+            {/* Back button */}
+            <Box sx={{ mb: 2 }}>
+              <Button variant="outlined" onClick={() => setStep(3)}>
+                Back
+              </Button>
             </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h4" fontWeight={700} color="primary">
+                Step 5 of 5: {stepLabels[4]}
+              </Typography>
+              <Tooltip 
+                title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
+                placement="top"
+              >
+                <span>
+                  <Button
+                    variant="outlined"
+                    disabled={createdVMs.length === 0}
+                    sx={{ textTransform: 'none' }}
+                    onClick={handleOpenAdditionalProducts}
+                  >
+                    Add Additional Products
+                  </Button>
+                </span>
+              </Tooltip>
+            </Box>
+            <ParentCard sx={{ '& .MuiCardContent-root': { pt: 0, px: 2 } }}>
+              <Typography variant="h6" fontWeight={600} mb={1}>
+                Give Your Server a Name
+              </Typography>
+              <Typography variant="body2" color="text.secondary" mb={2}>
+                Optional: Add a short description to help you identify this VM later.
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <TextField
+                  label="Machine Name"
+                  placeholder="e.g., web-server-01, app-server-prod"
+                  fullWidth
+                  size="small"
+                  value={serverName}
+                  onChange={e => {
+                    setServerName(e.target.value);
+                    setTouched(prev => ({ ...prev, serverName: true }));
+                    setErrors(prev => ({ ...prev, serverName: false }));
+                    notifyParent({ serverName: e.target.value });
+                  }}
+                  onBlur={() => setTouched(prev => ({ ...prev, serverName: true }))}
+                  error={errors.serverName}
+                  helperText={errors.serverName ? "Please enter a machine name" : "Enter a unique name for your virtual machine"}
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                    sx: { 
+                      position: 'relative',
+                      transform: 'none',
+                      marginBottom: '8px',
+                      color: 'text.primary',
+                      fontWeight: 600
+                    }
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      marginTop: '0px',
+                      '& fieldset': {
+                        border: '1px solid rgba(0, 0, 0, 0.23)'
+                      },
+                      '&:hover fieldset': {
+                        border: '1px solid rgba(0, 0, 0, 0.23)'
+                      },
+                      '&.Mui-focused fieldset': {
+                        border: '2px solid #1976d2'
+                      }
+                    }
+                  }}
+                />
+                <TextField
+                  label="Description"
+                  placeholder="e.g., Production web server for customer portal, Development environment for testing"
+                  fullWidth
+                  size="small"
+                  multiline
+                  minRows={2}
+                  value={description}
+                  onChange={e => {
+                    setDescription(e.target.value);
+                    notifyParent({ description: e.target.value });
+                  }}
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: true,
+                    sx: { 
+                      position: 'relative',
+                      transform: 'none',
+                      marginBottom: '8px',
+                      color: 'text.primary',
+                      fontWeight: 600
+                    }
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      marginTop: '0px',
+                      '& fieldset': {
+                        border: '1px solid rgba(0, 0, 0, 0.23)'
+                      },
+                      '&:hover fieldset': {
+                        border: '1px solid rgba(0, 0, 0, 0.23)'
+                      },
+                      '&.Mui-focused fieldset': {
+                        border: '2px solid #1976d2'
+                      }
+                    }
+                  }}
+                />
+              </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {createdVMs.map((vm) => {
-                const migratedVM = migrateVMConfig(vm);
+              {/* Create Resource button */}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={handleCreateResource}
+                  disabled={!isFormValid || createdVMs.length >= 5}
+                  sx={{
+                    px: 4,
+                    py: 1.5,
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    borderRadius: 2,
+                  }}
+                >
+                  {createdVMs.length >= 5 ? 'Maximum VMs Reached' : 'Create Resource'}
+                </Button>
+              </Box>
+            </ParentCard>
+          </div>
+        </Fade>
+      </div>
 
-                if (!migratedVM) {
-                  return null;
-                }
+      {/* Created VMs Summary */}
+      {createdVMs.length > 0 && (
+        <ParentCard sx={{ mt: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Typography variant="h6" fontWeight={600}>
+              Created Virtual Machines ({createdVMs.length}/5)
+            </Typography>
+            <Typography variant="h6" color="primary" fontWeight={700}>
+              Total: R{totalPrice.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+            </Typography>
+          </Box>
 
-                const specs = migratedVM.configuration.specs;
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {createdVMs.map((vm) => {
+              const migratedVM = migrateVMConfig(vm);
 
-                return (
-                  <Card key={migratedVM.id} sx={{ position: 'relative' }}>
-                    <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Box>
-                          <Typography variant="h6" fontWeight={600}>
-                            {migratedVM.serverName || 'Unnamed VM'}
+              if (!migratedVM) {
+                return null;
+              }
+
+              const specs = migratedVM.configuration.specs;
+
+              return (
+                <Card key={migratedVM.id} sx={{ position: 'relative' }}>
+                  <CardContent>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box>
+                        <Typography variant="h6" fontWeight={600}>
+                          {migratedVM.serverName || 'Unnamed VM'}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {migratedVM.description || 'No description provided'}
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                          <Typography variant="body2">
+                            <strong>Region:</strong> {migratedVM.region || 'Not specified'}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {migratedVM.description || 'No description provided'}
+                          <Typography variant="body2">
+                            <strong>OS:</strong> {migratedVM.os || 'Not specified'}
                           </Typography>
-                          <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-                            <Typography variant="body2">
-                              <strong>Region:</strong> {migratedVM.region || 'Not specified'}
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>OS:</strong> {migratedVM.os || 'Not specified'}
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>Tier:</strong> {migratedVM.tier || 'Not specified'}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-                            <Typography variant="body2">
-                              <strong>vCPUs:</strong> {specs?.vcpus || 0}
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>RAM:</strong> {specs?.memory || 0}GB
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>Storage:</strong> {specs?.storage || 0}GB
-                            </Typography>
-                            <Typography variant="body2">
-                              <strong>GHz:</strong> {specs?.ghz || 0}
-                            </Typography>
-                          </Box>
+                          <Typography variant="body2">
+                            <strong>Tier:</strong> {migratedVM.tier || 'Not specified'}
+                          </Typography>
                         </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                          <Typography variant="h6" color="primary" fontWeight={700}>
-                            R{(migratedVM.price || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                        <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                          <Typography variant="body2">
+                            <strong>vCPUs:</strong> {specs?.vcpus || 0}
                           </Typography>
-                          <IconButton
-                            onClick={() => handleDeleteVM(migratedVM.id)}
-                            color="error"
-                            size="small"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                          <Typography variant="body2">
+                            <strong>RAM:</strong> {specs?.memory || 0}GB
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>Storage:</strong> {specs?.storage || 0}GB
+                          </Typography>
+                          <Typography variant="body2">
+                            <strong>GHz:</strong> {specs?.ghz || 0}
+                          </Typography>
                         </Box>
                       </Box>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </Box>
-          </ParentCard>
-        )}
-      </ParentCard>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="h6" color="primary" fontWeight={700}>
+                          R{(migratedVM.price || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                        </Typography>
+                        <IconButton
+                          onClick={() => handleDeleteVM(migratedVM.id)}
+                          color="error"
+                          size="small"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </Box>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </Box>
+        </ParentCard>
+      )}
+
+      {/* Additional Products Dialog */}
+      <AdditionalProductsDialog
+        open={additionalProductsDialogOpen}
+        onClose={handleCloseAdditionalProducts}
+        products={products}
+        onProductsUpdate={handleAdditionalProductsUpdate}
+        existingProducts={createdVMs}
+      />
     </>
   );
 } 

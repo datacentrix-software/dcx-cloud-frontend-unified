@@ -23,7 +23,7 @@ const Menuitems: MenuItem[] = [
     id: uniqueId(),
     title: "Dashboard",
     icon: IconAperture,
-    href: "/",
+    href: "/nlu/dashboards/customer",
     chipColor: "secondary",
     allowedRoles: ["Solution Architect", "Sales", "SDM", "Admin", "Tender Analyst", "Customer", "Root"],
     description: "Overview of all data",

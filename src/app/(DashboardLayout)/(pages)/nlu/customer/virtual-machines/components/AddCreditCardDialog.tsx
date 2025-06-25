@@ -23,10 +23,10 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useAuthStore } from '@/store';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { CreditCard, Visibility, VisibilityOff, Person } from '@mui/icons-material';
-import { format, addMonths, startOfMonth } from 'date-fns';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
 import { IPaymentCard } from '@/types';
+import { CreditCard, Visibility, VisibilityOff, Person } from '@mui/icons-material';
+import { format, addMonths, startOfMonth } from 'date-fns';
 
 interface AddCreditCardDialogProps {
   open: boolean;
@@ -110,7 +110,7 @@ const AddCreditCardDialog: React.FC<AddCreditCardDialogProps> = ({ open, onClose
     try {
       const payload = {
         email: authUser?.email,
-        organisationId: authUser?.userOrganisations[0]?.organisation.id,
+        organisationId: authUser?.userOrganisations?.[0]?.organisation?.id,
         pin,
         card: {
           number: cardNumber,

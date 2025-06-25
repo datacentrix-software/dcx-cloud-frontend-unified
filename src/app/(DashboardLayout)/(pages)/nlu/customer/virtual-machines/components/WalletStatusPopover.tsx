@@ -9,7 +9,7 @@ import {
     Divider,
     Stack
 } from '@mui/material';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import { IconWallet } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 
@@ -36,10 +36,13 @@ export default function WalletStatusPopover({ wallet }: { wallet: Wallet }) {
 
     return (
         <>
-            <IconButton
-                color="inherit"
-                aria-describedby={id}
+            <Stack
+                direction="column"
+                alignItems="center"
+                spacing={0.5}
+                sx={{ cursor: 'pointer' }}
                 onClick={handleClick}
+                aria-describedby={id}
                 aria-label="wallet"
             >
                 <Badge
@@ -47,9 +50,12 @@ export default function WalletStatusPopover({ wallet }: { wallet: Wallet }) {
                     variant="dot"
                     invisible={wallet === null}
                 >
-                    <AccountBalanceWalletIcon />
+                    <IconWallet size={20} stroke={1.5} />
                 </Badge>
-            </IconButton>
+                <Typography variant="caption" sx={{ fontSize: '0.7rem', lineHeight: 1 }}>
+                    Wallet
+                </Typography>
+            </Stack>
 
             <Popover
                 id={id}

@@ -56,6 +56,7 @@ interface VMFilter {
     maxMemory: string;
     minCpu: string;
     maxCpu: string;
+    search: string;
 }
 
 interface VMDataProps {
@@ -89,6 +90,27 @@ const VMData: React.FC<VMDataProps> = ({
     onVmFilterChange,
     onVMClick 
 }) => {
+    // Extract unique values from VM data for dropdowns
+    const uniqueMemoryValues = React.useMemo(() => {
+        const memorySet = new Set<string>();
+        vmData.forEach(vm => {
+            if (vm.memory) {
+                memorySet.add(vm.memory);
+            }
+        });
+        return Array.from(memorySet).sort((a, b) => parseInt(a) - parseInt(b));
+    }, [vmData]);
+
+    const uniqueCpuValues = React.useMemo(() => {
+        const cpuSet = new Set<number>();
+        vmData.forEach(vm => {
+            if (vm.cpu !== undefined && vm.cpu !== null) {
+                cpuSet.add(vm.cpu);
+            }
+        });
+        return Array.from(cpuSet).sort((a, b) => a - b);
+    }, [vmData]);
+
     const handleVmSort = (key: string) => {
         onVmSort(key);
     };
@@ -128,7 +150,7 @@ const VMData: React.FC<VMDataProps> = ({
                                 </Typography>
                             </Box>
                             <Typography variant="body2" color="textSecondary">
-                                Total allocated memory across all VMs
+                                Total memory across all VMs
                             </Typography>
                         </Stack>
                     </ParentCard>
@@ -227,51 +249,146 @@ const VMData: React.FC<VMDataProps> = ({
                 }
             >
                 {/* Filter Controls */}
-                <Box sx={{ mb: 3, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                    <FormControl sx={{ minWidth: 200 }}>
-                        <InputLabel>OS Filter</InputLabel>
-                        <Select
-                            value={vmFilter.os}
-                            label="OS Filter"
-                            onChange={(e) => handleVmFilterChange('os', e.target.value)}
-                        >
-                            <MenuItem value="">All OS</MenuItem>
-                            <MenuItem value="WINDOWS">Windows</MenuItem>
-                            <MenuItem value="LINUX">Linux</MenuItem>
-                        </Select>
-                    </FormControl>
+                <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" sx={{ mb: 2, color: 'primary.main', fontWeight: 'medium' }}>
+                        Filter & Search VMs
+                    </Typography>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={4}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography variant="body2" sx={{ mb: 1, fontWeight: 'medium', color: 'text.secondary' }}>
+                                    Search VMs
+                                </Typography>
+                                <TextField
+                                    placeholder="Search VMs..."
+                                    value={vmFilter.search}
+                                    onChange={(e) => handleVmFilterChange('search', e.target.value)}
+                                    fullWidth
+                                    variant="outlined"
+                                    size="small"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
+                                                <IconInfoCircle size={16} color="#8884d8" />
+                                            </Box>
+                                        ),
+                                    }}
+                                />
+                            </Box>
+                        </Grid>
 
-                    <TextField
-                        label="Min Memory (GB)"
-                        type="number"
-                        value={vmFilter.minMemory}
-                        onChange={(e) => handleVmFilterChange('minMemory', e.target.value)}
-                        sx={{ width: 150 }}
-                    />
+                        <Grid item xs={12} md={2}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography variant="body2" sx={{ mb: 1, fontWeight: 'medium', color: 'text.secondary' }}>
+                                    Operating System
+                                </Typography>
+                                <FormControl fullWidth size="small">
+                                    <Select
+                                        value={vmFilter.os}
+                                        onChange={(e) => handleVmFilterChange('os', e.target.value)}
+                                        variant="outlined"
+                                        displayEmpty
+                                    >
+                                        <MenuItem value="">All OS</MenuItem>
+                                        <MenuItem value="WINDOWS">Windows</MenuItem>
+                                        <MenuItem value="LINUX">Linux</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </Grid>
 
-                    <TextField
-                        label="Max Memory (GB)"
-                        type="number"
-                        value={vmFilter.maxMemory}
-                        onChange={(e) => handleVmFilterChange('maxMemory', e.target.value)}
-                        sx={{ width: 150 }}
-                    />
+                        <Grid item xs={12} md={1.5}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography variant="body2" sx={{ mb: 1, fontWeight: 'medium', color: 'text.secondary' }}>
+                                    Min Memory (GB)
+                                </Typography>
+                                <FormControl fullWidth size="small">
+                                    <Select
+                                        value={vmFilter.minMemory}
+                                        onChange={(e) => handleVmFilterChange('minMemory', e.target.value)}
+                                        variant="outlined"
+                                        displayEmpty
+                                    >
+                                        <MenuItem value="">Any Memory</MenuItem>
+                                        {uniqueMemoryValues.map((memory) => (
+                                            <MenuItem key={`min-${memory}`} value={memory}>
+                                                {memory} GB
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </Grid>
 
-                    <TextField
-                        label="Min CPU"
-                        type="number"
-                        value={vmFilter.minCpu}
-                        onChange={(e) => handleVmFilterChange('minCpu', e.target.value)}
-                        sx={{ width: 150 }}
-                    />
+                        <Grid item xs={12} md={1.5}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography variant="body2" sx={{ mb: 1, fontWeight: 'medium', color: 'text.secondary' }}>
+                                    Max Memory (GB)
+                                </Typography>
+                                <FormControl fullWidth size="small">
+                                    <Select
+                                        value={vmFilter.maxMemory}
+                                        onChange={(e) => handleVmFilterChange('maxMemory', e.target.value)}
+                                        variant="outlined"
+                                        displayEmpty
+                                    >
+                                        <MenuItem value="">Any Memory</MenuItem>
+                                        {uniqueMemoryValues.map((memory) => (
+                                            <MenuItem key={`max-${memory}`} value={memory}>
+                                                {memory} GB
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </Grid>
 
-                    <TextField
-                        label="Max CPU"
-                        type="number"
-                        value={vmFilter.maxCpu}
-                        onChange={(e) => handleVmFilterChange('maxCpu', e.target.value)}
-                        sx={{ width: 150 }}
-                    />
+                        <Grid item xs={12} md={1.5}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography variant="body2" sx={{ mb: 1, fontWeight: 'medium', color: 'text.secondary' }}>
+                                    Min CPU
+                                </Typography>
+                                <FormControl fullWidth size="small">
+                                    <Select
+                                        value={vmFilter.minCpu}
+                                        onChange={(e) => handleVmFilterChange('minCpu', e.target.value)}
+                                        variant="outlined"
+                                        displayEmpty
+                                    >
+                                        <MenuItem value="">Any CPU</MenuItem>
+                                        {uniqueCpuValues.map((cpu) => (
+                                            <MenuItem key={`min-${cpu}`} value={cpu.toString()}>
+                                                {cpu} Cores
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </Grid>
+
+                        <Grid item xs={12} md={1.5}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Typography variant="body2" sx={{ mb: 1, fontWeight: 'medium', color: 'text.secondary' }}>
+                                    Max CPU
+                                </Typography>
+                                <FormControl fullWidth size="small">
+                                    <Select
+                                        value={vmFilter.maxCpu}
+                                        onChange={(e) => handleVmFilterChange('maxCpu', e.target.value)}
+                                        variant="outlined"
+                                        displayEmpty
+                                    >
+                                        <MenuItem value="">Any CPU</MenuItem>
+                                        {uniqueCpuValues.map((cpu) => (
+                                            <MenuItem key={`max-${cpu}`} value={cpu.toString()}>
+                                                {cpu} Cores
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </Grid>
+                    </Grid>
                 </Box>
 
                 <TableContainer component={Paper}>
@@ -287,10 +404,17 @@ const VMData: React.FC<VMDataProps> = ({
                                         }
                                     }}
                                 >
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <IconServer size={16} color="#8884d8" />
-                                        VM Name
-                                    </Box>
+                                    <TableSortLabel
+                                        active={vmSortConfig.key === 'identity_name'}
+                                        direction={vmSortConfig.key === 'identity_name' ? vmSortConfig.direction : 'asc'}
+                                        onClick={() => handleVmSort('identity_name')}
+                                        sx={{ color: 'primary.main' }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <IconServer size={16} color="#8884d8" />
+                                            VM Name
+                                        </Box>
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell 
                                     sx={{ 
@@ -301,10 +425,17 @@ const VMData: React.FC<VMDataProps> = ({
                                         }
                                     }}
                                 >
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <IconCpu size={16} color="#8884d8" />
-                                        OS
-                                    </Box>
+                                    <TableSortLabel
+                                        active={vmSortConfig.key === 'os'}
+                                        direction={vmSortConfig.key === 'os' ? vmSortConfig.direction : 'asc'}
+                                        onClick={() => handleVmSort('os')}
+                                        sx={{ color: 'primary.main' }}
+                                    >
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <IconCpu size={16} color="#8884d8" />
+                                            OS
+                                        </Box>
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell 
                                     align="right"

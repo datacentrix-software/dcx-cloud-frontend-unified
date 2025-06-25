@@ -43,6 +43,7 @@ import Swal from 'sweetalert2';
 import { useAuthStore } from '@/store';
 import axiosServices from '@/utils/axios';
 import useVirtualMachineStore from '@/store/useVirtualMachineStore';
+import { useCreditCardStore } from '@/store/useCreditCardStore';
 
 interface LandingProps {
     customerName: string;
@@ -61,6 +62,8 @@ const Landing: React.FC<LandingProps> = ({
     const [region, setRegion] = useState('')
     const { setVmTemplates, vmTemplates } = useVirtualMachineStore();
     const [activeTemplate, setActiveTemplate] = useState<any>(null);
+    const { hasLinkedCreditCard } = useCreditCardStore();
+
     const handleOSSelect = (os: 'windows' | 'linux') => {
         const tempSelectedObj = vmTemplates.find((template) => template.osType.toLowerCase().includes(os.toLowerCase()));
         setSelectedOS(os);
@@ -80,7 +83,7 @@ const Landing: React.FC<LandingProps> = ({
             const { ip } = await res.json();
 
             try {
-                const orgId = authUser?.userOrganisations[0]?.organisation.id
+                const orgId = authUser?.userOrganisations?.[0]?.organisation?.id;
                 const payload = {
                     customer: {
                         organisationId: orgId,
@@ -173,20 +176,22 @@ const Landing: React.FC<LandingProps> = ({
             onClick: () => router.push('/nlu/customer/virtual-machines'),
             color: theme.palette.primary.main
         },
-        {
+        // Only show "Add Payment Method" if user hasn't linked a credit card
+        ...(hasLinkedCreditCard ? [] : [{
             title: 'Add Payment Method',
             description: 'Set up your credit card details to enable seamless billing and service provisioning.',
             icon: <IconCreditCard size={48} color={theme.palette.secondary.main} />,
             onClick: () => router.push('/nlu/payments'),
             color: theme.palette.secondary.main
-        },
-        {
+        }]),
+        // Only show "Try a Free VM" if user has linked a credit card
+        ...(hasLinkedCreditCard ? [{
             title: 'Try a Free VM',
             description: 'Experience our platform with a free trial virtual machine. No credit card required.',
             icon: <IconGift size={48} color={theme.palette.success.main} />,
             onClick: () => setOpenOSDialog(true),
             color: theme.palette.success.main
-        }
+        }] : [])
     ];
 
     const renderOSOption = (os: 'windows' | 'linux', label: string, icon: React.ReactNode) => (
@@ -264,7 +269,7 @@ const Landing: React.FC<LandingProps> = ({
                             </Typography>
                             <Typography variant="h6" color="textSecondary" sx={{ maxWidth: '800px', mx: 'auto' }}>
                                 Get started with our cloud platform by choosing one of the options below.
-                                We&apos;re here to help you every step of the way.
+                                We're here to help you every step of the way.
                             </Typography>
                         </Box>
 
@@ -417,7 +422,7 @@ const Landing: React.FC<LandingProps> = ({
                                 </Select>
                             </FormControl>
                             <Typography variant="body2" ml={2} fontSize={12} mb={3} mt={1}>
-                                This will be your virtual machine&apos;s deployment region
+                                This will be your virtual machine's deployment region
                             </Typography>
                             <Paper
                                 elevation={0}
