@@ -31,6 +31,14 @@ const Profile = () => {
   const handleLogout = () => {
     handleClose2();
 
+    // Clear session storage items related to banner dismissals
+    sessionStorage.removeItem('paymentBannerDismissed');
+    sessionStorage.removeItem('lastPaymentBannerUserId');
+    sessionStorage.removeItem('welcomeCardDismissed');
+    sessionStorage.removeItem('lastUserId');
+    sessionStorage.removeItem('vmWelcomeCardDismissed');
+    sessionStorage.removeItem('lastVmWelcomeCardUserId');
+
     setTimeout(() => {
       router.push('/auth/login');
       logout();

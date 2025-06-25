@@ -31,7 +31,7 @@ export default function AdditionalServices({ onSelect, products, selected, setSe
     (p) => p.SubCategory?.name === 'Cloud Services -  Network as a Service (NaaS)'
   );
   const faasServices = products.filter(
-    (p) => p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS))'
+    (p) => p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS)'
   );
   const collocationServices = products.filter(
     (p) => p.SubCategory?.name === 'Cloud Services -  Collocation'

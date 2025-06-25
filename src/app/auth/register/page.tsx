@@ -20,6 +20,7 @@ import {
   Autocomplete,
 } from '@mui/material';
 import axiosServices from '@/utils/axios';
+import LoadingPage from '@/app/components/LoadingPage';
 import { useRouter } from 'next/navigation';
 import InfoCarousel from '../authForms/InfoCarousel';
 
@@ -175,7 +176,6 @@ export default function RegistrationPage() {
       msaAccepted
     );
 
-
     return valid;
   };
 
@@ -192,35 +192,6 @@ export default function RegistrationPage() {
 
     setIsRegistering(true);
     try {
-      // Check if the organization exists
-      const existingOrg = organizations.find(
-        org => org.toLowerCase() === formData.organisation.organisation_name.toLowerCase()
-      );
-
-      let organizationId = existingOrg ? organizations.indexOf(existingOrg) : null;
-
-      // If organization doesn't exist, create it
-      if (!existingOrg) {
-        try {
-          const orgResponse = await axiosServices.post(
-            `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/organisations/createorganisation`,
-            {
-              organisation_name: formData.organisation.organisation_name,
-              organisation_type: formData.organisation.organisation_type,
-            }
-          );
-          
-          if (orgResponse.data && orgResponse.data.id) {
-            organizationId = orgResponse.data.id;
-          }
-        } catch (orgError: any) {
-          setDialogMessage(orgError.response?.data?.message || 'Error creating organization. Please try again.');
-          setDialogOpen(true);
-          setIsRegistering(false);
-          return;
-        }
-      }
-
       const response = await axiosServices.post(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/users/registercustomer`,
         {
           firstName: formData.firstName,
@@ -230,7 +201,6 @@ export default function RegistrationPage() {
           organisation: {
             ...formData.organisation,
             msa_accepted: msaAccepted,
-            id: organizationId
           },
           actionById: 1,
           role: "Customer",
@@ -272,8 +242,11 @@ export default function RegistrationPage() {
     }
   };
 
-  return (
+  if (isLoading) {
+    return <LoadingPage title="Loading Registration" subtitle="Please wait while we prepare your registration form" />;
+  }
 
+  return (
     <Grid container sx={{ height: '100vh', overflow: 'hidden' }}>
       {/* Left side - Carousel */}
       <Grid item xs={12} md={6} sx={{ 
@@ -475,14 +448,14 @@ export default function RegistrationPage() {
 
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <Autocomplete
-                    freeSolo
-                    options={organizations}
+                  <TextField
+                    required
+                    label="Organisation Name"
                     value={formData.organisation.organisation_name}
-                    onChange={(event, newValue) => {
+                    onChange={(e) => {
                       const newOrgData = {
                         ...formData.organisation,
-                        organisation_name: newValue || ''
+                        organisation_name: e.target.value
                       };
 
                       setFormData({
@@ -491,53 +464,46 @@ export default function RegistrationPage() {
                       });
                       setErrors({ ...errors, organisation_name: '' });
                     }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        required
-                        label="Organisation Name"
-                        error={!!errors.organisation_name}
-                        helperText={errors.organisation_name}
-                        fullWidth
-                        size="medium"
-                        InputLabelProps={{
-                          shrink: true,
-                          sx: { 
-                            position: 'static',
-                            transform: 'none',
-                            fontSize: '0.875rem',
-                            color: 'text.secondary',
-                            mb: 0.5,
-                            '& .MuiFormLabel-asterisk': {
-                              color: 'error.main'
-                            }
-                          }
-                        }}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            borderRadius: 1,
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                            '&:hover fieldset': {
-                              borderColor: 'primary.main',
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main',
-                            },
-                          },
-                        }}
-                      />
-                    )}
+                    fullWidth
+                    size="medium"
+                    error={!!errors.organisation_name}
+                    helperText={errors.organisation_name}
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: { 
+                        position: 'static',
+                        transform: 'none',
+                        fontSize: '0.875rem',
+                        color: 'text.secondary',
+                        mb: 0.5,
+                        '& .MuiFormLabel-asterisk': {
+                          color: 'error.main'
+                        }
+                      }
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 1,
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        '&:hover fieldset': {
+                          borderColor: 'primary.main',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: 'primary.main',
+                        },
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Autocomplete
-                    freeSolo
-                    options={organizationTypes}
+                  <TextField
+                    required
+                    label="Organisation Type"
                     value={formData.organisation.organisation_type}
-                    onChange={(event, newValue) => {
+                    onChange={(e) => {
                       const newOrgData = {
                         ...formData.organisation,
-                        organisation_type: newValue || ''
+                        organisation_type: e.target.value
                       };
 
                       setFormData({
@@ -546,42 +512,35 @@ export default function RegistrationPage() {
                       });
                       setErrors({ ...errors, organisation_type: '' });
                     }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        required
-                        label="Organisation Type"
-                        error={!!errors.organisation_type}
-                        helperText={errors.organisation_type}
-                        fullWidth
-                        size="medium"
-                        InputLabelProps={{
-                          shrink: true,
-                          sx: { 
-                            position: 'static',
-                            transform: 'none',
-                            fontSize: '0.875rem',
-                            color: 'text.secondary',
-                            mb: 0.5,
-                            '& .MuiFormLabel-asterisk': {
-                              color: 'error.main'
-                            }
-                          }
-                        }}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            borderRadius: 1,
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                            '&:hover fieldset': {
-                              borderColor: 'primary.main',
-                            },
-                            '&.Mui-focused fieldset': {
-                              borderColor: 'primary.main',
-                            },
-                          },
-                        }}
-                      />
-                    )}
+                    fullWidth
+                    size="medium"
+                    error={!!errors.organisation_type}
+                    helperText={errors.organisation_type}
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: { 
+                        position: 'static',
+                        transform: 'none',
+                        fontSize: '0.875rem',
+                        color: 'text.secondary',
+                        mb: 0.5,
+                        '& .MuiFormLabel-asterisk': {
+                          color: 'error.main'
+                        }
+                      }
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 1,
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        '&:hover fieldset': {
+                          borderColor: 'primary.main',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: 'primary.main',
+                        },
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>

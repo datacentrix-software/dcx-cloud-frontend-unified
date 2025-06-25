@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import useVirtualMachineStore, { useVirtualMachineOptions } from '@/store/useVirtualMachineStore';
-import { Box, Container, Typography, Button, Paper, Stepper, Step, StepLabel, Dialog, DialogTitle, DialogContent, DialogActions, Table, TableHead, TableRow, TableCell, TableBody, IconButton, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Container, Typography, Button, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Table, TableHead, TableRow, TableCell, TableBody, IconButton, FormControlLabel, Checkbox, Card, CardContent, Tooltip } from '@mui/material';
 import CreateVirtualMachine from './components/CreateVirtualMachine';
 import BackupServices from './components/BackupServices';
 import SoftwareLicensing from './components/SoftwareLicensing';
@@ -18,8 +18,7 @@ import Swal from 'sweetalert2';
 import Link from 'next/link';
 import { InputVM, transformVMs } from '@/app/(DashboardLayout)/utilities/helpers/vm.helper';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
-
-const steps = ['Create a Virtual Machine'];
+import { IconServer, IconX, IconInfoCircle } from '@tabler/icons-react';
 
 export default function VirtualMachinesPage() {
   const { activeStep, setActiveStep } = useVirtualMachineStore();
@@ -29,7 +28,7 @@ export default function VirtualMachinesPage() {
 
   const { createdVMs, setCreatedVMs } = useVirtualMachineOptions();
   const customizer = useSelector((state: AppState) => state.customizer);
-  const { token } = useAuthStore();
+  const { token, user: authUser } = useAuthStore();
   const { quoteDialogOpen, setQuoteDialogOpen } = useVirtualMachineStore();
 
   // Get VMs from selectedOptions
@@ -37,9 +36,45 @@ export default function VirtualMachinesPage() {
 
   const [openAddCardDialog, setOpenAddCardDialog] = useState(false);
 
-  const { user: authUser } = useAuthStore();
   const [acceptedMSA, setAcceptedMSA] = useState(false);
   const { setPaymentCards, paymentCards, selectedCard, setSelectedCard } = useCreditCardStore()
+
+  // Welcome card state
+  const [isWelcomeCardVisible, setIsWelcomeCardVisible] = useState(true);
+  const [isWelcomeCardAnimating, setIsWelcomeCardAnimating] = useState(false);
+
+  // Check if welcome card was dismissed in current session
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem('vmWelcomeCardDismissed');
+    if (dismissed === 'true') {
+      setIsWelcomeCardVisible(false);
+    } else {
+      setIsWelcomeCardVisible(true);
+    }
+  }, []);
+
+  // Reset welcome card visibility when user changes
+  useEffect(() => {
+    if (authUser?.id) {
+      const lastUserId = sessionStorage.getItem('lastVmWelcomeCardUserId');
+      if (lastUserId !== authUser.id.toString()) {
+        // New user logged in, show welcome card
+        setIsWelcomeCardVisible(true);
+        setIsWelcomeCardAnimating(false);
+        sessionStorage.setItem('lastVmWelcomeCardUserId', authUser.id.toString());
+        sessionStorage.removeItem('vmWelcomeCardDismissed');
+      }
+    }
+  }, [authUser?.id]);
+
+  const handleWelcomeCardDismiss = () => {
+    setIsWelcomeCardAnimating(true);
+    // Start the animation
+    setTimeout(() => {
+      setIsWelcomeCardVisible(false);
+      sessionStorage.setItem('vmWelcomeCardDismissed', 'true');
+    }, 300); // Match the animation duration
+  };
 
   // Initialize selectedOptions if not already initialized
   useEffect(() => {
@@ -89,7 +124,7 @@ export default function VirtualMachinesPage() {
     p.SubCategory?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
   );
   const softwareLicensingProducts = products.filter((p: any) =>
-    p.SubCategory?.name === 'Cloud Services - M365'
+    p.SubCategory?.name === 'Cloud Services -  Microsoft Licences'
   );
   const additionalServicesProducts = products.filter((p: any) =>
     [
@@ -225,7 +260,7 @@ export default function VirtualMachinesPage() {
         });
       }
 
-      if (productToRemove.SubCategory?.name?.includes('M365')) {
+      if (productToRemove.SubCategory?.name?.includes('Microsoft Licences')) {
         setSoftwareLicensingSelected(
           softwareLicensingSelected.filter((item: any) => +item?.id !== productId)
         );
@@ -266,7 +301,7 @@ export default function VirtualMachinesPage() {
     );
     
     const softwareLicensing = newProducts.filter(product => 
-      product.SubCategory?.name?.includes('M365')
+      product.SubCategory?.name?.includes('Microsoft Licences')
     );
     
     const additionalServices = newProducts.filter(product => 
@@ -421,15 +456,109 @@ export default function VirtualMachinesPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 0 }}>
-      <Paper sx={{ p: 1, mb: 4, mt: '0px' }}>
-        <Stepper activeStep={activeStep} alternativeLabel>
-          {steps.map((label, index) => (
-            <Step key={label} onClick={() => handleStepClick(index)} sx={{ cursor: 'pointer' }}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-      </Paper>
+      {/* Welcome Card */}
+      {isWelcomeCardVisible && (
+        <Card
+          sx={{ 
+            mb: 4,
+            mt: 2,
+            background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: 2,
+            opacity: isWelcomeCardAnimating ? 0 : 1,
+            transform: isWelcomeCardAnimating ? 'scale(0.95) translateY(-10px)' : 'scale(1) translateY(0)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'radial-gradient(circle at top right, rgba(0,0,0,0.03) 0%, transparent 60%)',
+            }
+          }}
+        >
+          <CardContent sx={{ p: 4, position: 'relative' }}>
+            {/* Close button */}
+            <Tooltip title="Dismiss welcome message" arrow placement="top">
+              <IconButton
+                onClick={handleWelcomeCardDismiss}
+                sx={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  color: 'text.secondary',
+                  backgroundColor: 'rgba(0,0,0,0.04)',
+                  borderRadius: '50%',
+                  width: 32,
+                  height: 32,
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    color: 'error.main',
+                    backgroundColor: 'error.light + 20',
+                    transform: 'scale(1.1) rotate(90deg)',
+                    boxShadow: '0 4px 12px rgba(211, 47, 47, 0.4)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.95) rotate(90deg)',
+                  }
+                }}
+                size="small"
+              >
+                <IconX size={18} />
+              </IconButton>
+            </Tooltip>
+
+            <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
+              <Box
+                sx={{
+                  p: 2,
+                  borderRadius: '50%',
+                  backgroundColor: 'primary.main',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  flexShrink: 0,
+                }}
+              >
+                <IconServer size={32} />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Typography 
+                  variant="h4" 
+                  sx={{ 
+                    fontWeight: 'bold', 
+                    mb: 1,
+                    color: 'text.primary'
+                  }}
+                >
+                  Create Your Virtual Machine
+                </Typography>
+                <Typography 
+                  variant="subtitle1" 
+                  sx={{ 
+                    opacity: 0.9,
+                    color: 'text.secondary',
+                    mb: 2
+                  }}
+                >
+                  Configure and deploy virtual machines with our easy-to-use interface. Choose your preferred operating system, 
+                  customize specifications, and add additional services to build your perfect cloud infrastructure.
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
+                  <IconInfoCircle size={16} />
+                  <Typography variant="body2">
+                    You can also add backup services, software licensing, and additional professional services to your deployment.
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
+      )}
 
       <Box sx={{ mb: 4, maxWidth: 950, mx: 'auto', width: '100%' }}>
         {renderStepContent(activeStep)}
@@ -642,7 +771,7 @@ export default function VirtualMachinesPage() {
               {/* Software Licensing Subsection */}
               {uniqueProducts.filter(item => 
                 item.type !== 'virtualMachine' && 
-                item.SubCategory?.name?.includes('M365')
+                item.SubCategory?.name?.includes('Microsoft Licences')
               ).length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
@@ -651,7 +780,7 @@ export default function VirtualMachinesPage() {
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {uniqueProducts.filter(item => 
                       item.type !== 'virtualMachine' && 
-                      item.SubCategory?.name?.includes('M365')
+                      item.SubCategory?.name?.includes('Microsoft Licences')
                     ).map((item) => (
                       <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

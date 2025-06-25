@@ -41,6 +41,10 @@ const Header = () => {
   const [feedbackOpen, setFeedbackOpen] = React.useState(false);
   const [logsOpen, setLogsOpen] = React.useState(false);
   const [logs, setLogs] = React.useState([]);
+  
+  // Payment banner state
+  const [isPaymentBannerVisible, setIsPaymentBannerVisible] = useState(true);
+  const [isPaymentBannerAnimating, setIsPaymentBannerAnimating] = useState(false);
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow: 'none',
@@ -79,6 +83,39 @@ const Header = () => {
       backgroundColor: 'rgba(33, 150, 243, 0.04)',
     },
   }));
+
+  // Check if payment banner was dismissed in current session
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem('paymentBannerDismissed');
+    if (dismissed === 'true') {
+      setIsPaymentBannerVisible(false);
+    } else {
+      setIsPaymentBannerVisible(true);
+    }
+  }, []);
+
+  // Reset payment banner visibility when user changes
+  useEffect(() => {
+    if (authUser?.id) {
+      const lastUserId = sessionStorage.getItem('lastPaymentBannerUserId');
+      if (lastUserId !== authUser.id.toString()) {
+        // New user logged in, show payment banner
+        setIsPaymentBannerVisible(true);
+        setIsPaymentBannerAnimating(false);
+        sessionStorage.setItem('lastPaymentBannerUserId', authUser.id.toString());
+        sessionStorage.removeItem('paymentBannerDismissed');
+      }
+    }
+  }, [authUser?.id]);
+
+  const handlePaymentBannerDismiss = () => {
+    setIsPaymentBannerAnimating(true);
+    // Start the animation
+    setTimeout(() => {
+      setIsPaymentBannerVisible(false);
+      sessionStorage.setItem('paymentBannerDismissed', 'true');
+    }, 300); // Match the animation duration
+  };
 
   const fetchLogs = async () => {
     try {
@@ -295,7 +332,8 @@ const Header = () => {
         /> */}
       </ToolbarStyled>
 
-      {!hasLinkedCreditCard && getUserRoleDisplay(authUser)?.includes("Customer") && (
+      {/* Payment Setup Banner */}
+      {!hasLinkedCreditCard && getUserRoleDisplay(authUser)?.includes("Customer") && isPaymentBannerVisible && (
         <Paper
           elevation={0}
           sx={{
@@ -308,6 +346,9 @@ const Header = () => {
             borderColor: 'rgba(255, 255, 255, 0.1)',
             position: 'relative',
             overflow: 'hidden',
+            opacity: isPaymentBannerAnimating ? 0 : 1,
+            transform: isPaymentBannerAnimating ? 'scale(0.95) translateY(-10px)' : 'scale(1) translateY(0)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -383,23 +424,27 @@ const Header = () => {
                 >
                   Set Up Payment
                 </Button>
-                <IconButton
-                  size="small"
-                  sx={{
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    p: 0.5,
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white'
-                    }
-                  }}
-                  onClick={() => {
-                    // TODO: Add dismiss functionality if needed
-                    console.log('Dismiss payment setup notification');
-                  }}
-                >
-                  <IconX size={16} />
-                </IconButton>
+                <Tooltip title="Dismiss payment setup notification" arrow placement="top">
+                  <IconButton
+                    size="small"
+                    onClick={handlePaymentBannerDismiss}
+                    sx={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      p: 0.5,
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        transform: 'scale(1.1) rotate(90deg)',
+                      },
+                      '&:active': {
+                        transform: 'scale(0.95) rotate(90deg)',
+                      }
+                    }}
+                  >
+                    <IconX size={16} />
+                  </IconButton>
+                </Tooltip>
               </Stack>
             </Stack>
           </Box>

@@ -73,7 +73,7 @@ export default function AdditionalProductsDialog({
 
       // Update software licensing state
       const softwareLicensingProducts = additionalProducts.filter(product => 
-        product.SubCategory?.name?.includes('M365')
+        product.SubCategory?.name?.includes('Microsoft Licences')
       );
       setSoftwareLicensingSelected(softwareLicensingProducts);
 
@@ -99,14 +99,14 @@ export default function AdditionalProductsDialog({
   );
   
   const softwareLicensingProducts = products.filter((p: any) =>
-    p.SubCategory?.name === 'Cloud Services - M365'
+    p.SubCategory?.name === 'Cloud Services -  Microsoft Licences'
   );
   
   const additionalServicesProducts = products.filter((p: any) =>
     [
       'Cloud Services - Professional Services',
       'Cloud Services -  Network as a Service (NaaS)',
-      'Cloud Services -  Firewall as a Service (FaaS))',
+      'Cloud Services -  Firewall as a Service (FaaS)',
       'Cloud Services -  Collocation'
     ].includes(p.SubCategory?.name)
   );
@@ -174,7 +174,7 @@ export default function AdditionalProductsDialog({
     );
     const additionalFaasProducts = getSelectedProducts(
       additionalServicesSelected.faas || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS))'))
+      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS)'))
     );
     const additionalCollocationProducts = getSelectedProducts(
       additionalServicesSelected.collocation || [],
@@ -239,7 +239,7 @@ export default function AdditionalProductsDialog({
     );
     const additionalFaasProducts = getSelectedProducts(
       additionalServicesSelected.faas || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS))'))
+      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS)'))
     );
     const additionalCollocationProducts = getSelectedProducts(
       additionalServicesSelected.collocation || [],
@@ -301,7 +301,7 @@ export default function AdditionalProductsDialog({
       p.SubCategory?.name === 'Cloud Services -  Network as a Service (NaaS)'
     );
     const additionalFaasProducts = additionalServicesOptions.filter(p => 
-      p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS))'
+      p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS)'
     );
     const additionalCollocationProducts = additionalServicesOptions.filter(p => 
       p.SubCategory?.name === 'Cloud Services -  Collocation'
