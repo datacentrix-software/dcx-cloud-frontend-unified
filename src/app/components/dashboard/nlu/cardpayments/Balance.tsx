@@ -17,30 +17,25 @@ import axios from 'axios';
 import { useQuoteStore } from '@/store/useQuoteStore';
 
 const BalanceCard: React.FC = () => {
-  const { token, roles } = useAuthStore();
+  const { token } = useAuthStore();
   const [amount, setAmount] = useState('');
 
   const [message, setMessage] = useState('');
-  const authUser: any = useAuthStore((state) => state.user);
+  const { primaryOrgId } = useAuthStore();
   const { formatCurrency, } = useQuoteStore()
 
   const fetchCardDetails = async () => {
     try {
 
-      const orgId = authUser?.userOrganisations[0]?.organisation.id;
       const walletResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/wallet/${orgId}`,
+        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/wallet/${primaryOrgId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log(walletResponse.data.balance)
-      // if (!walletResponse) {
 
-      //   throw new Error('An error occurred while fetching card details');
-      // }
       setAmount(walletResponse.data.balance)
 
 

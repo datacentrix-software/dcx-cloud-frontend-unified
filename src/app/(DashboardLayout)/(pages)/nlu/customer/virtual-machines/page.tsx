@@ -28,7 +28,7 @@ export default function VirtualMachinesPage() {
 
   const { createdVMs, setCreatedVMs } = useVirtualMachineOptions();
   const customizer = useSelector((state: AppState) => state.customizer);
-  const { token, user: authUser } = useAuthStore();
+  const { token, user: authUser, primaryOrgId } = useAuthStore();
   const { quoteDialogOpen, setQuoteDialogOpen } = useVirtualMachineStore();
 
   // Get VMs from selectedOptions
@@ -381,10 +381,9 @@ export default function VirtualMachinesPage() {
     const { ip } = await res.json();
 
     try {
-      const orgId = authUser?.userOrganisations?.[0]?.organisation?.id
       const payload = {
         customer: {
-          organisationId: orgId,
+          organisationId: primaryOrgId,
           email: authUser?.email,
           businessUnitId: 1,
           attribute: `${authUser?.firstName} ${authUser?.lastName}`,

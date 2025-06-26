@@ -30,14 +30,6 @@ const Menuitems: MenuItem[] = [
   },
   {
     id: uniqueId(),
-    title: "Admin",
-    icon: IconSitemap,
-    href: "/nlu/admin",
-    allowedRoles: ["Admin", "Root"],
-    description: "Access administrative tools, settings and user management"
-  },
-  {
-    id: uniqueId(),
     title: "Payments",
     icon: IconCreditCard,
     href: "/nlu/payments",

@@ -12,7 +12,7 @@ import * as dropdownData from './data';
 import { IconMail, IconBriefcase, IconBuilding } from '@tabler/icons-react';
 import { Stack } from '@mui/system';
 import { useAuthStore } from '@/store';
-import { getUserInitials } from '@/app/(DashboardLayout)/utilities/helpers/user.helper';
+import { getOrganisationDisplay, getUserInitials, getUserRoleDisplay } from '@/app/(DashboardLayout)/utilities/helpers/user.helper';
 import { IUser } from '@/types/IUser';
 import { useRouter } from 'next/navigation';
 
@@ -98,11 +98,11 @@ const Profile = () => {
           </Typography>
           <Typography variant="subtitle2" color="textSecondary" display="flex" alignItems="center" gap={1}>
             <IconBriefcase width={15} height={15} />
-            {user?.userRoles.map(({ role }) => role.name).join(' | ')}
+            {getUserRoleDisplay(user as IUser)}
           </Typography>
           <Typography variant="subtitle2" color="textSecondary" display="flex" alignItems="center" gap={1}>
             <IconBuilding width={15} height={15} />
-            {user?.userOrganisations?.map(({ organisation }) => organisation.organisation_name).join(' | ')}
+            {getOrganisationDisplay(user as IUser)}
           </Typography>
           <Typography
             variant="subtitle2"

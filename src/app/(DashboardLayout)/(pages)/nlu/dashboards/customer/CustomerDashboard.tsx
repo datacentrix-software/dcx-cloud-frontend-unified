@@ -1,16 +1,16 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { 
-    Box, 
-    Typography, 
-    Grid, 
-    Paper, 
-    Table, 
-    TableBody, 
-    TableCell, 
-    TableContainer, 
-    TableHead, 
-    TableRow, 
+import {
+    Box,
+    Typography,
+    Grid,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     TablePagination,
     Tabs,
     Tab,
@@ -29,10 +29,10 @@ import {
     Tooltip,
     LinearProgress
 } from '@mui/material';
-import { 
-    IconServer, 
-    IconCpu, 
-    IconDatabase, 
+import {
+    IconServer,
+    IconCpu,
+    IconDatabase,
     IconDownload,
     IconPlus,
     IconInfoCircle,
@@ -345,9 +345,7 @@ const CustomerDashboard = () => {
     });
     const [isVMPoweredOn, setIsVMPoweredOn] = useState(false);
 
-    const token = useAuthStore((state) => state.token);
-    const user = useAuthStore((state) => state.user);
-    const router = useRouter();
+    const { token, user, primaryOrgId } = useAuthStore();
     const isNewCustomer = !vcenterOrgId;
 
     // Initialize loading progress
@@ -361,18 +359,17 @@ const CustomerDashboard = () => {
     // Fetch organization data
     useEffect(() => {
         const fetchOrganizationData = async () => {
-            const organisationId = user?.userOrganisations?.[0]?.organisation?.id;
-            if (!organisationId) return;
-            
+            if (!primaryOrgId) return;
+
             setLoadingStep(loadingSteps[1]); // "Fetching organization data..."
             setLoadingProgress(15);
-            
+
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/organisations/getorg`, {
                     headers: { Authorization: `Bearer ${token}` },
-                    params: { id: organisationId }
+                    params: { id: primaryOrgId }
                 });
-                
+
                 if (response.data) {
                     setCustomerName(response.data.organisation_name);
                     setVcenterOrgId(response.data.vcenterOrg_id);
@@ -383,23 +380,23 @@ const CustomerDashboard = () => {
         };
 
         fetchOrganizationData();
-    }, [user?.userOrganisations, token, loadingSteps]);
+    }, [primaryOrgId, token, loadingSteps]);
 
     // Fetch initial data
     useEffect(() => {
         const fetchData = async () => {
             if (!customerName) return; // Don't fetch data until we have the customer name
-            
+
             try {
                 console.log('Fetching data...');
-                
+
                 // Step 2: Loading products
                 setLoadingStep(loadingSteps[2]);
                 setLoadingProgress(30);
                 const productsResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/products/getproducts`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                
+
                 if (Array.isArray(productsResponse.data)) {
                     setProducts(productsResponse.data);
                 }
@@ -444,12 +441,12 @@ const CustomerDashboard = () => {
                 // Step 6: Finalizing
                 setLoadingStep(loadingSteps[6]);
                 setLoadingProgress(100);
-                
+
                 // Small delay to show the final step
                 setTimeout(() => {
                     setLoading(false);
                 }, 500);
-                
+
             } catch (error) {
                 console.error('Error fetching products:', error);
                 setLoading(false);
@@ -513,7 +510,7 @@ const CustomerDashboard = () => {
         setSelectedVM(vm);
         setCurrentTab(2); // Switch to VM Data Individual tab (index 2)
         setLoadingTelemetry(true);
-        
+
         try {
             const [telemetryResponse, networkResponse, cpuRamResponse, diskResponse, alertWindowResponse, healthWindowResponse] = await Promise.all([
                 axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmTelemetry`, {
@@ -541,11 +538,11 @@ const CustomerDashboard = () => {
                     params: { uuid: vm.identity_instance_uuid }
                 })
             ]);
-            
+
             if (Array.isArray(telemetryResponse.data) && telemetryResponse.data.length > 0) {
                 setVmTelemetry(telemetryResponse.data[0]);
             }
-            
+
             if (Array.isArray(networkResponse.data)) {
                 setVmNetworkData(networkResponse.data);
             }
@@ -613,7 +610,7 @@ const CustomerDashboard = () => {
 
     const handleVMPowerToggle = async () => {
         if (!selectedVM) return;
-        
+
         setIsPowerActionLoading(true);
         try {
             const newPowerState = !isVMPoweredOn;
@@ -646,7 +643,7 @@ const CustomerDashboard = () => {
         });
 
         if (selectedCategory !== 'all') {
-            filtered = filtered.filter(product => 
+            filtered = filtered.filter(product =>
                 product.SubCategory?.name?.toLowerCase().includes(selectedCategory.toLowerCase())
             );
         }
@@ -690,7 +687,7 @@ const CustomerDashboard = () => {
         // Search across multiple fields
         if (vmFilter.search) {
             const searchTerm = vmFilter.search.toLowerCase();
-            filtered = filtered.filter(vm => 
+            filtered = filtered.filter(vm =>
                 (vm.identity_name?.toLowerCase() || '').includes(searchTerm) ||
                 (vm.os?.toLowerCase() || '').includes(searchTerm) ||
                 (vm.vcenter_region?.toLowerCase() || '').includes(searchTerm) ||
@@ -703,27 +700,27 @@ const CustomerDashboard = () => {
         }
 
         if (vmFilter.os) {
-            filtered = filtered.filter(vm => 
+            filtered = filtered.filter(vm =>
                 vm.os.toLowerCase().includes(vmFilter.os.toLowerCase())
             );
         }
         if (vmFilter.minMemory) {
-            filtered = filtered.filter(vm => 
+            filtered = filtered.filter(vm =>
                 parseInt(vm.memory) >= parseInt(vmFilter.minMemory)
             );
         }
         if (vmFilter.maxMemory) {
-            filtered = filtered.filter(vm => 
+            filtered = filtered.filter(vm =>
                 parseInt(vm.memory) <= parseInt(vmFilter.maxMemory)
             );
         }
         if (vmFilter.minCpu) {
-            filtered = filtered.filter(vm => 
+            filtered = filtered.filter(vm =>
                 vm.cpu >= parseInt(vmFilter.minCpu)
             );
         }
         if (vmFilter.maxCpu) {
-            filtered = filtered.filter(vm => 
+            filtered = filtered.filter(vm =>
                 vm.cpu <= parseInt(vmFilter.maxCpu)
             );
         }
@@ -768,42 +765,42 @@ const CustomerDashboard = () => {
         let filtered = [...lineItems];
 
         if (lineItemFilter.vmName) {
-            filtered = filtered.filter(item => 
+            filtered = filtered.filter(item =>
                 item.vm_name.toLowerCase().includes(lineItemFilter.vmName.toLowerCase())
             );
         }
         if (lineItemFilter.os) {
-            filtered = filtered.filter(item => 
+            filtered = filtered.filter(item =>
                 item.guest_os.toLowerCase().includes(lineItemFilter.os.toLowerCase())
             );
         }
         if (lineItemFilter.minVcpus) {
-            filtered = filtered.filter(item => 
+            filtered = filtered.filter(item =>
                 item.vcpus >= parseInt(lineItemFilter.minVcpus)
             );
         }
         if (lineItemFilter.maxVcpus) {
-            filtered = filtered.filter(item => 
+            filtered = filtered.filter(item =>
                 item.vcpus <= parseInt(lineItemFilter.maxVcpus)
             );
         }
         if (lineItemFilter.minMemory) {
-            filtered = filtered.filter(item => 
+            filtered = filtered.filter(item =>
                 item.memory_size >= parseInt(lineItemFilter.minMemory)
             );
         }
         if (lineItemFilter.maxMemory) {
-            filtered = filtered.filter(item => 
+            filtered = filtered.filter(item =>
                 item.memory_size <= parseInt(lineItemFilter.maxMemory)
             );
         }
         if (lineItemFilter.minHours) {
-            filtered = filtered.filter(item => 
+            filtered = filtered.filter(item =>
                 item.total_hours >= parseInt(lineItemFilter.minHours)
             );
         }
         if (lineItemFilter.maxHours) {
-            filtered = filtered.filter(item => 
+            filtered = filtered.filter(item =>
                 item.total_hours <= parseInt(lineItemFilter.maxHours)
             );
         }
@@ -839,20 +836,20 @@ const CustomerDashboard = () => {
 
     if (loading) {
         return (
-            <Box 
-                sx={{ 
-                    display: 'flex', 
+            <Box
+                sx={{
+                    display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     height: '100vh',
                     gap: 3,
                     p: 4
                 }}
             >
-                <Card 
-                    sx={{ 
-                        maxWidth: 500, 
+                <Card
+                    sx={{
+                        maxWidth: 500,
                         width: '100%',
                         p: 4,
                         textAlign: 'center',
@@ -860,31 +857,31 @@ const CustomerDashboard = () => {
                     }}
                 >
                     <Box sx={{ mb: 3 }}>
-                        <CircularProgress 
-                            size={60} 
+                        <CircularProgress
+                            size={60}
                             thickness={4}
-                            sx={{ 
+                            sx={{
                                 color: 'primary.main',
                                 mb: 2
-                            }} 
+                            }}
                         />
-                        <Typography 
-                            variant="h5" 
-                            component="h2" 
+                        <Typography
+                            variant="h5"
+                            component="h2"
                             gutterBottom
                             sx={{ fontWeight: 600 }}
                         >
                             Loading Dashboard
                         </Typography>
-                        <Typography 
-                            variant="body1" 
+                        <Typography
+                            variant="body1"
                             color="text.secondary"
                             sx={{ mb: 3 }}
                         >
                             {loadingStep}
                         </Typography>
                     </Box>
-                    
+
                     <Box sx={{ width: '100%', mb: 2 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                             <Typography variant="body2" color="text.secondary">
@@ -894,11 +891,11 @@ const CustomerDashboard = () => {
                                 {loadingProgress}%
                             </Typography>
                         </Box>
-                        <LinearProgress 
-                            variant="determinate" 
+                        <LinearProgress
+                            variant="determinate"
                             value={loadingProgress}
-                            sx={{ 
-                                height: 8, 
+                            sx={{
+                                height: 8,
                                 borderRadius: 4,
                                 backgroundColor: 'grey.200',
                                 '& .MuiLinearProgress-bar': {
@@ -908,9 +905,9 @@ const CustomerDashboard = () => {
                             }}
                         />
                     </Box>
-                    
-                    <Typography 
-                        variant="caption" 
+
+                    <Typography
+                        variant="caption"
                         color="text.secondary"
                         sx={{ fontStyle: 'italic' }}
                     >
@@ -927,10 +924,10 @@ const CustomerDashboard = () => {
             <Box sx={{ mb: 4 }} />
 
             {!isNewCustomer && (
-                <Tabs 
-                    value={currentTab} 
-                    onChange={handleTabChange} 
-                    sx={{ 
+                <Tabs
+                    value={currentTab}
+                    onChange={handleTabChange}
+                    sx={{
                         mb: 3,
                         '& .MuiTabs-flexContainer': {
                             gap: 2,
@@ -971,7 +968,7 @@ const CustomerDashboard = () => {
             ) : (
                 <>
                     <TabPanel value={currentTab} index={0}>
-                        <VMDataComponent 
+                        <VMDataComponent
                             vmData={vmData}
                             vmFilter={vmFilter}
                             vmSortConfig={vmSortConfig}
@@ -989,7 +986,7 @@ const CustomerDashboard = () => {
                     </TabPanel>
 
                     <TabPanel value={currentTab} index={1}>
-                        <Billing 
+                        <Billing
                             billingData={billingData}
                             vmData={vmData}
                             pastBills={pastBills}
@@ -1011,7 +1008,7 @@ const CustomerDashboard = () => {
                     </TabPanel>
 
                     <TabPanel value={currentTab} index={2}>
-                        <VMDataIndividual 
+                        <VMDataIndividual
                             selectedVM={selectedVM}
                             vmTelemetry={vmTelemetry}
                             vmNetworkData={vmNetworkData}

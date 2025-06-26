@@ -8,29 +8,29 @@ export enum OrganisationType {
     PUBLIC = 'Public',
     PRIVATE = 'Private',
     OTHER = 'Other',
+    INTERNAL = 'internal', //
+}
+
+export enum OrganisationStatus {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive',
 }
 
 export interface Role {
-    id: string;
     name: string;
-    description: string;
-    createdAt: string;
-    updatedAt: string;
 }
 
 export interface Organisation {
     id: string;
     organisation_name: string;
-    org_description: string | null;
     organisation_type: OrganisationType | string;
+    organisation_status: OrganisationStatus | string;
 }
 
-export interface UserRole {
-    role: Role;
-}
-
-export interface UserOrganisation {
+export interface UserOrgRole {
+    orgId: string;
     organisation: Organisation;
+    role: Role;
 }
 
 export interface IUser {
@@ -43,11 +43,10 @@ export interface IUser {
     province: string;
     city: string;
     postalCode: string;
-    user_type: UserType;
+    userType: UserType;
     isVerified: boolean;
     isFirstLogin: boolean;
     createdAt: string;
     updatedAt: string;
-    userRoles: UserRole[];
-    userOrganisations: UserOrganisation[];
+    roles: UserOrgRole[];
 }

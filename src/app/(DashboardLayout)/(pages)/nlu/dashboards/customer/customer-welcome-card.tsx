@@ -46,7 +46,7 @@ interface Notification {
 }
 
 const WelcomeCard = () => {
-  const { user: authUser, token } = useAuthStore();
+  const { user: authUser, token, primaryOrgId } = useAuthStore();
   const userName = authUser ? `${authUser.firstName}` : "";
   const theme = useTheme();
   const [vcenterOrgId, setVcenterOrgId] = useState<number | null>(null);
@@ -129,13 +129,12 @@ const WelcomeCard = () => {
 
   useEffect(() => {
     const fetchOrganizationData = async () => {
-      const organisationId = authUser?.userOrganisations?.[0]?.organisation?.id;
-      if (!organisationId || !token) return;
+      if (!primaryOrgId || !token) return;
       
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/organisations/getorg`, {
           headers: { Authorization: `Bearer ${token}` },
-          params: { id: organisationId }
+          params: { id: primaryOrgId }
         });
         
         if (response.data) {
@@ -147,7 +146,7 @@ const WelcomeCard = () => {
     };
 
     fetchOrganizationData();
-  }, [authUser?.userOrganisations, token]);
+  }, [primaryOrgId, token]);
 
   const handleWelcomeDismiss = () => {
     setIsWelcomeAnimating(true);

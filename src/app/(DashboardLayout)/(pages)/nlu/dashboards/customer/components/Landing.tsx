@@ -58,7 +58,7 @@ const Landing: React.FC<LandingProps> = ({
     const [openFormDialog, setOpenFormDialog] = useState(false);
     const [selectedOS, setSelectedOS] = useState<'windows' | 'linux' | null>(null);
     const [vmName, setVmName] = useState('');
-    const { user: authUser, token } = useAuthStore();
+    const { user: authUser, token, primaryOrgId } = useAuthStore();
     const [region, setRegion] = useState('')
     const { setVmTemplates, vmTemplates } = useVirtualMachineStore();
     const [activeTemplate, setActiveTemplate] = useState<any>(null);
@@ -83,10 +83,9 @@ const Landing: React.FC<LandingProps> = ({
             const { ip } = await res.json();
 
             try {
-                const orgId = authUser?.userOrganisations?.[0]?.organisation?.id;
                 const payload = {
                     customer: {
-                        organisationId: orgId,
+                        organisationId: primaryOrgId,
                         email: authUser?.email,
                         businessUnitId: 1,
                         attribute: `${authUser?.firstName} ${authUser?.lastName}`,

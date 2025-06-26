@@ -31,8 +31,8 @@ import { getUserRoleDisplay } from '@/app/(DashboardLayout)/utilities/helpers/us
 const Header = () => {
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up('lg'));
   const lgDown = useMediaQuery((theme: any) => theme.breakpoints.down('lg'));
-  const authUser: any = useAuthStore((state) => state.user);
-  const [isCustomer, setIsCustomer] = useState(authUser?.role?.name === 'customer');
+  const { user: authUser, primaryOrgId } = useAuthStore();
+  const [isCustomer, setIsCustomer] = useState(false);
   const { setPaymentCards, paymentCards, hasLinkedCreditCard, setField, setSelectedCard, wallet } = useCreditCardStore()
   const customizer = useSelector((state: AppState) => state.customizer);
   const dispatch = useDispatch();
@@ -41,7 +41,7 @@ const Header = () => {
   const [feedbackOpen, setFeedbackOpen] = React.useState(false);
   const [logsOpen, setLogsOpen] = React.useState(false);
   const [logs, setLogs] = React.useState([]);
-  
+
   // Payment banner state
   const [isPaymentBannerVisible, setIsPaymentBannerVisible] = useState(true);
   const [isPaymentBannerAnimating, setIsPaymentBannerAnimating] = useState(false);
@@ -142,9 +142,7 @@ const Header = () => {
 
   const fetchCardDetails = async () => {
     try {
-
-      setIsCustomer(authUser?.role?.name === 'Customer');
-      const orgId = authUser?.userOrganisations?.[0]?.organisation?.id;
+      const orgId = primaryOrgId;
       const creditCardResponse = await axios.get(
         `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/payment/getcustomercards/${orgId}`,
         {
@@ -179,6 +177,7 @@ const Header = () => {
   };
 
   useEffect(() => {
+    setIsCustomer(getUserRoleDisplay(authUser)?.includes('Customer') as boolean);
     fetchCardDetails();
   }, []);
 
@@ -186,7 +185,7 @@ const Header = () => {
 
   const fetchAlerts = async () => {
     try {
-      const orgId = authUser?.userOrganisations?.[0]?.organisation?.id;
+      const orgId = primaryOrgId;
       const res = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/in-app-alerts/${orgId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -212,7 +211,7 @@ const Header = () => {
 
   const fetchWallet = async () => {
     try {
-      const orgId = authUser?.userOrganisations?.[0]?.organisation?.id;
+      const orgId = primaryOrgId;
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/wallet/${orgId}`, {
         headers: {
           Authorization: `Bearer ${token}`

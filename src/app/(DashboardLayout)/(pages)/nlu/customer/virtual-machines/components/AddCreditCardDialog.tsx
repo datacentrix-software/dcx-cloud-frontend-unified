@@ -49,7 +49,7 @@ const AddCreditCardDialog: React.FC<AddCreditCardDialogProps> = ({ open, onClose
   const [showPin, setShowPin] = useState(false);
   const theme = useTheme();
 
-  const { user: authUser, token } = useAuthStore();
+  const { user: authUser, token, primaryOrgId } = useAuthStore();
 
   const {
     setPaymentCards,
@@ -110,7 +110,7 @@ const AddCreditCardDialog: React.FC<AddCreditCardDialogProps> = ({ open, onClose
     try {
       const payload = {
         email: authUser?.email,
-        organisationId: authUser?.userOrganisations?.[0]?.organisation?.id,
+        organisationId: primaryOrgId,
         pin,
         card: {
           number: cardNumber,
