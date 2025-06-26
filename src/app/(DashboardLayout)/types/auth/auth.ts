@@ -1,15 +1,13 @@
-export interface registerType {
+import React from 'react';
+
+export interface BaseAuthType {
   title?: string;
-  subtitle?: JSX.Element | JSX.Element[];
-  subtext?: JSX.Element | JSX.Element[];
+  subtitle?: React.ReactNode;
+  subtext?: React.ReactNode;
 }
 
-export interface loginType {
-  title?: string;
-  subtitle?: JSX.Element | JSX.Element[];
-  subtext?: JSX.Element | JSX.Element[];
-}
-
+export interface registerType extends BaseAuthType {}
+export interface loginType extends BaseAuthType {}
 export interface signInType {
   title?: string;
 }

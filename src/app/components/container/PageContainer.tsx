@@ -1,15 +1,22 @@
+'use client';
+
+import React from 'react';
+import Head from 'next/head';
+
 type Props = {
-  description?: string;
-  children: JSX.Element | JSX.Element[];
   title?: string;
+  description?: string;
+  children: React.ReactNode;
 };
 
 const PageContainer = ({ title, description, children }: Props) => (
-  <div>
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    {children}
-  </div>
+  <>
+    <Head>
+      {title && <title>{title}</title>}
+      {description && <meta name="description" content={description} />}
+    </Head>
+    <div>{children}</div>
+  </>
 );
 
 export default PageContainer;

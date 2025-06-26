@@ -24,6 +24,7 @@ import OtpVerification from '../authForms/OtpVerification'
 import PasswordReset from '../authForms/PasswordReset'
 import LoginInfoCarousel from '../authForms/LoginInfoCarousel'
 import AuthDialogs from '../authForms/AuthDialogs'
+import { Key } from '@mui/icons-material';
 
 const AuthLogin = () => {
     const { setToken, setUser, token } = useAuthStore();
@@ -413,6 +414,24 @@ const AuthLogin = () => {
                                                     }}
                                                 >
                                                     Sign in with GitHub
+                                                </Button>
+
+                                                <Button
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    onClick={triggerGitHubSignIn}
+                                                    startIcon={<Key />}
+                                                    size="large"
+                                                    sx={{
+                                                        transition: '0.3s',
+                                                        '&:hover': {
+                                                            transform: 'scale(1.05)',
+                                                            boxShadow: '0 4px 12px rgba(0, 123, 255, 0.3)'
+                                                        }
+                                                    }}
+                                                >
+                                                    Sign in with Single Sign-On (SSO)
                                                 </Button>
                                             </Box>
                                         </Box>

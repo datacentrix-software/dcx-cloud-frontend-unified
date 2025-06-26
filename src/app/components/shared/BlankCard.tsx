@@ -2,10 +2,11 @@ import { Card } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { AppState } from '@/store/store';
 import {useSelector} from '@/store/hooks';
+import React from 'react';
 
 type Props = {
   className?: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode| React.ReactNode[];
   sx?: any;
 };
 

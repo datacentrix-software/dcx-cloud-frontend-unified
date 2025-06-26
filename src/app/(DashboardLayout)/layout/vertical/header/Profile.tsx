@@ -11,10 +11,13 @@ import * as dropdownData from './data';
 
 import { IconMail, IconBriefcase, IconBuilding } from '@tabler/icons-react';
 import { Stack } from '@mui/system';
-import Image from 'next/image';
-
+import { useAuthStore } from '@/store';
+import { getOrganisationDisplay, getUserInitials, getUserRoleDisplay } from '@/app/(DashboardLayout)/utilities/helpers/user.helper';
+import { IUser } from '@/types/IUser';
+import { useRouter } from 'next/navigation';
 
 const Profile = () => {
+  const router = useRouter();
   const [anchorEl2, setAnchorEl2] = useState(null);
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
@@ -22,6 +25,25 @@ const Profile = () => {
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
+
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = () => {
+    handleClose2();
+
+    // Clear session storage items related to banner dismissals
+    sessionStorage.removeItem('paymentBannerDismissed');
+    sessionStorage.removeItem('lastPaymentBannerUserId');
+    sessionStorage.removeItem('welcomeCardDismissed');
+    sessionStorage.removeItem('lastUserId');
+    sessionStorage.removeItem('vmWelcomeCardDismissed');
+    sessionStorage.removeItem('lastVmWelcomeCardUserId');
+
+    setTimeout(() => {
+      router.push('/auth/login');
+      logout();
+    }, 1500);
+  }
 
   return (
     <Box>
@@ -48,7 +70,7 @@ const Profile = () => {
             fontSize: 16,
           }}
         >
-          MA
+          {getUserInitials(user as IUser)}
         </Avatar>
       </IconButton>
       {/* ------------------------------------------- */}
@@ -72,15 +94,15 @@ const Profile = () => {
         <Typography variant="h5">User Profile</Typography>
         <Stack direction="column" py={3} spacing={1} alignItems="flex-start">
           <Typography variant="subtitle2" color="textPrimary" fontWeight={600}>
-            Mathew Anderson
+            {user?.firstName} {user?.lastName}
           </Typography>
           <Typography variant="subtitle2" color="textSecondary" display="flex" alignItems="center" gap={1}>
             <IconBriefcase width={15} height={15} />
-            Designer
+            {getUserRoleDisplay(user as IUser)}
           </Typography>
           <Typography variant="subtitle2" color="textSecondary" display="flex" alignItems="center" gap={1}>
             <IconBuilding width={15} height={15} />
-            Modernize Organisation
+            {getOrganisationDisplay(user as IUser)}
           </Typography>
           <Typography
             variant="subtitle2"
@@ -90,7 +112,7 @@ const Profile = () => {
             gap={1}
           >
             <IconMail width={15} height={15} />
-            info@modernize.com
+            {user?.email}
           </Typography>
         </Stack>
         <Divider />
@@ -130,7 +152,14 @@ const Profile = () => {
         ))}
         <Box mt={2}>
 
-          <Button href="/auth/auth1/login" variant="outlined" color="primary" component={Link} fullWidth>
+          <Button
+            href="/auth/login"
+            variant="outlined"
+            color="primary"
+            component={Link}
+            fullWidth
+            onClick={handleLogout}
+          >
             Logout
           </Button>
         </Box>
