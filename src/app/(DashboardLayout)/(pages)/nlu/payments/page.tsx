@@ -5,7 +5,6 @@ import PaymentMethodsCard from '@/app/components/dashboard/nlu/cardpayments/paym
 import ParentCard from '@/app/components/shared/ParentCard';
 import { Box, Grid, Paper, Typography, Divider, Alert } from '@mui/material';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
-import TransactionsCard from '@/app/components/dashboard/nlu/cardpayments/Transaction';
 
 export default function Home() {
 
@@ -39,14 +38,6 @@ export default function Home() {
             <PaymentMethodsCard />
           </Grid>
         </Grid>
-
-        {hasLinkedCreditCard && (
-          <Grid container spacing={3} mt={4}>
-            <Grid item xs={12}>
-              <TransactionsCard />
-            </Grid>
-          </Grid>
-        )}
       </Box>
     </ParentCard>
   );

@@ -14,7 +14,7 @@ import axiosServices from '@/utils/axios';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCreditCardDialog from './components/AddCreditCardDialog';
-import Swal from 'sweetalert2';
+
 import Link from 'next/link';
 import { InputVM, transformVMs } from '@/app/(DashboardLayout)/utilities/helpers/vm.helper';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
@@ -143,7 +143,7 @@ export default function VirtualMachinesPage() {
         additionalServices: []
       });
     }
-  }, []);
+  }, [setSelectedOptions, selectedOptions.virtualMachine]);
 
   // Fetch products and terraform config on mount with axios and token
   useEffect(() => {
@@ -173,7 +173,7 @@ export default function VirtualMachinesPage() {
       }
     };
     fetchData();
-  }, [token]);
+  }, [token, setProducts, setVmTemplates]);
 
 
   // Calculate total cost based on selected products
@@ -190,7 +190,7 @@ export default function VirtualMachinesPage() {
     const total = allSelected.reduce((sum, item) => sum + (item?.price || 0), 0);
 
     setTotalCost(total);
-  }, [selectedOptions]);
+  }, [selectedOptions, createdVMs, setTotalCost]);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -398,39 +398,39 @@ export default function VirtualMachinesPage() {
       return;
     }
 
-    if (!acceptedMSA) {
-      Swal.fire({
-        title: 'Alert',
-        text: 'Please accept the MSA before deploying resources',
-        icon: 'warning',
-        customClass: {
-          popup: 'custom-swal-zindex',
-        },
-        didOpen: () => {
-          const swalContainer = document.querySelector('.swal2-container');
-          if (swalContainer) {
-            (swalContainer as HTMLElement).style.zIndex = '9999';
-          }
-        },
-      });
-      return;
-    }
+    // if (!acceptedMSA) {
+    //   Swal.fire({
+    //     title: 'Alert',
+    //     text: 'Please accept the MSA before deploying resources',
+    //     icon: 'warning',
+    //     customClass: {
+    //       popup: 'custom-swal-zindex',
+    //     },
+    //     didOpen: () => {
+    //       const swalContainer = document.querySelector('.swal2-container');
+    //       if (swalContainer) {
+    //         (swalContainer as HTMLElement).style.zIndex = '9999';
+    //       }
+    //     },
+    //   });
+    //   return;
+    // }
 
     if (!createdVMs.length) {
-      Swal.fire({
-        title: 'Alert',
-        text: 'Please add at least one VM before deploying resources',
-        icon: 'warning',
-        customClass: {
-          popup: 'custom-swal-zindex',
-        },
-        didOpen: () => {
-          const swalContainer = document.querySelector('.swal2-container');
-          if (swalContainer) {
-            (swalContainer as HTMLElement).style.zIndex = '9999';
-          }
-        },
-      });
+      // Swal.fire({
+      //   title: 'Alert',
+      //   text: 'Please add at least one VM before deploying resources',
+      //   icon: 'warning',
+      //   customClass: {
+      //     popup: 'custom-swal-zindex',
+      //   },
+      //   didOpen: () => {
+      //     const swalContainer = document.querySelector('.swal2-container');
+      //     if (swalContainer) {
+      //       (swalContainer as HTMLElement).style.zIndex = '9999';
+      //     }
+      //   },
+      // });
       return;
     }
 
@@ -487,40 +487,40 @@ export default function VirtualMachinesPage() {
 
         if (vmResponse.data.message === 'Resource Provisioning In Progress') {
 
-          Swal.fire({
-            title: 'Successful!',
-            text: vmResponse?.data.message || `Your resources are currently being provisioned.`,
-            icon: 'success',
-            draggable: true,
-          }).then((result: { isConfirmed: boolean }) => {
-            if (result.isConfirmed) {
-              window.location.href = '/';
-            }
-          });
+          // Swal.fire({
+          //   title: 'Successful!',
+          //   text: vmResponse?.data.message || `Your resources are currently being provisioned.`,
+          //   icon: 'success',
+          //   draggable: true,
+          // }).then((result: { isConfirmed: boolean }) => {
+          //   if (result.isConfirmed) {
+          //     window.location.href = '/';
+          //   }
+          // });
         } else {
-          Swal.fire({
-            title: 'Failed',
-            text: response?.data.message || 'An error occurred.',
-            icon: 'error',
-            draggable: true,
-          });
+          // Swal.fire({
+          //   title: 'Failed',
+          //   text: response?.data.message || 'An error occurred.',
+          //   icon: 'error',
+          //   draggable: true,
+          // });
         }
       } else {
-        Swal.fire({
-          title: 'Failed',
-          text: response?.data.message || 'An error occurred.',
-          icon: 'error',
-          draggable: true,
-        });
+        // Swal.fire({
+        //   title: 'Failed',
+        //   text: response?.data.message || 'An error occurred.',
+        //   icon: 'error',
+        //   draggable: true,
+        // });
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred.';
-      Swal.fire({
-        title: 'Failed',
-        text: errorMessage,
-        icon: 'error',
-        draggable: true,
-      });
+      // Swal.fire({
+      //   title: 'Failed',
+      //   text: errorMessage,
+      //   icon: 'error',
+      //   draggable: true,
+      // });
     }
   };
 

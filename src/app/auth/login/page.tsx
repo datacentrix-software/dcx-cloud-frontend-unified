@@ -83,7 +83,7 @@ const AuthLogin = () => {
         }
 
         handleGitHubSession();
-    }, []);
+    }, [setToken, setUser, token]);
 
 
     useEffect(() => {
@@ -145,7 +145,7 @@ const AuthLogin = () => {
     };
 
     // Add error boundary
-    if (status === 'loading' || isRedirecting || isLoading || isSSOLoading) {
+    if (isRedirecting || isLoading || isSSOLoading) {
         return <LoadingPage />;
     }
 

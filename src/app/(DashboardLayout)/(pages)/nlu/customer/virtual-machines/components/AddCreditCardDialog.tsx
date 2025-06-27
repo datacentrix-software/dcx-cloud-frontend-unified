@@ -22,7 +22,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useAuthStore } from '@/store';
 import axios, { AxiosError } from 'axios';
-import Swal from 'sweetalert2';
+
 import { useCreditCardStore } from '@/store/useCreditCardStore';
 import { IPaymentCard } from '@/types';
 import { CreditCard, Visibility, VisibilityOff, Person } from '@mui/icons-material';
@@ -102,7 +102,7 @@ const AddCreditCardDialog: React.FC<AddCreditCardDialogProps> = ({ open, onClose
   useEffect(() => {
     const defaultCard = paymentCards.find((card) => card.isDefault)
     setSelectedCard(defaultCard || paymentCards[0])
-  }, [paymentCards])
+  }, [paymentCards, setSelectedCard])
 
   const handleSubmit = async () => {
     if (!validate()) return;
@@ -133,17 +133,17 @@ const AddCreditCardDialog: React.FC<AddCreditCardDialogProps> = ({ open, onClose
 
       if (!saveCardResponse.data.card) {
         const text = saveCardResponse.data.message || "Error saving card"
-        Swal.fire({
-          icon: 'error',
-          text,
-          showConfirmButton: true,
-        })
+        // Swal.fire({
+        //   icon: 'error',
+        //   text,
+        //   showConfirmButton: true,
+        // })
       } else {
-        Swal.fire({
-          icon: 'success',
-          text: saveCardResponse.data.message,
-          showConfirmButton: true,
-        });
+        // Swal.fire({
+        //   icon: 'success',
+        //   text: saveCardResponse.data.message,
+        //   showConfirmButton: true,
+        // });
 
         const newCard: IPaymentCard = saveCardResponse.data.card;
         setPaymentCards([...paymentCards, newCard]);
@@ -154,11 +154,11 @@ const AddCreditCardDialog: React.FC<AddCreditCardDialogProps> = ({ open, onClose
       const text = error instanceof AxiosError && error.response?.data?.message 
         ? error.response.data.message 
         : "Error saving card";
-      Swal.fire({
-        icon: 'error',
-        text,
-        showConfirmButton: true,
-      });
+      // Swal.fire({
+      //   icon: 'error',
+      //   text,
+      //   showConfirmButton: true,
+      // });
     }
 
     onSave({

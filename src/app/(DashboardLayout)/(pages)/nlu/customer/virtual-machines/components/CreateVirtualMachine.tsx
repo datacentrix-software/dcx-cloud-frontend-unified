@@ -11,10 +11,11 @@ import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import AdditionalProductsDialog from './AdditionalProductsDialog';
 import { useVirtualMachineOptions } from '@/store/useVirtualMachineStore';
 import { ISimpleProduct, IVMConfig, VMTemplate } from '@/types';
+import Image from 'next/image';
 
 // SVG flag icons for regions
 const FlagIcon = ({ code, alt }: { code: string; alt: string }) => (
-  <img
+  <Image
     src={`https://flagcdn.com/32x24/${code}.png`}
     alt={alt}
     style={{ borderRadius: 3, marginRight: 8, verticalAlign: 'middle', boxShadow: '0 1px 2px rgba(0,0,0,0.07)' }}
@@ -128,7 +129,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
 
       setCreatedVMs(migratedVMs);
     }
-  }, []);
+  }, [selectedVMs, setCreatedVMs]);
 
   // Form validation state
   const [errors, setErrors] = useState({
@@ -342,7 +343,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
 
       setCreatedVMs(migratedVMs);
     }
-  }, [selectedVMs]);
+  }, [selectedVMs, setCreatedVMs]);
 
   // Update handleDeleteVM to handle null VMs
   const handleDeleteVM = (vmId: string) => {
