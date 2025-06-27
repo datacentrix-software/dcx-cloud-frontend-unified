@@ -74,9 +74,9 @@ const defaultSpecs: ICustomSpecs = { vcpus: 2, memory: 8, storage: 50, ghz: 2 };
 
 export const useVirtualMachineOptions = create<IVMOptionsState>()(
   devtools((set) => ({
-    region: 'JHB3',
-    os: 'Linux',
-    tier: 'Standard SSD',
+    region: '',
+    os: '',
+    tier: '',
     serverName: '',
     description: '',
     buildType: 'template',
