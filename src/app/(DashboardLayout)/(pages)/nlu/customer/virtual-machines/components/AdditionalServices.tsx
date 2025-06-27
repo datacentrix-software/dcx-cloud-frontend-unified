@@ -1,20 +1,26 @@
 import { Box, Typography, Paper } from '@mui/material';
 import { useState } from 'react';
 import MultiSelect from '@/app/components/forms/theme-elements/MultiSelect';
+import { ISimpleProduct } from '@/types';
 
 interface AdditionalServicesProps {
-  onSelect: (options: any[]) => void;
-  products: any[];
+  onSelect: (options: ISimpleProduct[]) => void;
+  products: ISimpleProduct[];
   selected: {
     professional: string[];
     naas: string[];
     faas: string[];
     collocation: string[];
   };
-  setSelected: (options: any) => void;
+  setSelected: (options: {
+    professional: string[];
+    naas: string[];
+    faas: string[];
+    collocation: string[];
+  }) => void;
 }
 
-function toOptions(products: any[]) {
+function toOptions(products: ISimpleProduct[]) {
   return products.map((p) => ({
     value: String(p.id),
     label: `${p.title}${p.price ? ` (R${p.price})` : ''}`,
@@ -41,13 +47,18 @@ export default function AdditionalServices({ onSelect, products, selected, setSe
   );
 
   // Helper to get selected product objects by ID
-  const getSelectedProducts = (ids: string[], options: any[]) => {
+  const getSelectedProducts = (ids: string[], options: ReturnType<typeof toOptions>) => {
     const idSet = new Set(ids);
     return options.filter((opt) => idSet.has(String(opt.value))).map((opt) => opt.product);
   };
 
   // Helper to notify parent with all selected product objects
-  const notifyParent = (next: any) => {
+  const notifyParent = (next: Partial<{
+    professional: string[];
+    naas: string[];
+    faas: string[];
+    collocation: string[];
+  }>) => {
     const pro = next.professional ?? selected.professional;
     const naas = next.naas ?? selected.naas;
     const faas = next.faas ?? selected.faas;

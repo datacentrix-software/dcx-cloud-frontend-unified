@@ -17,13 +17,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import BackupServices from './BackupServices';
 import SoftwareLicensing from './SoftwareLicensing';
 import AdditionalServices from './AdditionalServices';
+import { ISimpleProduct } from '@/types';
 
 interface AdditionalProductsDialogProps {
   open: boolean;
   onClose: () => void;
-  products: any[];
-  onProductsUpdate: (products: any[]) => void;
-  existingProducts: any[];
+  products: ISimpleProduct[];
+  onProductsUpdate: (products: ISimpleProduct[]) => void;
+  existingProducts: (ISimpleProduct | any)[];
 }
 
 export default function AdditionalProductsDialog({
