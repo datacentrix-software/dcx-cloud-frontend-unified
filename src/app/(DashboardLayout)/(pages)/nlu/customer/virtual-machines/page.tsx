@@ -118,27 +118,6 @@ export default function VirtualMachinesPage() {
     fetchData();
   }, [token]);
 
-  // Prepare filtered product lists for each step
-  const backupServiceProducts = products.filter((p: any) =>
-    p.Category?.name === 'Cloud Services - Backup as a Service (BaaS)' ||
-    p.Category?.name === 'Cloud Services -  Backup as a Service (BaaS)' ||
-    p.Category?.name === 'Cloud Services - Disaster Recovery as a Service (DraaS)' ||
-    p.Category?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
-  );
-  const softwareLicensingProducts = products.filter((p: any) =>
-    p.Category?.name === 'Cloud Services - M365'
-  );
-  const additionalServicesProducts = products.filter((p: any) =>
-    [
-      'Cloud Services - Professional Services',
-      'Cloud Services - Network as a Service (NaaS)',
-      'Cloud Services -  Network as a Service (NaaS)',
-      'Cloud Services - Firewall as a Service (FaaS)',
-      'Cloud Services -  Firewall as a Service (FaaS)',
-      'Cloud Services - Collocation',
-      'Cloud Services -  Collocation'
-    ].includes(p.Category?.name)
-  );
 
   // Calculate total cost based on selected products
   useEffect(() => {
