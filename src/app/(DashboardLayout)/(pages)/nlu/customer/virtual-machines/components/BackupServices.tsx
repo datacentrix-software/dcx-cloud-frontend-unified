@@ -41,7 +41,7 @@ export default function BackupServices({ onSelect, products, selected, setSelect
       ...getSelectedProducts(selected.draas || [], toOptions(draasProducts)),
     ];
     onSelect(all);
-  }, [selected.baas, selected.draas]);
+  }, [selected.baas, selected.draas, onSelect, baasProducts, draasProducts]);
 
   return (
     <Box mb={"95px"}>

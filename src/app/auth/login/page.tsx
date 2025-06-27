@@ -83,7 +83,7 @@ const AuthLogin = () => {
         }
 
         handleGitHubSession();
-    }, []);
+    }, [setToken, setUser, token]);
 
 
     useEffect(() => {
