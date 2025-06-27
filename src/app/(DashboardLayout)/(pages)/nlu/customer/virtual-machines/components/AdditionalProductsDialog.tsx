@@ -56,10 +56,10 @@ export default function AdditionalProductsDialog({
       // Filter out VMs to get only additional products
       const additionalProducts = existingProducts.filter(product => product.type !== 'virtualMachine');
       
-      // Helper to get product IDs by SubCategory
-      const getProductIds = (subCategoryNames: string[]) => {
+      // Helper to get product IDs by Category
+      const getProductIds = (categoryNames: string[]) => {
         return additionalProducts
-          .filter(product => subCategoryNames.some(name => product.SubCategory?.name?.includes(name)))
+          .filter(product => categoryNames.some(name => product.Category?.name?.includes(name)))
           .map(product => String(product.id));
       };
 
@@ -73,7 +73,7 @@ export default function AdditionalProductsDialog({
 
       // Update software licensing state
       const softwareLicensingProducts = additionalProducts.filter(product => 
-        product.SubCategory?.name?.includes('Microsoft Licences')
+        product.Category?.name?.includes('M365')
       );
       setSoftwareLicensingSelected(softwareLicensingProducts);
 
@@ -94,21 +94,26 @@ export default function AdditionalProductsDialog({
 
   // Filter products for each service
   const backupServiceProducts = products.filter((p: any) =>
-    p.SubCategory?.name === 'Cloud Services -  Backup as a Service (BaaS)' ||
-    p.SubCategory?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
+    p.Category?.name === 'Cloud Services - Backup as a Service (BaaS)' ||
+    p.Category?.name === 'Cloud Services -  Backup as a Service (BaaS)' ||
+    p.Category?.name === 'Cloud Services - Disaster Recovery as a Service (DraaS)' ||
+    p.Category?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
   );
   
   const softwareLicensingProducts = products.filter((p: any) =>
-    p.SubCategory?.name === 'Cloud Services -  Microsoft Licences'
+    p.Category?.name === 'Cloud Services - M365'
   );
   
   const additionalServicesProducts = products.filter((p: any) =>
     [
       'Cloud Services - Professional Services',
+      'Cloud Services - Network as a Service (NaaS)',
       'Cloud Services -  Network as a Service (NaaS)',
+      'Cloud Services - Firewall as a Service (FaaS)',
       'Cloud Services -  Firewall as a Service (FaaS)',
+      'Cloud Services - Collocation',
       'Cloud Services -  Collocation'
-    ].includes(p.SubCategory?.name)
+    ].includes(p.Category?.name)
   );
 
   const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -156,29 +161,44 @@ export default function AdditionalProductsDialog({
     // Get backup services products
     const backupBaasProducts = getSelectedProducts(
       backupServicesSelected.baas || [], 
-      toOptions(backupServiceProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Backup as a Service (BaaS)'))
+      toOptions(backupServiceProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Backup as a Service (BaaS)' ||
+        p.Category?.name === 'Cloud Services -  Backup as a Service (BaaS)'
+      ))
     );
     const backupDraasProducts = getSelectedProducts(
       backupServicesSelected.draas || [], 
-      toOptions(backupServiceProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'))
+      toOptions(backupServiceProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Disaster Recovery as a Service (DraaS)' ||
+        p.Category?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
+      ))
     );
 
     // Get additional services products
     const additionalProfessionalProducts = getSelectedProducts(
       additionalServicesSelected.professional || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services - Professional Services'))
+      toOptions(additionalServicesProducts.filter(p => p.Category?.name === 'Cloud Services - Professional Services'))
     );
     const additionalNaasProducts = getSelectedProducts(
       additionalServicesSelected.naas || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Network as a Service (NaaS)'))
+      toOptions(additionalServicesProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Network as a Service (NaaS)' ||
+        p.Category?.name === 'Cloud Services -  Network as a Service (NaaS)'
+      ))
     );
     const additionalFaasProducts = getSelectedProducts(
       additionalServicesSelected.faas || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS)'))
+      toOptions(additionalServicesProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Firewall as a Service (FaaS)' ||
+        p.Category?.name === 'Cloud Services -  Firewall as a Service (FaaS)'
+      ))
     );
     const additionalCollocationProducts = getSelectedProducts(
       additionalServicesSelected.collocation || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Collocation'))
+      toOptions(additionalServicesProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Collocation' ||
+        p.Category?.name === 'Cloud Services -  Collocation'
+      ))
     );
 
     // Combine all selected additional products (only the ones currently selected in the dialog)
@@ -221,29 +241,44 @@ export default function AdditionalProductsDialog({
     // Get backup services products
     const backupBaasProducts = getSelectedProducts(
       backupServicesSelected.baas || [], 
-      toOptions(backupServiceProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Backup as a Service (BaaS)'))
+      toOptions(backupServiceProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Backup as a Service (BaaS)' ||
+        p.Category?.name === 'Cloud Services -  Backup as a Service (BaaS)'
+      ))
     );
     const backupDraasProducts = getSelectedProducts(
       backupServicesSelected.draas || [], 
-      toOptions(backupServiceProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'))
+      toOptions(backupServiceProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Disaster Recovery as a Service (DraaS)' ||
+        p.Category?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
+      ))
     );
 
     // Get additional services products
     const additionalProfessionalProducts = getSelectedProducts(
       additionalServicesSelected.professional || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services - Professional Services'))
+      toOptions(additionalServicesProducts.filter(p => p.Category?.name === 'Cloud Services - Professional Services'))
     );
     const additionalNaasProducts = getSelectedProducts(
       additionalServicesSelected.naas || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Network as a Service (NaaS)'))
+      toOptions(additionalServicesProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Network as a Service (NaaS)' ||
+        p.Category?.name === 'Cloud Services -  Network as a Service (NaaS)'
+      ))
     );
     const additionalFaasProducts = getSelectedProducts(
       additionalServicesSelected.faas || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS)'))
+      toOptions(additionalServicesProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Firewall as a Service (FaaS)' ||
+        p.Category?.name === 'Cloud Services -  Firewall as a Service (FaaS)'
+      ))
     );
     const additionalCollocationProducts = getSelectedProducts(
       additionalServicesSelected.collocation || [],
-      toOptions(additionalServicesProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Collocation'))
+      toOptions(additionalServicesProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Collocation' ||
+        p.Category?.name === 'Cloud Services -  Collocation'
+      ))
     );
 
     // Combine all selected additional products (only the ones currently selected in the dialog)
@@ -286,25 +321,34 @@ export default function AdditionalProductsDialog({
     // Get backup services products
     const backupBaasProducts = getSelectedProducts(
       backupServicesSelected.baas || [], 
-      toOptions(backupServiceProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Backup as a Service (BaaS)'))
+      toOptions(backupServiceProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Backup as a Service (BaaS)' ||
+        p.Category?.name === 'Cloud Services -  Backup as a Service (BaaS)'
+      ))
     );
     const backupDraasProducts = getSelectedProducts(
       backupServicesSelected.draas || [], 
-      toOptions(backupServiceProducts.filter(p => p.SubCategory?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'))
+      toOptions(backupServiceProducts.filter(p => 
+        p.Category?.name === 'Cloud Services - Disaster Recovery as a Service (DraaS)' ||
+        p.Category?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
+      ))
     );
 
     // Get additional services products using the passed options directly
     const additionalProfessionalProducts = additionalServicesOptions.filter(p => 
-      p.SubCategory?.name === 'Cloud Services - Professional Services'
+      p.Category?.name === 'Cloud Services - Professional Services'
     );
     const additionalNaasProducts = additionalServicesOptions.filter(p => 
-      p.SubCategory?.name === 'Cloud Services -  Network as a Service (NaaS)'
+      p.Category?.name === 'Cloud Services - Network as a Service (NaaS)' ||
+      p.Category?.name === 'Cloud Services -  Network as a Service (NaaS)'
     );
     const additionalFaasProducts = additionalServicesOptions.filter(p => 
-      p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS)'
+      p.Category?.name === 'Cloud Services - Firewall as a Service (FaaS)' ||
+      p.Category?.name === 'Cloud Services -  Firewall as a Service (FaaS)'
     );
     const additionalCollocationProducts = additionalServicesOptions.filter(p => 
-      p.SubCategory?.name === 'Cloud Services -  Collocation'
+      p.Category?.name === 'Cloud Services - Collocation' ||
+      p.Category?.name === 'Cloud Services -  Collocation'
     );
 
     // Combine all selected additional products (only the ones currently selected in the dialog)

@@ -120,19 +120,24 @@ export default function VirtualMachinesPage() {
 
   // Prepare filtered product lists for each step
   const backupServiceProducts = products.filter((p: any) =>
-    p.SubCategory?.name === 'Cloud Services -  Backup as a Service (BaaS)' ||
-    p.SubCategory?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
+    p.Category?.name === 'Cloud Services - Backup as a Service (BaaS)' ||
+    p.Category?.name === 'Cloud Services -  Backup as a Service (BaaS)' ||
+    p.Category?.name === 'Cloud Services - Disaster Recovery as a Service (DraaS)' ||
+    p.Category?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
   );
   const softwareLicensingProducts = products.filter((p: any) =>
-    p.SubCategory?.name === 'Cloud Services -  Microsoft Licences'
+    p.Category?.name === 'Cloud Services - M365'
   );
   const additionalServicesProducts = products.filter((p: any) =>
     [
       'Cloud Services - Professional Services',
+      'Cloud Services - Network as a Service (NaaS)',
       'Cloud Services -  Network as a Service (NaaS)',
-      'Cloud Services -  Firewall as a Service (FaaS))',
+      'Cloud Services - Firewall as a Service (FaaS)',
+      'Cloud Services -  Firewall as a Service (FaaS)',
+      'Cloud Services - Collocation',
       'Cloud Services -  Collocation'
-    ].includes(p.SubCategory?.name)
+    ].includes(p.Category?.name)
   );
 
   // Calculate total cost based on selected products
@@ -252,15 +257,15 @@ export default function VirtualMachinesPage() {
       setSelectedOptions(newSelectedOptions);
 
       // Update step-specific selections
-      if (productToRemove.SubCategory?.name?.includes('Backup as a Service') ||
-        productToRemove.SubCategory?.name?.includes('Disaster Recovery')) {
+      if (productToRemove.Category?.name?.includes('Backup as a Service') ||
+        productToRemove.Category?.name?.includes('Disaster Recovery')) {
         setBackupServicesSelected({
           baas: backupServicesSelected.baas.filter((item: any) => +item !== productId),
           draas: backupServicesSelected.draas.filter((item: any) => +item !== productId),
         });
       }
 
-      if (productToRemove.SubCategory?.name?.includes('Microsoft Licences')) {
+      if (productToRemove.Category?.name?.includes('M365')) {
         setSoftwareLicensingSelected(
           softwareLicensingSelected.filter((item: any) => +item?.id !== productId)
         );
@@ -271,7 +276,7 @@ export default function VirtualMachinesPage() {
         'Network as a Service',
         'Firewall as a Service',
         'Collocation'
-      ].some(name => productToRemove.SubCategory?.name?.includes(name))) {
+      ].some(name => productToRemove.Category?.name?.includes(name))) {
         setAdditionalServicesSelected({
           professional: additionalServicesSelected.professional.filter(id => id !== String(productId)),
           naas: additionalServicesSelected.naas.filter(id => id !== String(productId)),
@@ -294,21 +299,21 @@ export default function VirtualMachinesPage() {
 
   const handleAdditionalProductsUpdate = (newProducts: any[]) => {
     // Handle additional products separately from VMs
-    // Separate products by their SubCategory and update the appropriate state
+    // Separate products by their Category and update the appropriate state
     const backupServices = newProducts.filter(product => 
-      product.SubCategory?.name?.includes('Backup as a Service') ||
-      product.SubCategory?.name?.includes('Disaster Recovery')
+      product.Category?.name?.includes('Backup as a Service') ||
+      product.Category?.name?.includes('Disaster Recovery')
     );
     
     const softwareLicensing = newProducts.filter(product => 
-      product.SubCategory?.name?.includes('Microsoft Licences')
+      product.Category?.name?.includes('M365')
     );
     
     const additionalServices = newProducts.filter(product => 
-      product.SubCategory?.name?.includes('Professional Services') ||
-      product.SubCategory?.name?.includes('Network as a Service') ||
-      product.SubCategory?.name?.includes('Firewall as a Service') ||
-      product.SubCategory?.name?.includes('Collocation')
+      product.Category?.name?.includes('Professional Services') ||
+      product.Category?.name?.includes('Network as a Service') ||
+      product.Category?.name?.includes('Firewall as a Service') ||
+      product.Category?.name?.includes('Collocation')
     );
     
     // Update the selectedOptions state for each category
@@ -724,7 +729,7 @@ export default function VirtualMachinesPage() {
               {/* Backup Services Subsection */}
               {uniqueProducts.filter(item => 
                 item.type !== 'virtualMachine' && 
-                (item.SubCategory?.name?.includes('Backup as a Service') || item.SubCategory?.name?.includes('Disaster Recovery'))
+                (item.Category?.name?.includes('Backup as a Service') || item.Category?.name?.includes('Disaster Recovery'))
               ).length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
@@ -733,7 +738,7 @@ export default function VirtualMachinesPage() {
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {uniqueProducts.filter(item => 
                       item.type !== 'virtualMachine' && 
-                      (item.SubCategory?.name?.includes('Backup as a Service') || item.SubCategory?.name?.includes('Disaster Recovery'))
+                      (item.Category?.name?.includes('Backup as a Service') || item.Category?.name?.includes('Disaster Recovery'))
                     ).map((item) => (
                       <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -770,7 +775,7 @@ export default function VirtualMachinesPage() {
               {/* Software Licensing Subsection */}
               {uniqueProducts.filter(item => 
                 item.type !== 'virtualMachine' && 
-                item.SubCategory?.name?.includes('Microsoft Licences')
+                item.Category?.name?.includes('M365')
               ).length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
@@ -779,7 +784,7 @@ export default function VirtualMachinesPage() {
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {uniqueProducts.filter(item => 
                       item.type !== 'virtualMachine' && 
-                      item.SubCategory?.name?.includes('Microsoft Licences')
+                      item.Category?.name?.includes('M365')
                     ).map((item) => (
                       <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -816,10 +821,10 @@ export default function VirtualMachinesPage() {
               {/* Additional Services Subsection */}
               {uniqueProducts.filter(item => 
                 item.type !== 'virtualMachine' && 
-                (item.SubCategory?.name?.includes('Professional Services') || 
-                 item.SubCategory?.name?.includes('Network as a Service') || 
-                 item.SubCategory?.name?.includes('Firewall as a Service') || 
-                 item.SubCategory?.name?.includes('Collocation'))
+                (item.Category?.name?.includes('Professional Services') || 
+                 item.Category?.name?.includes('Network as a Service') || 
+                 item.Category?.name?.includes('Firewall as a Service') || 
+                 item.Category?.name?.includes('Collocation'))
               ).length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
@@ -828,10 +833,10 @@ export default function VirtualMachinesPage() {
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {uniqueProducts.filter(item => 
                       item.type !== 'virtualMachine' && 
-                      (item.SubCategory?.name?.includes('Professional Services') || 
-                       item.SubCategory?.name?.includes('Network as a Service') || 
-                       item.SubCategory?.name?.includes('Firewall as a Service') || 
-                       item.SubCategory?.name?.includes('Collocation'))
+                      (item.Category?.name?.includes('Professional Services') || 
+                       item.Category?.name?.includes('Network as a Service') || 
+                       item.Category?.name?.includes('Firewall as a Service') || 
+                       item.Category?.name?.includes('Collocation'))
                     ).map((item) => (
                       <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
