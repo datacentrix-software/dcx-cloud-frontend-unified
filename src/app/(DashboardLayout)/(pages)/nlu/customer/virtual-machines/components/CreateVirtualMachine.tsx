@@ -720,16 +720,14 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                 title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
                 placement="top"
               >
-                <span>
                   <Button
                     variant="outlined"
-                    // disabled={createdVMs.length === 0} CHAND
+                    disabled={createdVMs.length === 0}
                     sx={{ textTransform: 'none' }}
                     onClick={handleOpenAdditionalProducts}
                   >
                     Add Additional Products
                   </Button>
-                </span>
               </Tooltip>
             </Box>
             <ParentCard sx={{ mb: 3, bgcolor: '#fafbfc', '& .MuiCardContent-root': { pt: 0, px: 2 } }} id="region">
