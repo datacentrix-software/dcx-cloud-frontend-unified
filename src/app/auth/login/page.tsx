@@ -145,7 +145,7 @@ const AuthLogin = () => {
     };
 
     // Add error boundary
-    if (status === 'loading' || isRedirecting || isLoading || isSSOLoading) {
+    if (isRedirecting || isLoading || isSSOLoading) {
         return <LoadingPage />;
     }
 

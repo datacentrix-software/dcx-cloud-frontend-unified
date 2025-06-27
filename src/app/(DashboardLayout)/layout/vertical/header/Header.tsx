@@ -132,14 +132,11 @@ const Header = () => {
       const data = await response.json();
       setLogs(data);
       setLogsOpen(true);
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('Error fetching logs:', error);
       setLogs([]);
-
-      
     }
   };
-
-
 
   const fetchCardDetails = async () => {
     try {
@@ -162,13 +159,19 @@ const Header = () => {
       setPaymentCards(customerCards)
       setField('hasLinkedCreditCard', customerCards.length > 0);
 
-
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let errorMessage = 'An error occurred while fetching card details';
+      
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || error.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       Swal.fire({
         icon: 'error',
         title: 'API Error',
-        text: error?.response.data.message || 'An error occurred while fetching card details',
-
+        text: errorMessage,
         showConfirmButton: true
       });
     }
@@ -190,8 +193,9 @@ const Header = () => {
         },
       });
       setAlerts(res.data.alerts || []);
-    } catch (error) {
-
+    } catch (error: unknown) {
+      console.error('Error fetching alerts:', error);
+      setAlerts([]);
     }
   };
 
@@ -202,8 +206,8 @@ const Header = () => {
       //   headers: { Authorization: `Bearer ${token}` }
       // });
       setAlerts((prev: any) => prev.map((alert: any) => alert.id === id ? { ...alert, dismissed: true } : alert));
-    } catch (err) {
-
+    } catch (error: unknown) {
+      console.error('Error dismissing alert:', error);
     }
   };
 
@@ -217,11 +221,10 @@ const Header = () => {
       });
       const data = await res.json();
       setField('wallet', data);
-    } catch (error) {
-
+    } catch (error: unknown) {
+      console.error('Error fetching wallet:', error);
     }
   };
-
 
   useEffect(() => {
     fetchAlerts();

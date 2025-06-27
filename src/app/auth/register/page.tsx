@@ -20,6 +20,7 @@ import {
   Autocomplete,
 } from '@mui/material';
 import axiosServices from '@/utils/axios';
+import { AxiosError } from 'axios';
 import LoadingPage from '@/app/components/LoadingPage';
 import { useRouter } from 'next/navigation';
 import InfoCarousel from '../authForms/InfoCarousel';
@@ -209,8 +210,16 @@ export default function RegistrationPage() {
         });
         setMsaAccepted(false);
       }
-    } catch (error: any) {
-      setDialogMessage(error.response?.data?.message || 'Network error. Please try again.');
+    } catch (error: unknown) {
+      let errorMessage = 'Network error. Please try again.';
+      
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || error.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      setDialogMessage(errorMessage);
       setDialogOpen(true);
     } finally {
       setIsRegistering(false);

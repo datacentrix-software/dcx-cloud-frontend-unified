@@ -1,5 +1,4 @@
-
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 interface FetchTransactionsParams {
   email: string;
@@ -32,7 +31,15 @@ export async function fetchTransactionsApi({
 
     const response = await axios.get(url, { headers });
     return response.data;
-  } catch (error: any) {
-    throw new Error(error?.response?.data?.message || 'Failed to fetch transactions');
+  } catch (error: unknown) {
+    let errorMessage = 'Failed to fetch transactions';
+    
+    if (error instanceof AxiosError) {
+      errorMessage = error.response?.data?.message || error.message || errorMessage;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
+    throw new Error(errorMessage);
   }
 }
