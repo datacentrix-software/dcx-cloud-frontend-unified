@@ -29,7 +29,8 @@ import {
   IconClock,
   IconServer,
   IconCloud,
-  IconShield
+  IconShield,
+  IconChevronDown
 } from "@tabler/icons-react";
 import Image from "next/image";
 import axios from "axios";
@@ -52,6 +53,7 @@ const WelcomeCard = () => {
   const [vcenterOrgId, setVcenterOrgId] = useState<number | null>(null);
   const [isWelcomeVisible, setIsWelcomeVisible] = useState(true);
   const [isWelcomeAnimating, setIsWelcomeAnimating] = useState(false);
+  const [showAllNotifications, setShowAllNotifications] = useState(false);
   const isNewCustomer = !vcenterOrgId;
 
   // Mock notifications - in real app, these would come from API
@@ -186,13 +188,27 @@ const WelcomeCard = () => {
       case 'critical':
         return '#d32f2f'; // Red
       case 'high':
-        return '#ed6c02'; // Orange/Yellow
+        return '#ed6c02'; // Amber/Orange
       case 'medium':
-        return '#1976d2'; // Blue
       case 'low':
         return '#2e7d32'; // Green
       default:
         return theme.palette.grey[600];
+    }
+  };
+
+  const getPriorityOrder = (priority: Notification['priority']) => {
+    switch (priority) {
+      case 'critical':
+        return 1;
+      case 'high':
+        return 2;
+      case 'medium':
+        return 3;
+      case 'low':
+        return 4;
+      default:
+        return 5;
     }
   };
 
@@ -209,6 +225,11 @@ const WelcomeCard = () => {
   const unreadNotifications = notifications.filter(n => !n.read);
   const criticalNotifications = notifications.filter(n => n.priority === 'critical');
   const highNotifications = notifications.filter(n => n.priority === 'high');
+
+  // Sort notifications by priority (critical -> high -> medium -> low)
+  const sortedNotifications = [...notifications].sort((a, b) => {
+    return getPriorityOrder(a.priority) - getPriorityOrder(b.priority);
+  });
 
   // Render notifications component
   const renderNotifications = () => {
@@ -254,8 +275,14 @@ const WelcomeCard = () => {
             )}
           </Box>
 
-          <Stack spacing={1.5} sx={{ maxHeight: 300, overflowY: 'auto' }}>
-            {notifications.slice(0, 5).map((notification) => (
+          <Stack spacing={1.5} sx={{ 
+            maxHeight: showAllNotifications ? 400 : 200, 
+            overflowY: 'auto',
+            transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            transform: showAllNotifications ? 'translateY(0)' : 'translateY(0)',
+            opacity: 1
+          }}>
+            {sortedNotifications.map((notification, index) => (
               <Box
                 key={notification.id}
                 sx={{
@@ -264,10 +291,16 @@ const WelcomeCard = () => {
                   border: `2px solid ${getSeverityColor(notification.priority)}`,
                   backgroundColor: getSeverityColor(notification.priority) + '08',
                   position: 'relative',
-                  transition: 'all 0.2s ease',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  opacity: showAllNotifications || index < 2 ? 1 : 0,
+                  transform: showAllNotifications || index < 2 ? 'translateY(0)' : 'translateY(-20px)',
+                  height: showAllNotifications || index < 2 ? 'auto' : 0,
+                  marginBottom: showAllNotifications || index < 2 ? undefined : 0,
+                  padding: showAllNotifications || index < 2 ? 1.5 : 0,
+                  overflow: 'hidden',
                   '&:hover': {
                     backgroundColor: getSeverityColor(notification.priority) + '12',
-                    transform: 'translateX(2px)',
+                    transform: (showAllNotifications || index < 2) ? 'translateX(2px)' : 'translateY(-20px)',
                   }
                 }}
               >
@@ -316,7 +349,8 @@ const WelcomeCard = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: 0.5,
-                        mt: 0.5
+                        mt: 0.5,
+                        mb: 1
                       }}
                     >
                       <IconClock size={12} />
@@ -355,18 +389,52 @@ const WelcomeCard = () => {
             ))}
           </Stack>
 
-          {notifications.length > 5 && (
-            <Typography 
-              variant="caption" 
-              sx={{ 
-                color: theme.palette.text.disabled,
-                display: 'block',
-                textAlign: 'center',
-                mt: 1
-              }}
-            >
-              +{notifications.length - 5} more notification{notifications.length - 5 !== 1 ? 's' : ''}
-            </Typography>
+          {notifications.length > 2 && (
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              mt: 1.5
+            }}>
+              <IconButton
+                onClick={() => setShowAllNotifications(!showAllNotifications)}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  p: 1.5,
+                  borderRadius: 2,
+                  backgroundColor: theme.palette.primary.main + '10',
+                  color: theme.palette.primary.main,
+                  border: `1px solid ${theme.palette.primary.main + '30'}`,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.main + '20',
+                    transform: 'translateY(-1px)',
+                    boxShadow: `0 4px 12px ${theme.palette.primary.main}30`,
+                  }
+                }}
+              >
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5
+                  }}
+                >
+                  {showAllNotifications ? 'Show Less' : `Open All Notifications (${notifications.length - 2} more)`}
+                </Typography>
+                <Box
+                  sx={{
+                    transform: showAllNotifications ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s ease'
+                  }}
+                >
+                  <IconChevronDown size={16} />
+                </Box>
+              </IconButton>
+            </Box>
           )}
         </CardContent>
       </Card>
@@ -429,40 +497,36 @@ const WelcomeCard = () => {
               </IconButton>
             </Tooltip>
 
-            <Box sx={{ display: 'flex', gap: 3 }}>
-              {/* Welcome Message Section */}
-              <Box sx={{ flex: 1 }}>
-                <Typography 
-                  variant="h4" 
-                  sx={{ 
-                    fontWeight: 'bold', 
-                    mb: 1,
-                    color: theme.palette.text.primary
-                  }}
-                >
-                  {isNewCustomer ? `Welcome to your dashboard, ${userName}!` : `Good to see you again, ${userName}.`}
-                </Typography>
-                <Typography 
-                  variant="subtitle1" 
-                  sx={{ 
-                    opacity: 0.9,
-                    color: theme.palette.text.secondary
-                  }}
-                >
-                  {isNewCustomer 
-                    ? "You're all set to get started — spin up your first virtual machine or explore available services to launch your cloud journey."
-                    : "Here's how your infrastructure is performing today."}
-                </Typography>
-              </Box>
+            {/* Welcome Message Section */}
+            <Box sx={{ mb: 3 }}>
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  fontWeight: 'bold', 
+                  mb: 1,
+                  color: theme.palette.text.primary
+                }}
+              >
+                {isNewCustomer ? `Welcome to your dashboard, ${userName}!` : `Good to see you again, ${userName}.`}
+              </Typography>
+              <Typography 
+                variant="subtitle1" 
+                sx={{ 
+                  opacity: 0.9,
+                  color: theme.palette.text.secondary
+                }}
+              >
+                {isNewCustomer 
+                  ? "You're all set to get started — spin up your first virtual machine or explore available services to launch your cloud journey."
+                  : "Here's how your infrastructure is performing today."}
+              </Typography>
+            </Box>
 
-              {/* Notifications Section - Only show in welcome card if there are notifications */}
-              {notifications.length > 0 && (
-                <Box sx={{ 
-                  width: 280, 
-                  borderLeft: `1px solid ${theme.palette.divider}`,
-                  pl: 3,
-                  position: 'relative'
-                }}>
+            {/* Notifications Section - Full length at bottom */}
+            {notifications.length > 0 && (
+              <>
+                <Divider sx={{ mb: 3 }} />
+                <Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                     <IconBell size={20} color={theme.palette.primary.main} />
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
@@ -483,8 +547,14 @@ const WelcomeCard = () => {
                     )}
                   </Box>
 
-                  <Stack spacing={1.5} sx={{ maxHeight: 200, overflowY: 'auto' }}>
-                    {notifications.slice(0, 3).map((notification) => (
+                  <Stack spacing={1.5} sx={{ 
+                    maxHeight: showAllNotifications ? 400 : 200, 
+                    overflowY: 'auto',
+                    transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transform: showAllNotifications ? 'translateY(0)' : 'translateY(0)',
+                    opacity: 1
+                  }}>
+                    {sortedNotifications.map((notification, index) => (
                       <Box
                         key={notification.id}
                         sx={{
@@ -493,10 +563,16 @@ const WelcomeCard = () => {
                           border: `2px solid ${getSeverityColor(notification.priority)}`,
                           backgroundColor: getSeverityColor(notification.priority) + '08',
                           position: 'relative',
-                          transition: 'all 0.2s ease',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          opacity: showAllNotifications || index < 2 ? 1 : 0,
+                          transform: showAllNotifications || index < 2 ? 'translateY(0)' : 'translateY(-20px)',
+                          height: showAllNotifications || index < 2 ? 'auto' : 0,
+                          marginBottom: showAllNotifications || index < 2 ? undefined : 0,
+                          padding: showAllNotifications || index < 2 ? 1.5 : 0,
+                          overflow: 'hidden',
                           '&:hover': {
                             backgroundColor: getSeverityColor(notification.priority) + '12',
-                            transform: 'translateX(2px)',
+                            transform: (showAllNotifications || index < 2) ? 'translateX(2px)' : 'translateY(-20px)',
                           }
                         }}
                       >
@@ -545,7 +621,8 @@ const WelcomeCard = () => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 0.5,
-                                mt: 0.5
+                                mt: 0.5,
+                                mb: 1
                               }}
                             >
                               <IconClock size={12} />
@@ -584,22 +661,56 @@ const WelcomeCard = () => {
                     ))}
                   </Stack>
 
-                  {notifications.length > 3 && (
-                    <Typography 
-                      variant="caption" 
-                      sx={{ 
-                        color: theme.palette.text.disabled,
-                        display: 'block',
-                        textAlign: 'center',
-                        mt: 1
-                      }}
-                    >
-                      +{notifications.length - 3} more notification{notifications.length - 3 !== 1 ? 's' : ''}
-                    </Typography>
+                  {notifications.length > 2 && (
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      mt: 1.5
+                    }}>
+                      <IconButton
+                        onClick={() => setShowAllNotifications(!showAllNotifications)}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          p: 1.5,
+                          borderRadius: 2,
+                          backgroundColor: theme.palette.primary.main + '10',
+                          color: theme.palette.primary.main,
+                          border: `1px solid ${theme.palette.primary.main + '30'}`,
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            backgroundColor: theme.palette.primary.main + '20',
+                            transform: 'translateY(-1px)',
+                            boxShadow: `0 4px 12px ${theme.palette.primary.main}30`,
+                          }
+                        }}
+                      >
+                        <Typography 
+                          variant="caption" 
+                          sx={{ 
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            letterSpacing: 0.5
+                          }}
+                        >
+                          {showAllNotifications ? 'Show Less' : `Open All Notifications (${notifications.length - 2} more)`}
+                        </Typography>
+                        <Box
+                          sx={{
+                            transform: showAllNotifications ? 'rotate(180deg)' : 'rotate(0deg)',
+                            transition: 'transform 0.2s ease'
+                          }}
+                        >
+                          <IconChevronDown size={16} />
+                        </Box>
+                      </IconButton>
+                    </Box>
                   )}
                 </Box>
-              )}
-            </Box>
+              </>
+            )}
           </CardContent>
         </Card>
       )}

@@ -55,7 +55,7 @@ interface Product {
     price: number | null;
     cost: number | null;
     profit: number | null;
-    SubCategory: {
+    Category: {
         name: string;
     };
     units: number;
@@ -629,8 +629,8 @@ const CustomerDashboard = () => {
     // Filter and sort the products
     const filteredAndSortedProducts = React.useMemo(() => {
         let filtered = products.filter(product => {
-            if (!product || !product.SubCategory) return false;
-            const categoryName = product.SubCategory.name?.toLowerCase() || '';
+            if (!product || !product.Category) return false;
+            const categoryName = product.Category.name?.toLowerCase() || '';
             const title = product.title?.toLowerCase() || '';
             return categoryName.includes('cloud') ||
                 title.includes('cloud') ||
@@ -642,7 +642,7 @@ const CustomerDashboard = () => {
 
         if (selectedCategory !== 'all') {
             filtered = filtered.filter(product =>
-                product.SubCategory?.name?.toLowerCase().includes(selectedCategory.toLowerCase())
+                product.Category?.name?.toLowerCase().includes(selectedCategory.toLowerCase())
             );
         }
 
@@ -653,9 +653,9 @@ const CustomerDashboard = () => {
                 return productOrder === 'asc' ? aValue - bValue : bValue - aValue;
             }
 
-            if (productOrderBy === 'SubCategory') {
-                const aValue = a.SubCategory?.name || '';
-                const bValue = b.SubCategory?.name || '';
+            if (productOrderBy === 'Category') {
+                const aValue = a.Category?.name || '';
+                const bValue = b.Category?.name || '';
                 return productOrder === 'asc'
                     ? aValue.localeCompare(bValue)
                     : bValue.localeCompare(aValue);

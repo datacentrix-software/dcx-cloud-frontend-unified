@@ -196,6 +196,9 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
     const updatedVMs = [...createdVMs, vmConfig];
     setCreatedVMs(updatedVMs);
 
+    // Mark step 4 as completed
+    markStepCompleted(4);
+
     // Notify parent of all VMs for quote integration
     const vmProductsForQuote = updatedVMs.map(vm => {
       const specs = vm.configuration.specs;
@@ -565,7 +568,33 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
 
   // Stepper click handler
   const handleStepClick = (idx: number) => {
-    if (idx <= step) setStep(idx);
+    // Allow navigation to any completed step or current step
+    if (idx === step || isStepCompleted(idx) || idx < step) {
+      setStep(idx);
+    } else if (idx === step + 1 && validateCurrentStep()) {
+      // Allow progression to next step if current step is valid
+      markStepCompleted(step);
+      setStep(idx);
+    }
+  };
+
+  // Validate current step before allowing progression
+  const validateCurrentStep = () => {
+    switch (step) {
+      case 0: // Region selection
+        return !!region;
+      case 1: // Template selection
+        return buildType === 'template' ? !!selectedTemplate : 
+               buildType === 'custom' ? (!!customSpecs.vcpus && !!customSpecs.memory && !!customSpecs.storage && !!customSpecs.ghz) : false;
+      case 2: // Tier selection
+        return !!tier;
+      case 3: // OS selection
+        return !!os;
+      case 4: // Name and description
+        return !!serverName.trim();
+      default:
+        return true;
+    }
   };
 
   // Additional Products Dialog handlers
@@ -587,8 +616,98 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
     }
   };
 
+  // Add state to track completed steps
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
+
+  // Function to mark a step as completed
+  const markStepCompleted = (stepIndex: number) => {
+    setCompletedSteps(prev => new Set([...Array.from(prev), stepIndex]));
+  };
+
+  // Function to check if a step is completed
+  const isStepCompleted = (stepIndex: number) => {
+    return completedSteps.has(stepIndex);
+  };
+
+  // Function to check if a step can be accessed
+  const canAccessStep = (stepIndex: number) => {
+    // Allow access to current step, completed steps, or next step if current is valid
+    return stepIndex === step || isStepCompleted(stepIndex) || (stepIndex === step + 1 && validateCurrentStep());
+  };
+
   return (
     <>
+      {/* Step Progress Indicator */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h5" fontWeight={700} color="primary" mb={2}>
+          Create Virtual Machine
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          {stepLabels.map((label, index) => {
+            const isCompleted = isStepCompleted(index);
+            const isCurrent = index === step;
+            const canAccess = canAccessStep(index);
+            
+            return (
+              <Box
+                key={index}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  px: 2,
+                  py: 1,
+                  borderRadius: 2,
+                  backgroundColor: isCurrent ? 'primary.main' : 
+                                 isCompleted ? 'success.light' : 
+                                 'grey.100',
+                  color: isCurrent ? 'white' : 
+                         isCompleted ? 'success.dark' : 
+                         'text.secondary',
+                  cursor: canAccess ? 'pointer' : 'default',
+                  opacity: canAccess ? 1 : 0.5,
+                  transition: 'all 0.2s',
+                  '&:hover': canAccess ? {
+                    backgroundColor: isCurrent ? 'primary.dark' : 
+                                   isCompleted ? 'success.main' : 
+                                   'grey.200',
+                  } : {},
+                }}
+                onClick={() => canAccess && handleStepClick(index)}
+              >
+                <Box
+                  sx={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: isCurrent ? 'white' : 
+                                   isCompleted ? 'success.main' : 
+                                   'grey.300',
+                    color: isCurrent ? 'primary.main' : 
+                           isCompleted ? 'white' : 
+                           'text.secondary',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  {isCompleted ? '✓' : index + 1}
+                </Box>
+                <Typography 
+                  variant="body2" 
+                  fontWeight={isCurrent ? 600 : 500}
+                  sx={{ whiteSpace: 'nowrap' }}
+                >
+                  {label}
+                </Typography>
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
+
       {/* Step 1: Select Data Centre Region */}
       <div ref={regionRef} id="region-step">
         <Fade in={step === 0} timeout={500} unmountOnExit>
@@ -604,7 +723,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                 <span>
                   <Button
                     variant="outlined"
-                    disabled={createdVMs.length === 0}
+                    // disabled={createdVMs.length === 0} CHAND
                     sx={{ textTransform: 'none' }}
                     onClick={handleOpenAdditionalProducts}
                   >
@@ -620,6 +739,11 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               <Typography variant="body2" color="text.secondary" mb={2}>
                 Select the closest region for low-latency and compliance.
               </Typography>
+              {!region && (
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  Please select a data centre region to continue with your VM configuration.
+                </Alert>
+              )}
               {errors.region && (
                 <FormHelperText error>Please select a region</FormHelperText>
               )}
@@ -652,6 +776,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                     onClick={() => {
                       setRegion(r.value);
                       notifyParent({ region: r.value });
+                      markStepCompleted(0); // Mark step 0 as completed
                       setTimeout(() => setStep(1), 400); // Delay for animation
                     }}
                     startIcon={<FlagIcon code={r.flag} alt={r.alt} />}
@@ -1006,7 +1131,10 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                 <Button
                   variant="contained"
                   size="large"
-                  onClick={() => setStep(2)}
+                  onClick={() => {
+                    markStepCompleted(1); // Mark step 1 as completed
+                    setStep(2);
+                  }}
                   disabled={!buildType || (buildType === 'template' && !selectedTemplate) || (buildType === 'custom' && (!customSpecs.vcpus || !customSpecs.memory || !customSpecs.storage || !customSpecs.ghz))}
                   sx={{
                     px: 4,
@@ -1030,9 +1158,11 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
           <div>
             {/* Back button */}
             <Box sx={{ mb: 2 }}>
-              <Button variant="outlined" onClick={() => setStep(1)}>
-                Back
-              </Button>
+              {step > 0 && (
+                <Button variant="outlined" onClick={() => setStep(step - 1)}>
+                  Back
+                </Button>
+              )}
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h4" fontWeight={700} color="primary">
@@ -1061,6 +1191,11 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               <Typography variant="body2" color="text.secondary" mb={2}>
                 Choose the performance tier that best suits your workload.
               </Typography>
+              {!tier && (
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  Please select a storage tier to continue with your VM configuration.
+                </Alert>
+              )}
               {errors.tier && (
                 <FormHelperText error>Please select a tier</FormHelperText>
               )}
@@ -1093,6 +1228,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                   onClick={() => {
                     setTier('Standard SSD');
                     notifyParent({ tier: 'Standard SSD' });
+                    markStepCompleted(2); // Mark step 2 as completed
                     setTimeout(() => setStep(3), 400);
                   }}
                   startIcon={<StarBorderIcon />}
@@ -1128,6 +1264,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                   onClick={() => {
                     setTier('Premium SSD');
                     notifyParent({ tier: 'Premium SSD' });
+                    markStepCompleted(2); // Mark step 2 as completed
                     setTimeout(() => setStep(3), 400);
                   }}
                   startIcon={<StarIcon />}
@@ -1173,9 +1310,11 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
           <div>
             {/* Back button */}
             <Box sx={{ mb: 2 }}>
-              <Button variant="outlined" onClick={() => setStep(2)}>
-                Back
-              </Button>
+              {step > 0 && (
+                <Button variant="outlined" onClick={() => setStep(step - 1)}>
+                  Back
+                </Button>
+              )}
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h4" fontWeight={700} color="primary">
@@ -1204,6 +1343,11 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               <Typography variant="body2" color="text.secondary" mb={2}>
                 Run your workload on the platform you prefer.
               </Typography>
+              {!os && (
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  Please select an operating system to continue with your VM configuration.
+                </Alert>
+              )}
               {errors.os && (
                 <FormHelperText error>Please select an operating system</FormHelperText>
               )}
@@ -1238,6 +1382,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                     onClick={() => {
                       setOs(o.value);
                       notifyParent({ os: o.value });
+                      markStepCompleted(3); // Mark step 3 as completed
                       setTimeout(() => setStep(4), 400);
                     }}
                     startIcon={o.icon}
@@ -1284,9 +1429,11 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
           <div>
             {/* Back button */}
             <Box sx={{ mb: 2 }}>
-              <Button variant="outlined" onClick={() => setStep(3)}>
-                Back
-              </Button>
+              {step > 0 && (
+                <Button variant="outlined" onClick={() => setStep(step - 1)}>
+                  Back
+                </Button>
+              )}
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h4" fontWeight={700} color="primary">

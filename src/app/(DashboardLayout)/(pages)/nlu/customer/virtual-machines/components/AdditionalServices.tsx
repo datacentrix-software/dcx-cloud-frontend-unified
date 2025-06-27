@@ -25,16 +25,19 @@ function toOptions(products: any[]) {
 export default function AdditionalServices({ onSelect, products, selected, setSelected }: AdditionalServicesProps) {
   // Filter products for each input
   const professionalServices = products.filter(
-    (p) => p.SubCategory?.name === 'Cloud Services - Professional Services'
+    (p) => p.Category?.name === 'Cloud Services - Professional Services'
   );
   const naasServices = products.filter(
-    (p) => p.SubCategory?.name === 'Cloud Services -  Network as a Service (NaaS)'
+    (p) => p.Category?.name === 'Cloud Services - Network as a Service (NaaS)' ||
+           p.Category?.name === 'Cloud Services -  Network as a Service (NaaS)'
   );
   const faasServices = products.filter(
-    (p) => p.SubCategory?.name === 'Cloud Services -  Firewall as a Service (FaaS)'
+    (p) => p.Category?.name === 'Cloud Services - Firewall as a Service (FaaS)' ||
+           p.Category?.name === 'Cloud Services -  Firewall as a Service (FaaS)'
   );
   const collocationServices = products.filter(
-    (p) => p.SubCategory?.name === 'Cloud Services -  Collocation'
+    (p) => p.Category?.name === 'Cloud Services - Collocation' ||
+           p.Category?.name === 'Cloud Services -  Collocation'
   );
 
   // Helper to get selected product objects by ID

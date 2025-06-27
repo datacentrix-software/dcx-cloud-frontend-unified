@@ -24,7 +24,7 @@ export default function SoftwareLicensing({
   setSelected,
 }: SoftwareLicensingProps) {
   const m365Products = useMemo(
-    () => products.filter((p) => p.SubCategory?.name === 'Cloud Services -  Microsoft Licences'),
+    () => products.filter((p) => p.Category?.name === 'Cloud Services - M365'),
     [products]
   );
 
