@@ -17,14 +17,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import BackupServices from './BackupServices';
 import SoftwareLicensing from './SoftwareLicensing';
 import AdditionalServices from './AdditionalServices';
-import { ISimpleProduct } from '@/types';
+import { ISimpleProduct, IBackupServicesSelected, IAdditionalServicesSelected, IProductOption, IVMConfig } from '@/types';
 
 interface AdditionalProductsDialogProps {
   open: boolean;
   onClose: () => void;
   products: ISimpleProduct[];
   onProductsUpdate: (products: ISimpleProduct[]) => void;
-  existingProducts: (ISimpleProduct | any)[];
+  existingProducts: (ISimpleProduct | IVMConfig)[];
 }
 
 export default function AdditionalProductsDialog({
@@ -37,14 +37,9 @@ export default function AdditionalProductsDialog({
   const [expanded, setExpanded] = useState<string | false>('backup');
   
   // State for each service type
-  const [backupServicesSelected, setBackupServicesSelected] = useState<{ baas: any[]; draas: any[] }>({ baas: [], draas: [] });
-  const [softwareLicensingSelected, setSoftwareLicensingSelected] = useState<any[]>([]);
-  const [additionalServicesSelected, setAdditionalServicesSelected] = useState<{
-    professional: any[];
-    naas: any[];
-    faas: any[];
-    collocation: any[];
-  }>({
+  const [backupServicesSelected, setBackupServicesSelected] = useState<IBackupServicesSelected>({ baas: [], draas: [] });
+  const [softwareLicensingSelected, setSoftwareLicensingSelected] = useState<ISimpleProduct[]>([]);
+  const [additionalServicesSelected, setAdditionalServicesSelected] = useState<IAdditionalServicesSelected>({
     professional: [],
     naas: [],
     faas: [],
@@ -55,7 +50,7 @@ export default function AdditionalProductsDialog({
   useEffect(() => {
     if (open && existingProducts) {
       // Filter out VMs to get only additional products
-      const additionalProducts = existingProducts.filter(product => product.type !== 'virtualMachine');
+      const additionalProducts = existingProducts.filter(product => product.type !== 'virtualMachine') as ISimpleProduct[];
       
       // Helper to get product IDs by Category
       const getProductIds = (categoryNames: string[]) => {
@@ -94,18 +89,18 @@ export default function AdditionalProductsDialog({
   }, [open, existingProducts]);
 
   // Filter products for each service
-  const backupServiceProducts = products.filter((p: any) =>
+  const backupServiceProducts = products.filter((p: ISimpleProduct) =>
     p.Category?.name === 'Cloud Services - Backup as a Service (BaaS)' ||
     p.Category?.name === 'Cloud Services -  Backup as a Service (BaaS)' ||
     p.Category?.name === 'Cloud Services - Disaster Recovery as a Service (DraaS)' ||
     p.Category?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
   );
   
-  const softwareLicensingProducts = products.filter((p: any) =>
+  const softwareLicensingProducts = products.filter((p: ISimpleProduct) =>
     p.Category?.name === 'Cloud Services - M365'
   );
   
-  const additionalServicesProducts = products.filter((p: any) =>
+  const additionalServicesProducts = products.filter((p: ISimpleProduct) =>
     [
       'Cloud Services - Professional Services',
       'Cloud Services - Network as a Service (NaaS)',
@@ -114,44 +109,44 @@ export default function AdditionalProductsDialog({
       'Cloud Services -  Firewall as a Service (FaaS)',
       'Cloud Services - Collocation',
       'Cloud Services -  Collocation'
-    ].includes(p.Category?.name)
+    ].includes(p.Category?.name || '')
   );
 
   const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
   };
 
-  const handleBackupServicesSelect = (options: any[]) => {
+  const handleBackupServicesSelect = (options: ISimpleProduct[]) => {
     // The BackupServices component handles its own state, we just need to update all products
     updateAllProducts();
   };
 
-  const handleSoftwareLicensingSelect = (options: any[]) => {
+  const handleSoftwareLicensingSelect = (options: ISimpleProduct[]) => {
     // Update the state with the new options
     setSoftwareLicensingSelected(options);
     // Update all products with the new options
     updateAllProductsWithSoftwareLicensing(options);
   };
 
-  const handleAdditionalServicesSelect = (options: any[]) => {
+  const handleAdditionalServicesSelect = (options: ISimpleProduct[]) => {
     // The AdditionalServices component manages its own state, we just need to update all products
     updateAllProductsWithAdditionalServices(options);
   };
 
-  // const handleAdditionalProductsUpdate = (newProducts: any[]) => {
+  // const handleAdditionalProductsUpdate = (newProducts: ISimpleProduct[]) => {
   //   // Update the parent with the new products
   //   onProductsUpdate(newProducts);
   // };
 
   const updateAllProducts = () => {
     // Helper to get selected product objects by ID
-    const getSelectedProducts = (ids: string[], options: any[]) => {
+    const getSelectedProducts = (ids: string[], options: IProductOption[]) => {
       const idSet = new Set(ids);
       return options.filter((opt) => idSet.has(String(opt.value))).map((opt) => opt.product);
     };
 
     // Convert options to the format expected by getSelectedProducts
-    const toOptions = (products: any[]) => {
+    const toOptions = (products: ISimpleProduct[]): IProductOption[] => {
       return products.map((p) => ({
         value: String(p.id),
         label: `${p.title}${p.price ? ` (R${p.price})` : ''}`,
@@ -214,7 +209,7 @@ export default function AdditionalProductsDialog({
     ];
     
     // Get existing VMs from the existing products
-    const existingVMs = existingProducts.filter(product => product.type === 'virtualMachine');
+    const existingVMs = existingProducts.filter(product => product.type === 'virtualMachine') as ISimpleProduct[];
     
     // Combine VMs with the new additional products
     const allProducts = [...existingVMs, ...allSelectedAdditionalProducts];
@@ -223,15 +218,15 @@ export default function AdditionalProductsDialog({
     onProductsUpdate(allProducts);
   };
 
-  const updateAllProductsWithSoftwareLicensing = (softwareLicensingOptions: any[]) => {
+  const updateAllProductsWithSoftwareLicensing = (softwareLicensingOptions: ISimpleProduct[]) => {
     // Helper to get selected product objects by ID
-    const getSelectedProducts = (ids: string[], options: any[]) => {
+    const getSelectedProducts = (ids: string[], options: IProductOption[]) => {
       const idSet = new Set(ids);
       return options.filter((opt) => idSet.has(String(opt.value))).map((opt) => opt.product);
     };
 
     // Convert options to the format expected by getSelectedProducts
-    const toOptions = (products: any[]) => {
+    const toOptions = (products: ISimpleProduct[]): IProductOption[] => {
       return products.map((p) => ({
         value: String(p.id),
         label: `${p.title}${p.price ? ` (R${p.price})` : ''}`,
@@ -294,7 +289,7 @@ export default function AdditionalProductsDialog({
     ];
     
     // Get existing VMs from the existing products
-    const existingVMs = existingProducts.filter(product => product.type === 'virtualMachine');
+    const existingVMs = existingProducts.filter(product => product.type === 'virtualMachine') as ISimpleProduct[];
     
     // Combine VMs with the new additional products
     const allProducts = [...existingVMs, ...allSelectedAdditionalProducts];
@@ -303,15 +298,15 @@ export default function AdditionalProductsDialog({
     onProductsUpdate(allProducts);
   };
 
-  const updateAllProductsWithAdditionalServices = (additionalServicesOptions: any[]) => {
+  const updateAllProductsWithAdditionalServices = (additionalServicesOptions: ISimpleProduct[]) => {
     // Helper to get selected product objects by ID
-    const getSelectedProducts = (ids: string[], options: any[]) => {
+    const getSelectedProducts = (ids: string[], options: IProductOption[]) => {
       const idSet = new Set(ids);
       return options.filter((opt) => idSet.has(String(opt.value))).map((opt) => opt.product);
     };
 
     // Convert options to the format expected by getSelectedProducts
-    const toOptions = (products: any[]) => {
+    const toOptions = (products: ISimpleProduct[]): IProductOption[] => {
       return products.map((p) => ({
         value: String(p.id),
         label: `${p.title}${p.price ? ` (R${p.price})` : ''}`,
@@ -364,7 +359,7 @@ export default function AdditionalProductsDialog({
     ];
     
     // Get existing VMs from the existing products
-    const existingVMs = existingProducts.filter(product => product.type === 'virtualMachine');
+    const existingVMs = existingProducts.filter(product => product.type === 'virtualMachine') as ISimpleProduct[];
     
     // Combine VMs with the new additional products
     const allProducts = [...existingVMs, ...allSelectedAdditionalProducts];

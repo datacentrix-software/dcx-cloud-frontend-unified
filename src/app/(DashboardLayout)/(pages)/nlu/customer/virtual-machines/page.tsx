@@ -19,6 +19,63 @@ import Link from 'next/link';
 import { InputVM, transformVMs } from '@/app/(DashboardLayout)/utilities/helpers/vm.helper';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
 import { IconServer, IconX, IconInfoCircle } from '@tabler/icons-react';
+import { ISimpleProduct, IVMConfig, VMTemplate } from '@/types';
+
+// Define interfaces for the component
+interface VMQuoteObject {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  units: number;
+  unit: string;
+  type: string;
+  details: {
+    region: string;
+    os: string;
+    tier: string;
+    configuration: {
+      type: 'template' | 'custom';
+      templateId: string;
+      specs: {
+        vcpus: number;
+        memory: number;
+        storage: number;
+        ghz: number;
+      };
+    };
+  };
+}
+
+interface ProductWithType extends ISimpleProduct {
+  type?: string;
+  Category?: {
+    name: string;
+  };
+}
+
+// Union type for all possible product types
+type AllProductTypes = ProductWithType | (IVMConfig & { type?: string }) | VMQuoteObject;
+
+interface BackupServicesOptions {
+  baas: ISimpleProduct[];
+  draas: ISimpleProduct[];
+}
+
+interface AdditionalServicesOptions {
+  professional: string[];
+  naas: string[];
+  faas: string[];
+  collocation: string[];
+}
+
+// Override the ISelectedOptions interface for this component
+interface StepOptions {
+  virtualMachine: VMQuoteObject[];
+  backupServices: ISimpleProduct[];
+  softwareLicensing: ISimpleProduct[];
+  additionalServices: ISimpleProduct[];
+}
 
 export default function VirtualMachinesPage() {
   const { activeStep, setActiveStep } = useVirtualMachineStore();
@@ -130,7 +187,7 @@ export default function VirtualMachinesPage() {
     ];
 
     // Sum up the price for each selected product (assuming each is a product object)
-    const total = allSelected.reduce((sum, item: any) => sum + (item?.price || 0), 0);
+    const total = allSelected.reduce((sum, item) => sum + (item?.price || 0), 0);
 
     setTotalCost(total);
   }, [selectedOptions]);
@@ -147,14 +204,26 @@ export default function VirtualMachinesPage() {
     setActiveStep(step);
   };
 
-  const handleOptionSelect = (step: string, options: any) => {
+  const handleOptionSelect = (step: string, options: VMQuoteObject[] | BackupServicesOptions | ISimpleProduct[] | AdditionalServicesOptions) => {
     const currentOptions = useVirtualMachineStore.getState().selectedOptions;
 
     // For virtual machines, we want to replace the entire array
     if (step === 'virtualMachine') {
+      // Convert VMQuoteObject[] to IVMConfig[]
+      const vmConfigs: IVMConfig[] = (options as VMQuoteObject[]).map(vm => ({
+        id: vm.id,
+        region: vm.details.region,
+        os: vm.details.os,
+        serverName: vm.title.split(' - ')[0],
+        description: vm.description,
+        tier: vm.details.tier,
+        configuration: vm.details.configuration,
+        price: vm.price
+      }));
+      
       setSelectedOptions({
         ...currentOptions,
-        [step]: options
+        virtualMachine: vmConfigs
       });
     } else {
       // For other steps, maintain existing behavior
@@ -166,11 +235,15 @@ export default function VirtualMachinesPage() {
 
     // Also update the step-specific selected state
     if (step === 'backupServices' && typeof options === 'object' && options != null && 'baas' in options && 'draas' in options) {
-      setBackupServicesSelected(options);
+      setBackupServicesSelected(options as BackupServicesOptions);
     }
-    if (step === 'softwareLicensing' && Array.isArray(options)) setSoftwareLicensingSelected(options);
+    if (step === 'softwareLicensing' && Array.isArray(options)) {
+      // Convert ISimpleProduct[] to string[] by extracting IDs
+      const stringArray = (options as ISimpleProduct[]).map(item => item.id.toString());
+      setSoftwareLicensingSelected(stringArray);
+    }
     if (step === 'additionalServices' && typeof options === 'object' && options != null && 'professional' in options && 'naas' in options && 'faas' in options && 'collocation' in options) {
-      setAdditionalServicesSelected(options);
+      setAdditionalServicesSelected(options as AdditionalServicesOptions);
     }
   };
 
@@ -195,7 +268,7 @@ export default function VirtualMachinesPage() {
   };
 
   // Gather all selected products for the quote
-  const allSelectedProducts: any[] = [
+  const allSelectedProducts = [
     ...(Array.isArray(selectedOptions.virtualMachine) ? selectedOptions.virtualMachine : []),
     ...(Array.isArray(selectedOptions.backupServices) ? selectedOptions.backupServices : []),
     ...(Array.isArray(selectedOptions.softwareLicensing) ? selectedOptions.softwareLicensing : []),
@@ -203,33 +276,33 @@ export default function VirtualMachinesPage() {
   ];
 
   // Remove duplicates by product id (if needed)
-  const uniqueProducts: any[] = allSelectedProducts.filter((item, index, arr) =>
+  const uniqueProducts = allSelectedProducts.filter((item, index, arr) =>
     item && item.id && arr.findIndex((i) => i && i.id === item.id) === index
   );
 
   // Remove a product from all selected options
-  const handleRemoveProduct = (productId: any) => {
+  const handleRemoveProduct = (productId: string | number) => {
     const productToRemove = products.find(p => p.id === productId);
 
     // Check if it's a VM (it won't be in products array)
-    const isVM = uniqueProducts.find(p => p.id === productId)?.type === 'virtualMachine';
+    const isVM = uniqueProducts.find(p => p.id === productId && 'type' in p && p.type === 'virtualMachine');
 
     if (isVM) {
       // For VMs, we need to update the virtualMachine array directly
-      const newVirtualMachines = selectedOptions.virtualMachine.filter((item: any) => item.id !== productId);
+      const newVirtualMachines = selectedOptions.virtualMachine.filter((item: IVMConfig) => item.id !== productId);
       setSelectedOptions({
         ...selectedOptions,
         virtualMachine: newVirtualMachines
       });
 
-      setCreatedVMs(createdVMs.filter((item: any) => item?.id !== productId));
+      setCreatedVMs(createdVMs.filter((item: IVMConfig) => item?.id !== productId));
     } else if (productToRemove) {
       // For other products, maintain existing behavior
       const newSelectedOptions = {
-        virtualMachine: selectedOptions.virtualMachine.filter((item: any) => +item?.id !== productId),
-        backupServices: selectedOptions.backupServices.filter((item: any) => +item?.id !== productId),
-        softwareLicensing: selectedOptions.softwareLicensing.filter((item: any) => +item?.id !== productId),
-        additionalServices: selectedOptions.additionalServices.filter((item: any) => +item?.id !== productId),
+        virtualMachine: selectedOptions.virtualMachine.filter((item: IVMConfig) => +item?.id !== productId),
+        backupServices: selectedOptions.backupServices.filter((item: ISimpleProduct) => +item?.id !== productId),
+        softwareLicensing: selectedOptions.softwareLicensing.filter((item: ISimpleProduct) => +item?.id !== productId),
+        additionalServices: selectedOptions.additionalServices.filter((item: ISimpleProduct) => +item?.id !== productId),
       };
 
 
@@ -239,14 +312,14 @@ export default function VirtualMachinesPage() {
       if (productToRemove.Category?.name?.includes('Backup as a Service') ||
         productToRemove.Category?.name?.includes('Disaster Recovery')) {
         setBackupServicesSelected({
-          baas: backupServicesSelected.baas.filter((item: any) => +item !== productId),
-          draas: backupServicesSelected.draas.filter((item: any) => +item !== productId),
+          baas: backupServicesSelected.baas.filter((item: ISimpleProduct) => +item.id !== productId),
+          draas: backupServicesSelected.draas.filter((item: ISimpleProduct) => +item.id !== productId),
         });
       }
 
       if (productToRemove.Category?.name?.includes('M365')) {
         setSoftwareLicensingSelected(
-          softwareLicensingSelected.filter((item: any) => +item?.id !== productId)
+          softwareLicensingSelected.filter((item: string) => +item !== productId)
         );
       }
 
@@ -272,11 +345,11 @@ export default function VirtualMachinesPage() {
       ...(Array.isArray(selectedOptions.softwareLicensing) ? selectedOptions.softwareLicensing : []),
       ...(Array.isArray(selectedOptions.additionalServices) ? selectedOptions.additionalServices : [])
     ];
-    const newTotal = allSelected.reduce((sum, item: any) => sum + (item?.price || 0), 0);
+    const newTotal = allSelected.reduce((sum, item) => sum + (item?.price || 0), 0);
     setTotalCost(newTotal);
   };
 
-  const handleAdditionalProductsUpdate = (newProducts: any[]) => {
+  const handleAdditionalProductsUpdate = (newProducts: ISimpleProduct[]) => {
     // Handle additional products separately from VMs
     // Separate products by their Category and update the appropriate state
     const backupServices = newProducts.filter(product => 
@@ -365,6 +438,19 @@ export default function VirtualMachinesPage() {
     const { ip } = await res.json();
 
     try {
+      // Convert IVMConfig to InputVM for the transformVMs function
+      const inputVMs: InputVM[] = createdVMs.map(vm => ({
+        ...vm,
+        configuration: {
+          ...vm.configuration,
+          specs: {
+            ...vm.configuration.specs,
+            ghz: vm.configuration.specs.ghz.toString() // Convert number to string as expected by InputVM
+          },
+          templateId: vm.configuration.templateId || '' // Ensure templateId is never undefined
+        }
+      }));
+
       const payload = {
         customer: {
           organisationId: primaryOrgId,
@@ -377,7 +463,7 @@ export default function VirtualMachinesPage() {
           loginUserEmail: authUser?.email,
           loginUserName: `${authUser?.firstName} ${authUser?.lastName}`,
         },
-        vms: transformVMs(createdVMs as any, vmTemplates),
+        vms: transformVMs(inputVMs, vmTemplates),
         products: [
           ...selectedOptions.backupServices,
           ...selectedOptions.softwareLicensing,
@@ -406,7 +492,7 @@ export default function VirtualMachinesPage() {
             text: vmResponse?.data.message || `Your resources are currently being provisioned.`,
             icon: 'success',
             draggable: true,
-          }).then((result: any) => {
+          }).then((result: { isConfirmed: boolean }) => {
             if (result.isConfirmed) {
               window.location.href = '/';
             }
@@ -427,10 +513,11 @@ export default function VirtualMachinesPage() {
           draggable: true,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred.';
       Swal.fire({
         title: 'Failed',
-        text: error || 'An error occurred.',
+        text: errorMessage,
         icon: 'error',
         draggable: true,
       });
@@ -618,97 +705,101 @@ export default function VirtualMachinesPage() {
         </DialogTitle>
         <DialogContent sx={{ pb: 2 }}>
           {/* Virtual Machines Section */}
-          {uniqueProducts.filter(item => item.type === 'virtualMachine').length > 0 && (
+          {uniqueProducts.filter(item => 'type' in item && item.type === 'virtualMachine').length > 0 && (
             <Box sx={{ mb: 4 }}>
               <Typography variant="h5" fontWeight={600} sx={{ mb: 2, color: 'primary.main' }}>
-                Virtual Machines ({uniqueProducts.filter(item => item.type === 'virtualMachine').length})
+                Virtual Machines ({uniqueProducts.filter(item => 'type' in item && item.type === 'virtualMachine').length})
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {uniqueProducts.filter(item => item.type === 'virtualMachine').map((item) => (
-                  <Paper key={item.id} variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <Box sx={{ flex: 1 }}>
-                        <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-                          {item.title}
-                        </Typography>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 2 }}>
-                          <Typography variant="body2">
-                            <strong>Region:</strong> {item.details.region}
+                {uniqueProducts.filter(item => 'type' in item && item.type === 'virtualMachine').map((item) => {
+                  // Type guard to ensure item has details property
+                  const vmItem = item as unknown as VMQuoteObject;
+                  return (
+                    <Paper key={vmItem.id} variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
+                            {vmItem.title}
                           </Typography>
-                          <Typography variant="body2">
-                            <strong>OS:</strong> {item.details.os}
-                          </Typography>
-                          <Typography variant="body2">
-                            <strong>Tier:</strong> {item.details.tier}
-                          </Typography>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 2 }}>
+                            <Typography variant="body2">
+                              <strong>Region:</strong> {vmItem.details.region}
+                            </Typography>
+                            <Typography variant="body2">
+                              <strong>OS:</strong> {vmItem.details.os}
+                            </Typography>
+                            <Typography variant="body2">
+                              <strong>Tier:</strong> {vmItem.details.tier}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                            {vmItem.details.configuration.type === 'custom' ? (
+                              <>
+                                <Typography variant="body2">
+                                  <strong>vCPUs:</strong> {vmItem.details.configuration.specs.vcpus}
+                                </Typography>
+                                <Typography variant="body2">
+                                  <strong>RAM:</strong> {vmItem.details.configuration.specs.memory}GB
+                                </Typography>
+                                <Typography variant="body2">
+                                  <strong>Storage:</strong> {vmItem.details.configuration.specs.storage}GB
+                                </Typography>
+                                <Typography variant="body2">
+                                  <strong>GHz:</strong> {vmItem.details.configuration.specs.ghz}
+                                </Typography>
+                              </>
+                            ) : (
+                              <>
+                                <Typography variant="body2">
+                                  <strong>vCPUs:</strong> {vmItem.details.configuration.specs.vcpus}
+                                </Typography>
+                                <Typography variant="body2">
+                                  <strong>RAM:</strong> {vmItem.details.configuration.specs.memory}GB
+                                </Typography>
+                                <Typography variant="body2">
+                                  <strong>Storage:</strong> {vmItem.details.configuration.specs.storage}GB
+                                </Typography>
+                                <Typography variant="body2">
+                                  <strong>GHz:</strong> {vmItem.details.configuration.specs.ghz}
+                                </Typography>
+                              </>
+                            )}
+                          </Box>
                         </Box>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-                          {item.details.configuration.type === 'custom' ? (
-                            <>
-                              <Typography variant="body2">
-                                <strong>vCPUs:</strong> {item.details.configuration.specs.vcpus}
-                              </Typography>
-                              <Typography variant="body2">
-                                <strong>RAM:</strong> {item.details.configuration.specs.memory}GB
-                              </Typography>
-                              <Typography variant="body2">
-                                <strong>Storage:</strong> {item.details.configuration.specs.storage}GB
-                              </Typography>
-                              <Typography variant="body2">
-                                <strong>GHz:</strong> {item.details.configuration.specs.ghz}
-                              </Typography>
-                            </>
-                          ) : (
-                            <>
-                              <Typography variant="body2">
-                                <strong>vCPUs:</strong> {item.details.configuration.vcpus}
-                              </Typography>
-                              <Typography variant="body2">
-                                <strong>RAM:</strong> {item.details.configuration.memory}GB
-                              </Typography>
-                              <Typography variant="body2">
-                                <strong>Storage:</strong> {item.details.configuration.storage}GB
-                              </Typography>
-                              <Typography variant="body2">
-                                <strong>GHz:</strong> {item.details.configuration.ghz}
-                              </Typography>
-                            </>
-                          )}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, ml: 2 }}>
+                          <Typography variant="h6" color="primary" fontWeight={700}>
+                            R{(vmItem.price * (vmItem.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                          </Typography>
+                          <IconButton
+                            color="error"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveProduct(vmItem.id);
+                            }}
+                            size="small"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
                         </Box>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, ml: 2 }}>
-                        <Typography variant="h6" color="primary" fontWeight={700}>
-                          R{(item.price * (item.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
-                        </Typography>
-                        <IconButton
-                          color="error"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveProduct(item.id);
-                          }}
-                          size="small"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                  </Paper>
-                ))}
+                    </Paper>
+                  );
+                })}
               </Box>
             </Box>
           )}
 
           {/* Additional Products Section */}
-          {uniqueProducts.filter(item => item.type !== 'virtualMachine').length > 0 && (
+          {uniqueProducts.filter(item => !('type' in item) || item.type !== 'virtualMachine').length > 0 && (
             <Box>
               <Typography variant="h5" fontWeight={600} sx={{ mb: 2, color: 'primary.main' }}>
-                Additional Products ({uniqueProducts.filter(item => item.type !== 'virtualMachine').length})
+                Additional Products ({uniqueProducts.filter(item => !('type' in item) || item.type !== 'virtualMachine').length})
               </Typography>
               
               {/* Backup Services Subsection */}
               {uniqueProducts.filter(item => 
-                item.type !== 'virtualMachine' && 
-                (item.Category?.name?.includes('Backup as a Service') || item.Category?.name?.includes('Disaster Recovery'))
+                (!('type' in item) || item.type !== 'virtualMachine') && 
+                ('Category' in item && (item as ISimpleProduct).Category?.name?.includes('Backup as a Service') || (item as ISimpleProduct).Category?.name?.includes('Disaster Recovery'))
               ).length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
@@ -716,45 +807,51 @@ export default function VirtualMachinesPage() {
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {uniqueProducts.filter(item => 
-                      item.type !== 'virtualMachine' && 
-                      (item.Category?.name?.includes('Backup as a Service') || item.Category?.name?.includes('Disaster Recovery'))
-                    ).map((item) => (
-                      <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Box>
-                            <Typography variant="body1" fontWeight={500}>
-                              {item.title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {item.description}
-                            </Typography>
+                      (!('type' in item) || item.type !== 'virtualMachine') && 
+                      ('Category' in item && (item as ISimpleProduct).Category?.name?.includes('Backup as a Service') || (item as ISimpleProduct).Category?.name?.includes('Disaster Recovery'))
+                    ).map((item) => {
+                      // Type guard to ensure we're working with ISimpleProduct
+                      if (!('Category' in item)) return null;
+                      const productItem = item as ISimpleProduct;
+                      return (
+                        <Paper key={productItem.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box>
+                              <Typography variant="body1" fontWeight={500}>
+                                {productItem.title}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {/* ISimpleProduct doesn't have description, so use empty string */}
+                                {''}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                              <Typography variant="body1" fontWeight={600}>
+                                R{(productItem.price * 1).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                              </Typography>
+                              <IconButton
+                                color="error"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveProduct(productItem.id);
+                                }}
+                                size="small"
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
                           </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Typography variant="body1" fontWeight={600}>
-                              R{(item.price * (item.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
-                            </Typography>
-                            <IconButton
-                              color="error"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRemoveProduct(item.id);
-                              }}
-                              size="small"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </Paper>
-                    ))}
+                        </Paper>
+                      );
+                    }).filter(Boolean)}
                   </Box>
                 </Box>
               )}
 
               {/* Software Licensing Subsection */}
               {uniqueProducts.filter(item => 
-                item.type !== 'virtualMachine' && 
-                item.Category?.name?.includes('M365')
+                (!('type' in item) || item.type !== 'virtualMachine') && 
+                ('Category' in item && item.Category?.name?.includes('M365'))
               ).length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
@@ -762,48 +859,54 @@ export default function VirtualMachinesPage() {
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {uniqueProducts.filter(item => 
-                      item.type !== 'virtualMachine' && 
-                      item.Category?.name?.includes('M365')
-                    ).map((item) => (
-                      <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Box>
-                            <Typography variant="body1" fontWeight={500}>
-                              {item.title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {item.description}
-                            </Typography>
+                      (!('type' in item) || item.type !== 'virtualMachine') && 
+                      ('Category' in item && item.Category?.name?.includes('M365'))
+                    ).map((item) => {
+                      // Type guard to ensure we're working with ISimpleProduct
+                      if (!('Category' in item)) return null;
+                      const productItem = item as ISimpleProduct;
+                      return (
+                        <Paper key={productItem.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box>
+                              <Typography variant="body1" fontWeight={500}>
+                                {productItem.title}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {/* ISimpleProduct doesn't have description, so use empty string */}
+                                {''}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                              <Typography variant="body1" fontWeight={600}>
+                                R{(productItem.price * 1).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                              </Typography>
+                              <IconButton
+                                color="error"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveProduct(productItem.id);
+                                }}
+                                size="small"
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
                           </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Typography variant="body1" fontWeight={600}>
-                              R{(item.price * (item.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
-                            </Typography>
-                            <IconButton
-                              color="error"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRemoveProduct(item.id);
-                              }}
-                              size="small"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </Paper>
-                    ))}
+                        </Paper>
+                      );
+                    }).filter(Boolean)}
                   </Box>
                 </Box>
               )}
 
               {/* Additional Services Subsection */}
               {uniqueProducts.filter(item => 
-                item.type !== 'virtualMachine' && 
-                (item.Category?.name?.includes('Professional Services') || 
+                (!('type' in item) || item.type !== 'virtualMachine') && 
+                ('Category' in item && (item.Category?.name?.includes('Professional Services') || 
                  item.Category?.name?.includes('Network as a Service') || 
                  item.Category?.name?.includes('Firewall as a Service') || 
-                 item.Category?.name?.includes('Collocation'))
+                 item.Category?.name?.includes('Collocation')))
               ).length > 0 && (
                 <Box sx={{ mb: 3 }}>
                   <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>
@@ -811,40 +914,46 @@ export default function VirtualMachinesPage() {
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {uniqueProducts.filter(item => 
-                      item.type !== 'virtualMachine' && 
-                      (item.Category?.name?.includes('Professional Services') || 
+                      (!('type' in item) || item.type !== 'virtualMachine') && 
+                      ('Category' in item && (item.Category?.name?.includes('Professional Services') || 
                        item.Category?.name?.includes('Network as a Service') || 
                        item.Category?.name?.includes('Firewall as a Service') || 
-                       item.Category?.name?.includes('Collocation'))
-                    ).map((item) => (
-                      <Paper key={item.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Box>
-                            <Typography variant="body1" fontWeight={500}>
-                              {item.title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {item.description}
-                            </Typography>
+                       item.Category?.name?.includes('Collocation')))
+                    ).map((item) => {
+                      // Type guard to ensure we're working with ISimpleProduct
+                      if (!('Category' in item)) return null;
+                      const productItem = item as ISimpleProduct;
+                      return (
+                        <Paper key={productItem.id} variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box>
+                              <Typography variant="body1" fontWeight={500}>
+                                {productItem.title}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {/* ISimpleProduct doesn't have description, so use empty string */}
+                                {''}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                              <Typography variant="body1" fontWeight={600}>
+                                R{(productItem.price * 1).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                              </Typography>
+                              <IconButton
+                                color="error"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveProduct(productItem.id);
+                                }}
+                                size="small"
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
                           </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <Typography variant="body1" fontWeight={600}>
-                              R{(item.price * (item.units || 1)).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
-                            </Typography>
-                            <IconButton
-                              color="error"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRemoveProduct(item.id);
-                              }}
-                              size="small"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </Paper>
-                    ))}
+                        </Paper>
+                      );
+                    }).filter(Boolean)}
                   </Box>
                 </Box>
               )}
@@ -865,7 +974,7 @@ export default function VirtualMachinesPage() {
               Total Monthly Cost
             </Typography>
             <Typography variant="h4" color="primary" fontWeight={700}>
-              R{uniqueProducts.reduce((sum, item) => sum + (item.price ? item.price * (item.units || 1) : 0), 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              R{uniqueProducts.reduce((sum, item) => sum + (Number(item.price) || 0) * (('units' in item ? Number(item.units) : 1) || 1), 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </Typography>
           </Box>
         </DialogContent>

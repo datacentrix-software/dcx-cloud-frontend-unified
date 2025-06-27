@@ -21,7 +21,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useAuthStore } from '@/store';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Swal from 'sweetalert2';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
 import { IPaymentCard } from '@/types';
@@ -150,8 +150,10 @@ const AddCreditCardDialog: React.FC<AddCreditCardDialogProps> = ({ open, onClose
         setField('hasLinkedCreditCard', Object.keys(newCard).length > 0);
         handleClose();
       }
-    } catch (error: any) {
-      const text = error.response.data.message || "Error saving card"
+    } catch (error: unknown) {
+      const text = error instanceof AxiosError && error.response?.data?.message 
+        ? error.response.data.message 
+        : "Error saving card";
       Swal.fire({
         icon: 'error',
         text,

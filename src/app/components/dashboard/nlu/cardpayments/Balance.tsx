@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '@/store';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useQuoteStore } from '@/store/useQuoteStore';
 
 const BalanceCard: React.FC = () => {
@@ -39,15 +39,21 @@ const BalanceCard: React.FC = () => {
       setAmount(walletResponse.data.balance)
 
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let errorMessage = 'An error occurred while fetching card details';
+      
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || error.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       Swal.fire({
         icon: 'error',
         title: 'API Error',
-        text: error?.response.data.message || 'An error occurred while fetching card details',
-
+        text: errorMessage,
         showConfirmButton: true
       });
-
     }
   };
 
@@ -77,7 +83,7 @@ const BalanceCard: React.FC = () => {
             </Typography>
           </Box>
           <Typography variant="body2" color="text.secondary">
-            You won’t be charged until there’s a balance due.
+            You won't be charged until there's a balance due.
           </Typography>
           <Divider />
           {/* <Button variant="text" color="primary" fullWidth onClick={handlePayment}>

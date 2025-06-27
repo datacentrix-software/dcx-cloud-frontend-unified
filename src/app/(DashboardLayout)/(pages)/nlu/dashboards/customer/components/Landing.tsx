@@ -42,6 +42,7 @@ import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '@/store';
 import axiosServices from '@/utils/axios';
+import { AxiosError } from 'axios';
 import useVirtualMachineStore from '@/store/useVirtualMachineStore';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
 
@@ -152,10 +153,18 @@ const Landing: React.FC<LandingProps> = ({
                         draggable: true,
                     });
                 }
-            } catch (error: any) {
+            } catch (error: unknown) {
+                let errorMessage = 'An error occurred.';
+                
+                if (error instanceof AxiosError) {
+                    errorMessage = error.response?.data?.message || error.message || 'An error occurred.';
+                } else if (error instanceof Error) {
+                    errorMessage = error.message;
+                }
+                
                 Swal.fire({
                     title: 'Failed',
-                    text: error || 'An error occurred.',
+                    text: errorMessage,
                     icon: 'error',
                     draggable: true,
                 });
@@ -249,9 +258,9 @@ const Landing: React.FC<LandingProps> = ({
                 });
 
                 setVmTemplates(terraformResponse.data.filter((template: any) => template.group == 'Free'));
-            } catch (error) {
+            } catch (error: unknown) {
+                console.error('Error fetching terraform config:', error);
                 setVmTemplates([]);
-                
             }
         };
         fetchData();

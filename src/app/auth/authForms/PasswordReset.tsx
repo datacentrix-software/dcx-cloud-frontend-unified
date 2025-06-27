@@ -10,6 +10,7 @@ import ArrowBack from '@mui/icons-material/ArrowBack';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import axiosServices from '@/utils/axios';
+import { AxiosError } from 'axios';
 import { useAuthStore } from '@/store/';
 import { decoder } from '@/utils/';
 import InfoCarousel from './InfoCarousel';
@@ -73,8 +74,16 @@ const PasswordReset = ({ email: initialEmail, onError, onSuccess }: PasswordRese
           onSuccess();
         }
       }
-    } catch (error: any) {
-      onError(error.response?.data?.message || 'An error occurred.');
+    } catch (error: unknown) {
+      let errorMessage = 'An error occurred.';
+      
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || error.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      onError(errorMessage);
     }
   };
 
