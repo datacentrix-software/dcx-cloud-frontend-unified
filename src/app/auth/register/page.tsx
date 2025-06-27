@@ -33,21 +33,6 @@ export default function RegistrationPage() {
   const [msaAccepted, setMsaAccepted] = useState<boolean>(false);
   const [isTermsLoading, setIsTermsLoading] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
-  const [organizations] = useState([
-    "Datacentrix",
-    "Kyoto",
-    "TestUser",
-    "Datacentrix pty",
-    "Arcne Cope",
-    "Acme Corp"
-  ]);
-  const [organizationTypes] = useState([
-    "Private",
-    "Public",
-    "Government",
-    "Non-Profit",
-    "Educational"
-  ]);
 
   const [formData, setFormData] = React.useState({
     firstName: '',
@@ -56,7 +41,6 @@ export default function RegistrationPage() {
     mobile: '+27',
     organisation: {
       organisation_name: '',
-      organisation_type: '',
       msa_accepted: false
     }
   });
@@ -147,12 +131,6 @@ export default function RegistrationPage() {
       isValid = false;
     }
 
-    // Organisation Type validation
-    if (!formData.organisation.organisation_type.trim()) {
-      tempErrors.organisation_type = 'Organisation type is required';
-      isValid = false;
-    }
-
     // MSA acceptance validation
     if (!msaAccepted) {
       tempErrors.msa_accepted = 'You must accept the Master Service Agreement';
@@ -172,7 +150,6 @@ export default function RegistrationPage() {
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
       /^\+27\d{9}$/.test(formData.mobile) &&
       formData.organisation.organisation_name.trim() !== '' &&
-      formData.organisation.organisation_type.trim() !== '' &&
       msaAccepted
     );
 
@@ -201,9 +178,8 @@ export default function RegistrationPage() {
           organisation: {
             ...formData.organisation,
             msa_accepted: msaAccepted,
+            email_domain: formData.email
           },
-          actionById: 1,
-          role: "Customer",
           status: 'Active',
           msa_version_id: null,
         }
@@ -228,7 +204,6 @@ export default function RegistrationPage() {
           mobile: '+27',
           organisation: {
             organisation_name: '',
-            organisation_type: '',
             msa_accepted: false
           }
         });
@@ -495,54 +470,8 @@ export default function RegistrationPage() {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    label="Organisation Type"
-                    value={formData.organisation.organisation_type}
-                    onChange={(e) => {
-                      const newOrgData = {
-                        ...formData.organisation,
-                        organisation_type: e.target.value
-                      };
-
-                      setFormData({
-                        ...formData,
-                        organisation: newOrgData
-                      });
-                      setErrors({ ...errors, organisation_type: '' });
-                    }}
-                    fullWidth
-                    size="medium"
-                    error={!!errors.organisation_type}
-                    helperText={errors.organisation_type}
-                    InputLabelProps={{
-                      shrink: true,
-                      sx: { 
-                        position: 'static',
-                        transform: 'none',
-                        fontSize: '0.875rem',
-                        color: 'text.secondary',
-                        mb: 0.5,
-                        '& .MuiFormLabel-asterisk': {
-                          color: 'error.main'
-                        }
-                      }
-                    }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 1,
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        '&:hover fieldset': {
-                          borderColor: 'primary.main',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: 'primary.main',
-                        },
-                      },
-                    }}
-                  />
-                </Grid>
+            
+            
               </Grid>
 
               <TextField
