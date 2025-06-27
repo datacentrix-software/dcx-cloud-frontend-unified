@@ -73,6 +73,7 @@ interface IVMConfig {
       templateId?: number | string;
     };
     price: number;
+    type?: string;
   }
   
   interface ICustomSpecs {
