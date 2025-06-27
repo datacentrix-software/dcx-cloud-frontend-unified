@@ -143,7 +143,7 @@ const WelcomeCard = () => {
           setVcenterOrgId(response.data.vcenterOrg_id);
         }
       } catch (error) {
-        console.error('Error fetching organization data:', error);
+        
       }
     };
 

@@ -77,8 +77,6 @@ const AuthLogin = () => {
             } catch (error) {
                 setErrorMessage('Failed to initiate GitHub login. Please try again.');
                 setOpenErrorDialog(true);
-                console.error('Error fetching user details:', error);
-                throw new Error('Failed to fetch user details');
             } finally {
                 setIsLoading(false);
             }

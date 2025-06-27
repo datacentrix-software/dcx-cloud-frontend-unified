@@ -81,7 +81,7 @@ const TransactionsCard: React.FC = () => {
         const data = await response.json();
         setVms(data);
       } catch (error) {
-        console.log('Error fetching virtual machines:', error);
+        
       }
     }
   };
@@ -103,7 +103,7 @@ const TransactionsCard: React.FC = () => {
       });
       setTransactions(transactions.data)
       setLoading(false);
-      console.log("testing:", transactions.data)
+
       return {
         props: {
           transactions,
@@ -122,7 +122,6 @@ const TransactionsCard: React.FC = () => {
 
   const downloadPDF = () => {
     fetchData();
-    console.log('Downloading PDF...');
   };
 
   return (

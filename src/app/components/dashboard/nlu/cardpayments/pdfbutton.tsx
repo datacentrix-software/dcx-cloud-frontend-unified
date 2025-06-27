@@ -91,11 +91,9 @@ const VMComponent: React.FC = () => {
 
         return data;
       } catch (error) {
-        console.log('Error fetching virtual machines:', error);
         return [];
       }
     } else {
-      console.log('No email found in sessionStorage.');
       return [];
     }
   };
@@ -125,7 +123,6 @@ const VMComponent: React.FC = () => {
 
       if (response.ok) {
         const vmData = await response.json();
-        console.log('VM running time data:', vmData);
         let totalCost = 0;
 
         const updatedVMs = vmData
@@ -140,7 +137,6 @@ const VMComponent: React.FC = () => {
 
 
             if (!matchedVM) {
-              console.log(`No matching VM found for ${vm_name}`);
               return null;
             }
 
@@ -169,28 +165,24 @@ const VMComponent: React.FC = () => {
               totalCost: vmTotalCost
             };
           })
-          .filter(Boolean); 
+          .filter(Boolean);
 
         setVms(updatedVMs as VM[]);
         setAmount(totalCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
-        console.log('VM Costs:', updatedVMs);
-        console.log(
-          'Total Cost for all VMs:',
-          totalCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-        );
       } else {
-        console.error('Failed to fetch VM data');
+
+        throw new Error('Failed to fetch VM data');
       }
-    } catch (e) {
-      console.log('Error:', e);
+    } catch (error) {
+      
     }
   };
 
-  
+
 
   const downloadPDF = async () => {
-    setHideButtons(true); 
-    await new Promise((r) => setTimeout(r, 100)); 
+    setHideButtons(true);
+    await new Promise((r) => setTimeout(r, 100));
     if (dialogRef.current) {
       const canvas = await html2canvas(dialogRef.current, { scale: 2 });
       const imgData = canvas.toDataURL('image/png');
@@ -200,7 +192,7 @@ const VMComponent: React.FC = () => {
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save('invoice.pdf');
     }
-    setHideButtons(false); 
+    setHideButtons(false);
   };
 
 
@@ -221,7 +213,6 @@ const VMComponent: React.FC = () => {
       .toFixed(2)
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     sessionStorage.setItem('vm_subtotal', subtotal);
-    console.log(subtotal, 'cndkncdknc--o-o-o');
   }, [vms]);
 
   const handleOpenPopup = () => {
@@ -238,11 +229,10 @@ const VMComponent: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         setUserDetails(data as User);
-        console.log(data, 'Fetched user data');
       } else {
       }
     } catch (error) {
-      console.log('Fetch error:', error);
+      
     }
   };
 
@@ -253,7 +243,7 @@ const VMComponent: React.FC = () => {
   );
   const total12Months = monthly * 12;
 
-  
+
 
   return (
     <>
@@ -272,7 +262,7 @@ const VMComponent: React.FC = () => {
               </Typography>
             </Box>
 
- 
+
             <Box mb={4}>
               <Box display="flex" justifyContent="space-between">
                 <Box>
@@ -422,17 +412,17 @@ const VMComponent: React.FC = () => {
 
             {/* Footer buttons */}
 
-              {!hideButtons && (
-           <Box mt={4} display="flex" justifyContent="flex-end" gap={2}>
-              <Button variant="contained" color="inherit" onClick={() => setIsSummaryOpen(false)}>
-                Close
-              </Button>
-              <Button variant="contained" color="primary" onClick={downloadPDF}>
-                Download PDF
-              </Button>
-            </Box>
-        )}
-           
+            {!hideButtons && (
+              <Box mt={4} display="flex" justifyContent="flex-end" gap={2}>
+                <Button variant="contained" color="inherit" onClick={() => setIsSummaryOpen(false)}>
+                  Close
+                </Button>
+                <Button variant="contained" color="primary" onClick={downloadPDF}>
+                  Download PDF
+                </Button>
+              </Box>
+            )}
+
           </Box>
         </DialogContent>
       </Dialog>

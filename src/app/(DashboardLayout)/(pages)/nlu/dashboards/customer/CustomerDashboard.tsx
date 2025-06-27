@@ -375,7 +375,7 @@ const CustomerDashboard = () => {
                     setVcenterOrgId(response.data.vcenterOrg_id);
                 }
             } catch (error) {
-                console.error('Error fetching organization data:', error);
+                
             }
         };
 
@@ -388,8 +388,6 @@ const CustomerDashboard = () => {
             if (!customerName) return; // Don't fetch data until we have the customer name
 
             try {
-                console.log('Fetching data...');
-
                 // Step 2: Loading products
                 setLoadingStep(loadingSteps[2]);
                 setLoadingProgress(30);
@@ -435,7 +433,7 @@ const CustomerDashboard = () => {
                         setPastBills(pastBillsResponse.data);
                     }
                 } catch (error) {
-                    console.error('Error fetching data:', error);
+                    
                 }
 
                 // Step 6: Finalizing
@@ -448,8 +446,8 @@ const CustomerDashboard = () => {
                 }, 500);
 
             } catch (error) {
-                console.error('Error fetching products:', error);
                 setLoading(false);
+                
             }
         };
 
@@ -563,7 +561,7 @@ const CustomerDashboard = () => {
                 setVmHealthWindow(healthWindowResponse.data);
             }
         } catch (error) {
-            console.error('Error fetching VM data:', error);
+            
         } finally {
             setLoadingTelemetry(false);
         }
@@ -581,7 +579,7 @@ const CustomerDashboard = () => {
                 setLineItems(response.data);
             }
         } catch (error) {
-            console.error('Error fetching line items:', error);
+            
         } finally {
             setLoadingLineItems(false);
         }
@@ -622,7 +620,7 @@ const CustomerDashboard = () => {
             });
             setIsVMPoweredOn(newPowerState);
         } catch (error) {
-            console.error('Error toggling VM power state:', error);
+            
         } finally {
             setIsPowerActionLoading(false);
         }

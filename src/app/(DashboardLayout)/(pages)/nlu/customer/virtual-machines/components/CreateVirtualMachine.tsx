@@ -160,13 +160,12 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
     // Check if we've reached the VM limit
     if (createdVMs.length >= 5) {
       alert('You can only create up to 5 VMs at a time.');
-      return;
+      throw new Error('No template selected');
     }
 
     // Validate template data
     if (buildType === 'template' && !selectedTemplate) {
-      console.error('No template selected');
-      return;
+      throw new Error('No template selected');
     }
 
     // Get the specs based on build type
@@ -190,7 +189,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
         specs,
         templateId: selectedTemplate?.id || ''
       },
-      price: calculatePrice(specs)
+      price: calculatePrice(specs) || 0
     };
 
     // Add to created VMs
@@ -360,12 +359,10 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
   const calculatePrice = (specs: { vcpus: number; memory: number; storage: number; ghz: number }) => {
     // Input validation
     if (!specs) {
-      console.error('No specs provided for price calculation');
       return 0;
     }
 
     if (!products || products.length === 0) {
-      console.error('No products available for pricing calculation');
       return 0;
     }
 
@@ -395,30 +392,18 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
 
     if (!cpuProduct) {
       validationErrors.push(`No CPU product found for ${specs.ghz}`);
-      console.warn(`No CPU product found for ${specs.ghz}. Available CPU products:`,
-        products.filter(p => p.title.toLowerCase().includes('cpu'))
-          .map(p => ({ title: p.title, price: p.price, cost: p.cost }))
-      );
     }
 
     if (!memoryProduct) {
       validationErrors.push('No memory product found');
-      console.warn('No memory product found. Available memory products:',
-        products.filter(p => p.title.toLowerCase().includes('memory') || p.title.toLowerCase().includes('ram'))
-          .map(p => ({ title: p.title, price: p.price, cost: p.cost }))
-      );
     }
 
     if (!storageProduct) {
       validationErrors.push(`No ${tier} storage product found`);
-      console.warn(`No ${tier} storage product found. Available storage products:`,
-        products.filter(p => p.title.toLowerCase().includes('storage'))
-          .map(p => ({ title: p.title, price: p.price, cost: p.cost }))
-      );
     }
 
     if (validationErrors.length > 0) {
-      console.warn('Validation warnings:', validationErrors);
+      return;
     }
 
     // Ensure all specs are valid numbers with defensive checks
@@ -431,20 +416,12 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
     const ghz = typeof specs.ghz === 'number' ? specs.ghz :
       typeof specs.ghz === 'string' ? parseFloat(specs.ghz) : 0;
 
-    // Log the converted values for debugging
-
-
     // Validate numeric inputs
     if (isNaN(vcpus) || isNaN(memory) || isNaN(storage) || isNaN(ghz)) {
-      console.error('Invalid numeric conversion:', {
-        original: specs,
-        converted: { vcpus, memory, storage, ghz }
-      });
       return 0;
     }
 
     if (vcpus <= 0 || memory <= 0 || storage <= 0 || ghz <= 0) {
-      console.error('Non-positive numeric inputs:', { vcpus, memory, storage, ghz });
       return 0;
     }
 
@@ -548,7 +525,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
     if (step < 2) {
       return vmTemplates.filter(template => template.group === size);
     }
-    
+
     // At later steps, filter by all criteria
     return vmTemplates.filter(template =>
       template.group === size &&
@@ -739,20 +716,18 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               <Typography variant="h4" fontWeight={700} color="primary">
                 Step 1 of 5: {stepLabels[0]}
               </Typography>
-              <Tooltip 
+              <Tooltip
                 title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
                 placement="top"
               >
-                <span>
                   <Button
                     variant="outlined"
-                    // disabled={createdVMs.length === 0} CHAND
+                    disabled={createdVMs.length === 0}
                     sx={{ textTransform: 'none' }}
                     onClick={handleOpenAdditionalProducts}
                   >
                     Add Additional Products
                   </Button>
-                </span>
               </Tooltip>
             </Box>
             <ParentCard sx={{ mb: 3, bgcolor: '#fafbfc', '& .MuiCardContent-root': { pt: 0, px: 2 } }} id="region">
@@ -829,7 +804,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               <Typography variant="h4" fontWeight={700} color="primary">
                 Step 2 of 5: {stepLabels[1]}
               </Typography>
-              <Tooltip 
+              <Tooltip
                 title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
                 placement="top"
               >
@@ -993,7 +968,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                                     {template.description}
                                   </Typography>
                                   <Typography variant="h6" color="primary" fontWeight={700} mt={1}>
-                                    R{templatePrice.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
+                                    R{templatePrice?.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/month
                                   </Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', gap: 3 }}>
@@ -1114,7 +1089,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                             Estimated Monthly Cost
                           </Typography>
                           <Typography variant="h5" color="primary" fontWeight={700}>
-                            R{calculatePrice(customSpecs).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            R{calculatePrice(customSpecs)?.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </Typography>
                         </Box>
                         <Box sx={{ display: 'flex', gap: 3 }}>
@@ -1191,7 +1166,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               <Typography variant="h4" fontWeight={700} color="primary">
                 Step 3 of 5: {stepLabels[2]}
               </Typography>
-              <Tooltip 
+              <Tooltip
                 title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
                 placement="top"
               >
@@ -1343,7 +1318,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               <Typography variant="h4" fontWeight={700} color="primary">
                 Step 4 of 5: {stepLabels[3]}
               </Typography>
-              <Tooltip 
+              <Tooltip
                 title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
                 placement="top"
               >
@@ -1462,7 +1437,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               <Typography variant="h4" fontWeight={700} color="primary">
                 Step 5 of 5: {stepLabels[4]}
               </Typography>
-              <Tooltip 
+              <Tooltip
                 title={createdVMs.length === 0 ? "You need to create a virtual machine first before adding additional products" : ""}
                 placement="top"
               >
@@ -1504,7 +1479,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                   variant="outlined"
                   InputLabelProps={{
                     shrink: true,
-                    sx: { 
+                    sx: {
                       position: 'relative',
                       transform: 'none',
                       marginBottom: '8px',
@@ -1542,7 +1517,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                   variant="outlined"
                   InputLabelProps={{
                     shrink: true,
-                    sx: { 
+                    sx: {
                       position: 'relative',
                       transform: 'none',
                       marginBottom: '8px',
