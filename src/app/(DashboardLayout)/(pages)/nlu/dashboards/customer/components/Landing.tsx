@@ -39,7 +39,6 @@ import {
 } from '@tabler/icons-react';
 import ParentCard from '@/app/components/shared/ParentCard';
 import { useRouter } from 'next/navigation';
-import Swal from 'sweetalert2';
 import { useAuthStore } from '@/store';
 import axiosServices from '@/utils/axios';
 import { AxiosError } from 'axios';
@@ -127,31 +126,31 @@ const Landing: React.FC<LandingProps> = ({
 
                     if (vmResponse.data.message === 'Resource Provisioning In Progress') {
 
-                        Swal.fire({
-                            title: 'Successful!',
-                            text: vmResponse?.data.message || `Your resources are currently being provisioned.`,
-                            icon: 'success',
-                            draggable: true,
-                        }).then((result: any) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '/nlu/dashboards/customer';
-                            }
-                        });
+                        // Swal.fire({
+                        //     title: 'Successful!',
+                        //     text: vmResponse?.data.message || `Your resources are currently being provisioned.`,
+                        //     icon: 'success',
+                        //     draggable: true,
+                        // }).then((result: any) => {
+                        //     if (result.isConfirmed) {
+                        //         window.location.href = '/nlu/dashboards/customer';
+                        //     }
+                        // });
                     } else {
-                        Swal.fire({
-                            title: 'Failed',
-                            text: response?.data.message || 'An error occurred.',
-                            icon: 'error',
-                            draggable: true,
-                        });
+                        // Swal.fire({
+                        //     title: 'Failed',
+                        //     text: response?.data.message || 'An error occurred.',
+                        //     icon: 'error',
+                        //     draggable: true,
+                        // });
                     }
                 } else {
-                    Swal.fire({
-                        title: 'Failed',
-                        text: response?.data.message || 'An error occurred.',
-                        icon: 'error',
-                        draggable: true,
-                    });
+                    // Swal.fire({
+                    //     title: 'Failed',
+                    //     text: response?.data.message || 'An error occurred.',
+                    //     icon: 'error',
+                    //     draggable: true,
+                    // });
                 }
             } catch (error: unknown) {
                 let errorMessage = 'An error occurred.';
@@ -162,12 +161,12 @@ const Landing: React.FC<LandingProps> = ({
                     errorMessage = error.message;
                 }
                 
-                Swal.fire({
-                    title: 'Failed',
-                    text: errorMessage,
-                    icon: 'error',
-                    draggable: true,
-                });
+                // Swal.fire({
+                //     title: 'Failed',
+                //     text: errorMessage,
+                //     icon: 'error',
+                //     draggable: true,
+                // });
             }
             setOpenFormDialog(false);
             setVmName('');
@@ -264,7 +263,7 @@ const Landing: React.FC<LandingProps> = ({
             }
         };
         fetchData();
-    }, [token]);
+    }, [token, setVmTemplates]);
 
     return (
         <>

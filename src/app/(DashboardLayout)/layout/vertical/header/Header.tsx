@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -22,7 +22,6 @@ import { useAuthStore } from '@/store';
 import axiosServices from '@/utils/axios';
 import axios, { AxiosError } from 'axios';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
-import Swal from 'sweetalert2';
 import { IPaymentCard } from '@/types';
 import WalletStatusPopover from '@/app/(DashboardLayout)/(pages)/nlu/customer/virtual-machines/components/WalletStatusPopover';
 import NotificationPopover from '@/app/(DashboardLayout)/(pages)/nlu/customer/virtual-machines/components/NotificationPopover';
@@ -138,7 +137,7 @@ const Header = () => {
     }
   };
 
-  const fetchCardDetails = async () => {
+  const fetchCardDetails = useCallback(async () => {
     try {
       const orgId = primaryOrgId;
       const creditCardResponse = await axios.get(
@@ -161,30 +160,30 @@ const Header = () => {
 
     } catch (error: unknown) {
       let errorMessage = 'An error occurred while fetching card details';
-      
+
       if (error instanceof AxiosError) {
         errorMessage = error.response?.data?.message || error.message || errorMessage;
       } else if (error instanceof Error) {
         errorMessage = error.message;
       }
-      
-      Swal.fire({
-        icon: 'error',
-        title: 'API Error',
-        text: errorMessage,
-        showConfirmButton: true
-      });
+
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'API Error',
+      //   text: errorMessage,
+      //   showConfirmButton: true
+      // });
     }
-  };
+  }, [primaryOrgId, token, setField, setPaymentCards]);
 
   useEffect(() => {
     setIsCustomer(getUserRoleDisplay(authUser)?.includes('Customer') as boolean);
     fetchCardDetails();
-  }, []);
+  }, [authUser, fetchCardDetails]);
 
   const [alerts, setAlerts] = useState<any>([]);
 
-  const fetchAlerts = async () => {
+  const fetchAlerts = useCallback(async () => {
     try {
       const orgId = primaryOrgId;
       const res = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/in-app-alerts/${orgId}`, {
@@ -197,7 +196,7 @@ const Header = () => {
       console.error('Error fetching alerts:', error);
       setAlerts([]);
     }
-  };
+  }, [primaryOrgId, token]);
 
   const handleDismissAlert = async (id: number) => {
     try {
@@ -211,7 +210,7 @@ const Header = () => {
     }
   };
 
-  const fetchWallet = async () => {
+  const fetchWallet = useCallback(async () => {
     try {
       const orgId = primaryOrgId;
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/wallet/${orgId}`, {
@@ -224,12 +223,12 @@ const Header = () => {
     } catch (error: unknown) {
       console.error('Error fetching wallet:', error);
     }
-  };
+  }, [setField, primaryOrgId, token]);
 
   useEffect(() => {
     fetchAlerts();
     fetchWallet();
-  }, []);
+  }, [fetchAlerts, fetchWallet]);
 
   return (
     <AppBarStyled position="sticky" color="default" sx={{ marginBottom: 4 }}>

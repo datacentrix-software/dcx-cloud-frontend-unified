@@ -21,7 +21,7 @@ const PaymentMethodsCard: React.FC = () => {
   useEffect(() => {
     const defaultCard = paymentCards.find((card) => card.isDefault)
     setSelectedCard(defaultCard || paymentCards[0])
-  }, [paymentCards])
+  }, [paymentCards, setSelectedCard])
 
   return (
     <Box sx={{ backgroundColor: '#fff', p: 3, borderRadius: 2, border: '1px solid #ccc' }}>

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CreditCard } from '@mui/icons-material';
 import {
   Box,
@@ -11,7 +11,6 @@ import {
   Alert,
   Stack
 } from '@mui/material';
-import Swal from 'sweetalert2';
 import { useAuthStore } from '@/store';
 import axios, { AxiosError } from 'axios';
 import { useQuoteStore } from '@/store/useQuoteStore';
@@ -24,7 +23,7 @@ const BalanceCard: React.FC = () => {
   const { primaryOrgId } = useAuthStore();
   const { formatCurrency, } = useQuoteStore()
 
-  const fetchCardDetails = async () => {
+  const fetchCardDetails = useCallback(async () => {
     try {
 
       const walletResponse = await axios.get(
@@ -41,26 +40,26 @@ const BalanceCard: React.FC = () => {
 
     } catch (error: unknown) {
       let errorMessage = 'An error occurred while fetching card details';
-      
+
       if (error instanceof AxiosError) {
         errorMessage = error.response?.data?.message || error.message || errorMessage;
       } else if (error instanceof Error) {
         errorMessage = error.message;
       }
-      
-      Swal.fire({
-        icon: 'error',
-        title: 'API Error',
-        text: errorMessage,
-        showConfirmButton: true
-      });
+
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'API Error',
+      //   text: errorMessage,
+      //   showConfirmButton: true
+      // });
     }
-  };
+  }, [primaryOrgId, token]);
 
   useEffect(() => {
     fetchCardDetails()
-  }, [])
-  
+  }, [fetchCardDetails])
+
   return (
     <Card variant="outlined">
       <CardContent>
@@ -83,7 +82,7 @@ const BalanceCard: React.FC = () => {
             </Typography>
           </Box>
           <Typography variant="body2" color="text.secondary">
-            You won't be charged until there's a balance due.
+            You won&apos;t be charged until there&apos;s a balance due.
           </Typography>
           <Divider />
           {/* <Button variant="text" color="primary" fullWidth onClick={handlePayment}>
