@@ -28,6 +28,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+
 interface Transaction {
   reference: string;
   amount: number;
@@ -90,8 +91,6 @@ const TransactionsCard: React.FC = () => {
   const validateToDate = (value: string) => !fromDate || value >= fromDate;
 
   const fetchTransactions = async () => {
-
-
     setLoading(true);
 
     try {
@@ -110,10 +109,16 @@ const TransactionsCard: React.FC = () => {
         },
       };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let errorMessage = 'An error occurred while fetching transactions';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       return {
         props: {
-          error: error.message,
+          error: errorMessage,
         },
       };
     }

@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import CustomTextField from '@/app/components/forms/theme-elements/CustomTextField';
 import CustomFormLabel from '@/app/components/forms/theme-elements/CustomFormLabel';
 import axiosServices from '@/utils/axios';
+import { AxiosError } from 'axios';
 
 interface LoginFormProps {
   onOtpSent: (email: string) => void;
@@ -46,9 +47,15 @@ const LoginForm = ({ onOtpSent, onError, onBackToOptions }: LoginFormProps) => {
           // router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
         }
       }
-    } catch (error: any) {
-      const errorMsg =
-        error?.response?.data?.message || 'An error occurred during login';
+    } catch (error: unknown) {
+      let errorMsg = 'An error occurred during login';
+      
+      if (error instanceof AxiosError) {
+        errorMsg = error.response?.data?.message || error.message || errorMsg;
+      } else if (error instanceof Error) {
+        errorMsg = error.message;
+      }
+      
       onError(errorMsg);
     } finally {
       setIsLoading(false);

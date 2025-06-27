@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import axiosServices from '@/utils/axios';
+import { AxiosError } from 'axios';
 import { decoder } from '@/utils/';
 import { useAuthStore } from '@/store/';
 import { useRouter } from 'next/navigation';
@@ -52,8 +53,16 @@ const OtpVerification = ({ email, onError, onSuccess }: OtpVerificationProps) =>
       } else {
         onError(loginResponse.data.message);
       }
-    } catch (error: any) {
-      onError(error.response?.data?.message || 'An error occurred during login.');
+    } catch (error: unknown) {
+      let errorMessage = 'An error occurred during login.';
+      
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || error.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      onError(errorMessage);
     } finally {
       setIsVerifyingOtp(false);
     }

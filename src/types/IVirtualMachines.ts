@@ -12,6 +12,25 @@ interface IAdditionalServices {
     collocation: string[];
 }
 
+// New types for option structures
+interface IProductOption {
+    value: string;
+    label: string;
+    product: ISimpleProduct;
+}
+
+interface IBackupServicesSelected {
+    baas: string[];
+    draas: string[];
+}
+
+interface IAdditionalServicesSelected {
+    professional: string[];
+    naas: string[];
+    faas: string[];
+    collocation: string[];
+}
+
 interface ISelectedOptions {
     virtualMachine: IVMConfig[];
     backupServices: ISimpleProduct[];
@@ -90,7 +109,7 @@ interface IVMConfig {
     serverName: string;
     description: string;
     buildType: 'template' | 'custom';
-    selectedTemplate: any;
+    selectedTemplate: VMTemplate | null;
     selectedSize: string | null;
     customSpecs: ICustomSpecs;
     createdVMs: IVMConfig[];
@@ -101,12 +120,23 @@ interface IVMConfig {
     setServerName: (name: string) => void;
     setDescription: (desc: string) => void;
     setBuildType: (type: 'template' | 'custom') => void;
-    setSelectedTemplate: (template: any) => void;
+    setSelectedTemplate: (template: VMTemplate | null) => void;
     setSelectedSize: (size: string | null) => void;
     setCustomSpecs: (specs: ICustomSpecs) => void;
     setCreatedVMs: (vms: IVMConfig[]) => void;
   }
 
 export type {
-    IProduct, IBackupServices, IAdditionalServices, ISelectedOptions, IVirtualMachineState, IVMConfig, ICustomSpecs, IVMOptionsState, VMTemplate
+    IProduct, 
+    IBackupServices, 
+    IAdditionalServices, 
+    ISelectedOptions, 
+    IVirtualMachineState, 
+    IVMConfig, 
+    ICustomSpecs, 
+    IVMOptionsState, 
+    VMTemplate,
+    IProductOption,
+    IBackupServicesSelected,
+    IAdditionalServicesSelected
 };

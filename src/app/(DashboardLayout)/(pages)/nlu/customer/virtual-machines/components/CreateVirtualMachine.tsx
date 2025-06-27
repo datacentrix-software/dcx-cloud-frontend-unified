@@ -86,6 +86,21 @@ interface VMQuoteObject {
   };
 }
 
+interface OldVMFormat {
+  id: string;
+  vcpus?: number;
+  memory?: number;
+  storage?: number;
+  ghz?: number;
+  configuration?: Partial<IVMConfig["configuration"]>;
+  region?: string;
+  os?: string;
+  tier?: string;
+  serverName?: string;
+  description?: string;
+  price?: number;
+}
+
 interface CreateVirtualMachineProps {
   onSelect: (options: VMQuoteObject[]) => void;
   onAdditionalProductsUpdate?: (products: ISimpleProduct[]) => void;
@@ -179,10 +194,10 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
 
     // Get the specs based on build type
     const specs = buildType === 'template' ? {
-      vcpus: selectedTemplate.vcpus,
-      memory: selectedTemplate.memory,
-      storage: selectedTemplate.storage,
-      ghz: selectedTemplate.ghz
+      vcpus: selectedTemplate?.vcpus || 0,
+      memory: selectedTemplate?.memory || 0,
+      storage: selectedTemplate?.storage || 0,
+      ghz: selectedTemplate?.ghz || 0
     } : customSpecs;
 
     // Create the VM configuration
@@ -196,7 +211,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
       configuration: {
         type: buildType,
         specs,
-        templateId: selectedTemplate?.id || ''
+        templateId: String(selectedTemplate?.id || '')
       },
       price: calculatePrice(specs) || 0
     };
@@ -225,7 +240,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
           tier: vm.tier,
           configuration: {
             type: vm.configuration.type,
-            templateId: vm.configuration.templateId || selectedTemplate?.id || '',
+            templateId: String(vm.configuration.templateId || selectedTemplate?.id || ''),
             specs: {
               vcpus: specs.vcpus,
               memory: specs.memory,
@@ -258,46 +273,59 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
   };
 
   // Update migrateVMConfig to be more defensive
-  const migrateVMConfig = (vm: any) => {
+  const migrateVMConfig = (vm: IVMConfig | VMQuoteObject | null) => {
 
     if (!vm) {
       return null;
     }
 
-    // If the VM is already in the correct format, return it as is
-    if (vm.configuration?.specs && vm.region && vm.os && vm.tier) {
-      return vm;
-    }
-
-    // If the VM is in the quote format, extract the details
-    if (vm.details) {
-      const migratedVM = {
+    // Check if it's a VMQuoteObject (has details property)
+    if ('details' in vm && vm.details) {
+      const migratedVM: IVMConfig = {
         id: vm.id,
         region: vm.details.region,
         os: vm.details.os,
         serverName: vm.title.split(' - ')[0],
         description: vm.description,
         tier: vm.details.tier,
-        configuration: { ...vm.details.configuration, templateId: vm.details.configuration.templateId || '' },
+        configuration: { ...vm.details.configuration, templateId: String(vm.details.configuration.templateId || '') },
         price: vm.price
       };
 
       return migratedVM;
     }
 
+    // Check if it's already an IVMConfig
+    if ('configuration' in vm && vm.configuration?.specs && 'region' in vm && vm.region && 'os' in vm && vm.os && 'tier' in vm && vm.tier) {
+      return vm as IVMConfig;
+    }
+
     // If the VM is in the old format, migrate it
-    const config = vm.configuration || {};
-    const migratedVM = {
-      ...vm,
+    let config: Partial<IVMConfig["configuration"]> = {};
+    if ('configuration' in vm && vm.configuration) {
+      config = vm.configuration;
+    }
+    
+    // Handle old format where specs might be at the top level
+    const vmAsOldFormat = vm as unknown as OldVMFormat;
+    const oldFormatSpecs = {
+      vcpus: Number(vmAsOldFormat.vcpus || 0),
+      memory: Number(vmAsOldFormat.memory || 0),
+      storage: Number(vmAsOldFormat.storage || 0),
+      ghz: Number(vmAsOldFormat.ghz || 0)
+    };
+    
+    const migratedVM: IVMConfig = {
+      ...vm as IVMConfig,
       configuration: {
         type: config.type || 'template',
         specs: {
-          vcpus: Number(config.specs?.vcpus || config.vcpus || 0),
-          memory: Number(config.specs?.memory || config.memory || 0),
-          storage: Number(config.specs?.storage || config.storage || 0),
-          ghz: Number(config.specs?.ghz || config.ghz || 0)
+          vcpus: Number(config.specs?.vcpus || oldFormatSpecs.vcpus || 0),
+          memory: Number(config.specs?.memory || oldFormatSpecs.memory || 0),
+          storage: Number(config.specs?.storage || oldFormatSpecs.storage || 0),
+          ghz: Number(config.specs?.ghz || oldFormatSpecs.ghz || 0)
         },
-        templateId: config.templateId || ''
+        templateId: String(config.templateId || '')
       }
     };
 
@@ -349,7 +377,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               storage: vm.configuration.specs.storage,
               ghz: vm.configuration.specs.ghz
             },
-            templateId: vm.configuration?.templateId || ''
+            templateId: String(vm.configuration?.templateId || '')
           }
         }
       };
@@ -388,32 +416,14 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
       !p.title.toLowerCase().includes('manager')
     );
 
-    // Find storage product based on tier
+    // Find storage product based on tier - use default tier if not selected yet
+    const currentTier = tier || 'Standard SSD';
     const storageProduct = products.find(p =>
       p.title.toLowerCase().includes('storage') &&
-      p.title.toLowerCase().includes(tier.toLowerCase()) &&
+      p.title.toLowerCase().includes(currentTier.toLowerCase()) &&
       !p.title.toLowerCase().includes('engineer') &&
       !p.title.toLowerCase().includes('manager')
     );
-
-    // Detailed validation with specific error messages
-    const validationErrors = [];
-
-    if (!cpuProduct) {
-      validationErrors.push(`No CPU product found for ${specs.ghz}`);
-    }
-
-    if (!memoryProduct) {
-      validationErrors.push('No memory product found');
-    }
-
-    if (!storageProduct) {
-      validationErrors.push(`No ${tier} storage product found`);
-    }
-
-    if (validationErrors.length > 0) {
-      return;
-    }
 
     // Ensure all specs are valid numbers with defensive checks
     const vcpus = typeof specs.vcpus === 'number' ? specs.vcpus :
@@ -447,7 +457,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
     // Calculate Storage cost based on tier
     const storageCost = storageProduct ?
       storageProduct.price * storage : // Use price directly for storage
-      storage * (tier === 'Premium SSD' ? 2.75 : 1.8); // Fallback prices based on tier
+      storage * (currentTier === 'Premium SSD' ? 2.75 : 1.8); // Fallback prices based on tier
 
     const total = cpuCost + memoryCost + storageCost;
 
@@ -546,13 +556,10 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
     setAdditionalProductsDialogOpen(false);
   };
 
-  const handleAdditionalProductsUpdate = (newProducts: any[]) => {
+  const handleAdditionalProductsUpdate = (newProducts: ISimpleProduct[]) => {
     // Use the dedicated callback for additional products if provided
     if (onAdditionalProductsUpdate) {
       onAdditionalProductsUpdate(newProducts);
-    } else {
-      // Fallback to the old behavior
-      onSelect(newProducts);
     }
   };
 
