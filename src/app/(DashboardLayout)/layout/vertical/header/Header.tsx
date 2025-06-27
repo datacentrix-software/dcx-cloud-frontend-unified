@@ -20,7 +20,7 @@ import { AppState } from '@/store/store';
 import { Alert, Link, Tooltip, Typography, Paper, Button, useTheme } from '@mui/material';
 import { useAuthStore } from '@/store';
 import axiosServices from '@/utils/axios';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
 import Swal from 'sweetalert2';
 import { IPaymentCard } from '@/types';
@@ -133,8 +133,9 @@ const Header = () => {
       setLogs(data);
       setLogsOpen(true);
     } catch (error) {
-      console.error('Error fetching logs:', error);
       setLogs([]);
+
+      
     }
   };
 
@@ -163,7 +164,6 @@ const Header = () => {
 
 
     } catch (error: any) {
-      console.error("Card details error", error);
       Swal.fire({
         icon: 'error',
         title: 'API Error',
@@ -171,9 +171,7 @@ const Header = () => {
 
         showConfirmButton: true
       });
-
     }
-
   };
 
   useEffect(() => {
@@ -193,7 +191,7 @@ const Header = () => {
       });
       setAlerts(res.data.alerts || []);
     } catch (error) {
-      console.error('Error fetching alerts:', error);
+
     }
   };
 
@@ -205,7 +203,7 @@ const Header = () => {
       // });
       setAlerts((prev: any) => prev.map((alert: any) => alert.id === id ? { ...alert, dismissed: true } : alert));
     } catch (err) {
-      console.error('Failed to dismiss alert:', err);
+
     }
   };
 
@@ -220,7 +218,7 @@ const Header = () => {
       const data = await res.json();
       setField('wallet', data);
     } catch (error) {
-      console.error('Error fetching wallet data:', error);
+
     }
   };
 

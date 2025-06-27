@@ -40,7 +40,6 @@ const BalanceCard: React.FC = () => {
 
 
     } catch (error: any) {
-      console.error("Card details error", error);
       Swal.fire({
         icon: 'error',
         title: 'API Error',
@@ -50,12 +49,12 @@ const BalanceCard: React.FC = () => {
       });
 
     }
-
   };
 
   useEffect(() => {
     fetchCardDetails()
   }, [])
+  
   return (
     <Card variant="outlined">
       <CardContent>

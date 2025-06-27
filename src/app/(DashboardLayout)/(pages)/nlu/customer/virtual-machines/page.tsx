@@ -110,9 +110,9 @@ export default function VirtualMachinesPage() {
         });
         setVmTemplates(terraformResponse.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
         setProducts([]);
         setVmTemplates([]);
+        
       }
     };
     fetchData();
