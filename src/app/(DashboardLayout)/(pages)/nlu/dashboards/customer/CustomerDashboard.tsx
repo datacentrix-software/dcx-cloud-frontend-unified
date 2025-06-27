@@ -405,7 +405,7 @@ const CustomerDashboard = () => {
                     // Step 3: Retrieving metrics
                     setLoadingStep(loadingSteps[3]);
                     setLoadingProgress(45);
-                    const metricsResponse = await axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/metricAggregation`, {
+                    const metricsResponse = await axios.get("https://daas.billing.backend.datacentrix.cloud/api/cloud/metricAggregation", {
                         headers: { Authorization: `Bearer ${token}` },
                         params: { customer: customerName }
                     });
