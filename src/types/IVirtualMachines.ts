@@ -1,8 +1,8 @@
-type IProduct = any;
+import { IProduct, ISimpleProduct } from "./IProducts";
 
 interface IBackupServices {
-    baas: IProduct[];
-    draas: IProduct[];
+    baas: ISimpleProduct[];
+    draas: ISimpleProduct[];
 }
 
 interface IAdditionalServices {
@@ -13,18 +13,31 @@ interface IAdditionalServices {
 }
 
 interface ISelectedOptions {
-    virtualMachine: IProduct[];
-    backupServices: IProduct[];
-    softwareLicensing: IProduct[];
-    additionalServices: IProduct[];
+    virtualMachine: IVMConfig[];
+    backupServices: ISimpleProduct[];
+    softwareLicensing: ISimpleProduct[];
+    additionalServices: ISimpleProduct[];
+}
+
+interface VMTemplate {
+    id: number;
+    title: string;
+    vcpus: number;
+    memory: number;
+    storage: number;
+    ghz: number;
+    description: string;
+    group: string;
+    osType: string;
+    type: string;
 }
 
 interface IVirtualMachineState {
     activeStep: number;
     selectedOptions: ISelectedOptions;
     totalCost: number;
-    products: IProduct[];
-    vmTemplates: IProduct[];
+    products: ISimpleProduct[];
+    vmTemplates: VMTemplate[];
     backupServicesSelected: IBackupServices;
     softwareLicensingSelected: string[];
     additionalServicesSelected: IAdditionalServices;
@@ -33,8 +46,8 @@ interface IVirtualMachineState {
     setActiveStep: (step: number) => void;
     setSelectedOptions: (options: Partial<ISelectedOptions>) => void;
     setTotalCost: (cost: number) => void;
-    setProducts: (products: IProduct[]) => void;
-    setVmTemplates: (templates: IProduct[]) => void;
+    setProducts: (products: ISimpleProduct[]) => void;
+    setVmTemplates: (templates: VMTemplate[]) => void;
     setBackupServicesSelected: (data: IBackupServices) => void;
     setSoftwareLicensingSelected: (data: string[]) => void;
     setAdditionalServicesSelected: (data: IAdditionalServices) => void;
@@ -94,5 +107,5 @@ interface IVMConfig {
   }
 
 export type {
-    IProduct, IBackupServices, IAdditionalServices, ISelectedOptions, IVirtualMachineState, IVMConfig, ICustomSpecs, IVMOptionsState
+    IProduct, IBackupServices, IAdditionalServices, ISelectedOptions, IVirtualMachineState, IVMConfig, ICustomSpecs, IVMOptionsState, VMTemplate
 };

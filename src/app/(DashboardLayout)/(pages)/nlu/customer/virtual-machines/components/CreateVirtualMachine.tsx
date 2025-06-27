@@ -10,6 +10,7 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import AdditionalProductsDialog from './AdditionalProductsDialog';
 import { useVirtualMachineOptions } from '@/store/useVirtualMachineStore';
+import { ISimpleProduct, IVMConfig, VMTemplate } from '@/types';
 
 // SVG flag icons for regions
 const FlagIcon = ({ code, alt }: { code: string; alt: string }) => (
@@ -60,29 +61,37 @@ const osOptions = [
   { label: 'Linux', value: 'Linux', icon: <LinuxSVGIcon fontSize={32} /> },
 ];
 
-interface VMConfig {
+interface VMQuoteObject {
   id: string;
-  region: string;
-  os: string;
-  serverName: string;
+  title: string;
   description: string;
-  tier: string;
-  configuration: any;
   price: number;
+  units: number;
+  unit: string;
+  type: string;
+  details: {
+    region: string;
+    os: string;
+    tier: string;
+    configuration: {
+      type: 'template' | 'custom';
+      templateId: string;
+      specs: {
+        vcpus: number;
+        memory: number;
+        storage: number;
+        ghz: number;
+      };
+    };
+  };
 }
 
 interface CreateVirtualMachineProps {
-  onSelect: (options: any) => void;
-  onAdditionalProductsUpdate?: (products: any[]) => void;
-  vmTemplates: any[];
-  products: Array<{
-    id: number;
-    title: string;
-    cost: number;
-    price: number;
-    profit: number;
-  }>;
-  selectedVMs?: VMConfig[];
+  onSelect: (options: VMQuoteObject[]) => void;
+  onAdditionalProductsUpdate?: (products: ISimpleProduct[]) => void;
+  vmTemplates: VMTemplate[];
+  products: ISimpleProduct[];
+  selectedVMs?: IVMConfig[];
 }
 
 export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpdate, vmTemplates, products, selectedVMs = [] }: CreateVirtualMachineProps) {
@@ -182,7 +191,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
       region,
       os,
       serverName,
-      description,
+      description: (description ?? description) || `${specs.vcpus} vCPU, ${specs.memory}GB RAM, ${specs.storage}GB Storage, ${specs.ghz}GHz`,
       tier,
       configuration: {
         type: buildType,
@@ -445,75 +454,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
     return total;
   };
 
-  // Update notifyParent to include all details
-  const notifyParent = (next: any = {}) => {
-    if (buildType === 'custom') {
-      const specs = customSpecs;
-      // Validate specs before calculating price
-      if (specs && specs.vcpus > 0 && specs.memory > 0 && specs.storage > 0 && specs.ghz > 0) {
-        onSelect({
-          region: next.region ?? region,
-          os: next.os ?? os,
-          serverName: next.serverName ?? serverName,
-          description: next.description ?? description,
-          tier: next.tier ?? tier,
-          template: [{
-            id: 'custom',
-            title: 'Custom Build',
-            vcpus: specs.vcpus,
-            memory: specs.memory,
-            storage: specs.storage,
-            ghz: specs.ghz,
-            price: calculatePrice(specs),
-            description: `${specs.vcpus} vCPU, ${specs.memory}GB RAM, ${specs.storage}GB Storage, ${specs.ghz}GHz`
-          }]
-        });
-      } else {
-        // If specs are invalid, send empty template array
-        onSelect({
-          region: next.region ?? region,
-          os: next.os ?? os,
-          serverName: next.serverName ?? serverName,
-          description: next.description ?? description,
-          tier: next.tier ?? tier,
-          template: []
-        });
-      }
-    } else {
-      const template = next.template ?? selectedTemplate;
-      if (template && template.vcpus > 0 && template.memory > 0 && template.storage > 0 && template.ghz > 0) {
-        const specs = {
-          vcpus: template.vcpus,
-          memory: template.memory,
-          storage: template.storage,
-          ghz: template.ghz
-        };
-        const templateWithPrice = {
-          ...template,
-          price: calculatePrice(specs)
-        };
-        onSelect({
-          region: next.region ?? region,
-          os: next.os ?? os,
-          serverName: next.serverName ?? serverName,
-          description: next.description ?? description,
-          tier: next.tier ?? tier,
-          template: [templateWithPrice]
-        });
-      } else {
-        // If template is invalid or null, send empty template array
-        onSelect({
-          region: next.region ?? region,
-          os: next.os ?? os,
-          serverName: next.serverName ?? serverName,
-          description: next.description ?? description,
-          tier: next.tier ?? tier,
-          template: []
-        });
-      }
-    }
-  };
-
   // Get unique sizes from templates
   const sizes = ['Small', 'Medium', 'Large'].filter(size =>
     vmTemplates.some(t => t.group === size)
@@ -773,7 +713,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                     }}
                     onClick={() => {
                       setRegion(r.value);
-                      notifyParent({ region: r.value });
                       markStepCompleted(0); // Mark step 0 as completed
                       setTimeout(() => setStep(1), 400); // Delay for animation
                     }}
@@ -849,7 +788,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                         storage: 50,
                         ghz: 2.0,
                       });
-                      notifyParent({ template: [] });
                     }
                   }}
                   sx={{
@@ -955,7 +893,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                             }}
                             onClick={() => {
                               setSelectedTemplate(template);
-                              notifyParent({ template });
                             }}
                           >
                             <CardContent>
@@ -1017,7 +954,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                         onChange={(e) => {
                           const value = Math.max(1, Math.min(32, parseInt(e.target.value) || 1));
                           setCustomSpecs({ ...customSpecs, vcpus: value });
-                          notifyParent();
                         }}
                         InputProps={{
                           inputProps: { min: 1, max: 32 }
@@ -1034,7 +970,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                           onChange={(e) => {
                             const value = Number(e.target.value);
                             setCustomSpecs({ ...customSpecs, memory: value });
-                            notifyParent();
                           }}
                         >
                           {[4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 128].map((ram) => (
@@ -1052,7 +987,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                         onChange={(e) => {
                           const value = Math.max(10, Math.min(2000, parseInt(e.target.value) || 10));
                           setCustomSpecs({ ...customSpecs, storage: value });
-                          notifyParent();
                         }}
                         InputProps={{
                           inputProps: { min: 10, max: 2000 }
@@ -1069,7 +1003,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                           onChange={(e) => {
                             const value = Number(e.target.value);
                             setCustomSpecs({ ...customSpecs, ghz: value });
-                            notifyParent();
                           }}
                         >
                           <MenuItem value={1}>1 GHz</MenuItem>
@@ -1225,7 +1158,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                   }}
                   onClick={() => {
                     setTier('Standard SSD');
-                    notifyParent({ tier: 'Standard SSD' });
                     markStepCompleted(2); // Mark step 2 as completed
                     setTimeout(() => setStep(3), 400);
                   }}
@@ -1261,7 +1193,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                   }}
                   onClick={() => {
                     setTier('Premium SSD');
-                    notifyParent({ tier: 'Premium SSD' });
                     markStepCompleted(2); // Mark step 2 as completed
                     setTimeout(() => setStep(3), 400);
                   }}
@@ -1379,7 +1310,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                     }}
                     onClick={() => {
                       setOs(o.value);
-                      notifyParent({ os: o.value });
                       markStepCompleted(3); // Mark step 3 as completed
                       setTimeout(() => setStep(4), 400);
                     }}
@@ -1471,7 +1401,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                     setServerName(e.target.value);
                     setTouched(prev => ({ ...prev, serverName: true }));
                     setErrors(prev => ({ ...prev, serverName: false }));
-                    notifyParent({ serverName: e.target.value });
                   }}
                   onBlur={() => setTouched(prev => ({ ...prev, serverName: true }))}
                   error={errors.serverName}
@@ -1512,7 +1441,6 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                   value={description}
                   onChange={e => {
                     setDescription(e.target.value);
-                    notifyParent({ description: e.target.value });
                   }}
                   variant="outlined"
                   InputLabelProps={{

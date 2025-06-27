@@ -1,15 +1,16 @@
 import { Box, Typography, Paper } from '@mui/material';
 import MultiSelect from '@/app/components/forms/theme-elements/MultiSelect';
 import { useMemo } from 'react';
+import { ISimpleProduct } from '@/types';
 
 interface SoftwareLicensingProps {
-  onSelect: (options: any[]) => void;
-  products: any[];
-  selected: any[];
-  setSelected: (options: any[]) => void;
+  onSelect: (options: ISimpleProduct[]) => void;
+  products: ISimpleProduct[];
+  selected: ISimpleProduct[];
+  setSelected: (options: ISimpleProduct[]) => void;
 }
 
-function toOptions(products: any[]) {
+function toOptions(products: ISimpleProduct[]) {
   return products.map((p) => ({
     value: String(p.id),
     label: `${p.title}${p.price ? ` (R${p.price})` : ''}`,

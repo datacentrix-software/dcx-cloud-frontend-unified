@@ -1,15 +1,16 @@
 import { Box, Typography, Paper } from '@mui/material';
 import MultiSelect from '@/app/components/forms/theme-elements/MultiSelect';
 import { useEffect } from 'react';
+import { ISimpleProduct } from '@/types';
 
 interface BackupServicesProps {
-  onSelect: (options: any[]) => void;
-  products: any[];
-  selected: { baas: any[]; draas: any[] };
-  setSelected: (options: { baas: any[]; draas: any[] }) => void;
+  onSelect: (options: ISimpleProduct[]) => void;
+  products: ISimpleProduct[];
+  selected: { baas: string[]; draas: string[] };
+  setSelected: (options: { baas: string[]; draas: string[] }) => void;
 }
 
-function toOptions(products: any[]) {
+function toOptions(products: ISimpleProduct[]) {
   return products.map((p) => ({
     value: String(p.id),
     label: `${p.title}${p.price ? ` (R${p.price})` : ''}`,
@@ -29,7 +30,7 @@ export default function BackupServices({ onSelect, products, selected, setSelect
   );
 
   // Helper to get selected product objects by ID
-  const getSelectedProducts = (ids: string[], options: any[]) => {
+  const getSelectedProducts = (ids: string[], options: ReturnType<typeof toOptions>) => {
     const idSet = new Set(ids);
     return options.filter((opt) => idSet.has(String(opt.value))).map((opt) => opt.product);
   };
