@@ -20,10 +20,12 @@ function toOptions(products: any[]) {
 export default function BackupServices({ onSelect, products, selected, setSelected }: BackupServicesProps) {
   // Filter products for each input
   const baasProducts = products.filter(
-    (p) => p.SubCategory?.name === 'Cloud Services -  Backup as a Service (BaaS)'
+    (p) => p.Category?.name === 'Cloud Services - Backup as a Service (BaaS)' ||
+           p.Category?.name === 'Cloud Services -  Backup as a Service (BaaS)'
   );
   const draasProducts = products.filter(
-    (p) => p.SubCategory?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
+    (p) => p.Category?.name === 'Cloud Services - Disaster Recovery as a Service (DraaS)' ||
+           p.Category?.name === 'Cloud Services -  Disaster Recovery as a Service (DraaS)'
   );
 
   // Helper to get selected product objects by ID

@@ -627,7 +627,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
                 <span>
                   <Button
                     variant="outlined"
-                    disabled={createdVMs.length === 0}
+                    // disabled={createdVMs.length === 0} CHAND
                     sx={{ textTransform: 'none' }}
                     onClick={handleOpenAdditionalProducts}
                   >
