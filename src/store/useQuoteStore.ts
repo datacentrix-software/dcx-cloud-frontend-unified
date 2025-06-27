@@ -85,7 +85,6 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
 
 
       if (existingServices.some((s: any) => s.id === service.id)) {
-        console.warn("Service with the same name already selected.");
         return state;
       }
 
@@ -237,8 +236,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
       set({ services: products });
       return products;
     } catch (error) {
-      // handle error as needed
-      console.error(error);
+
     }
   },
 
@@ -316,7 +314,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
 
       set({ connectivityCosts: costsData });
     } catch (error) {
-      console.error("Error fetching connectivity costs:", error);
+      
     }
   },
   selectedCustomerViewProducts: {},

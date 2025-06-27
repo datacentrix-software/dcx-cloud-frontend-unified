@@ -27,7 +27,7 @@ export default function SoftwareLicensing({
     () => products.filter((p) => p.SubCategory?.name === 'Cloud Services -  Microsoft Licences'),
     [products]
   );
-console.log("Products", {products})
+
   const options = useMemo(() => toOptions(m365Products), [m365Products]);
 
   const selectedIds = useMemo(() => selected.map((s) => String(s.id)), [selected]);

@@ -250,8 +250,8 @@ const Landing: React.FC<LandingProps> = ({
 
                 setVmTemplates(terraformResponse.data.filter((template: any) => template.group == 'Free'));
             } catch (error) {
-                console.error('Error fetching data:', error);
                 setVmTemplates([]);
+                
             }
         };
         fetchData();
