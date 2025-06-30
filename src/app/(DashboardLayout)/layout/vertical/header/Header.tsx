@@ -132,7 +132,7 @@ const Header = () => {
       setLogs(data);
       setLogsOpen(true);
     } catch (error: unknown) {
-      console.error('Error fetching logs:', error);
+
       setLogs([]);
     }
   };
@@ -193,7 +193,7 @@ const Header = () => {
       });
       setAlerts(res.data.alerts || []);
     } catch (error: unknown) {
-      console.error('Error fetching alerts:', error);
+
       setAlerts([]);
     }
   }, [primaryOrgId, token]);
@@ -206,7 +206,7 @@ const Header = () => {
       // });
       setAlerts((prev: any) => prev.map((alert: any) => alert.id === id ? { ...alert, dismissed: true } : alert));
     } catch (error: unknown) {
-      console.error('Error dismissing alert:', error);
+
     }
   };
 
@@ -221,7 +221,7 @@ const Header = () => {
       const data = await res.json();
       setField('wallet', data);
     } catch (error: unknown) {
-      console.error('Error fetching wallet:', error);
+
     }
   }, [setField, primaryOrgId, token]);
 
