@@ -12,7 +12,7 @@ import {
     Popover,
     IconButton
 } from '@mui/material';
-import { IconServer, IconCpu, IconDatabase, IconPower, IconInfoCircle, IconX, IconChartLine, IconBulb } from '@tabler/icons-react';
+import { IconServer, IconCpu, IconDatabase, IconPower, IconInfoCircle, IconX, IconChartLine, IconBulb, IconArrowUp } from '@tabler/icons-react';
 import ParentCard from '@/app/components/shared/ParentCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, Area } from 'recharts';
 
@@ -155,13 +155,35 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
     const cpuGraphRef = React.useRef<HTMLDivElement | null>(null);
     const memoryGraphRef = React.useRef<HTMLDivElement | null>(null);
     const diskGraphRef = React.useRef<HTMLDivElement | null>(null);
+    const overviewCardsRef = React.useRef<HTMLDivElement | null>(null);
+    
+    // Track which graph user navigated to
+    const [activeGraph, setActiveGraph] = useState<'cpu' | 'memory' | 'disk' | null>(null);
     
     // Scroll to graph section
-    const scrollToGraph = (ref: React.RefObject<HTMLDivElement | null>) => {
+    const scrollToGraph = (ref: React.RefObject<HTMLDivElement | null>, graphType: 'cpu' | 'memory' | 'disk') => {
         const element = ref.current;
         if (element) {
             const headerHeight = 120; // Account for header + margin + padding
             const elementPosition = element.offsetTop - headerHeight;
+            
+            setActiveGraph(graphType);
+            
+            window.scrollTo({
+                top: elementPosition,
+                behavior: 'smooth'
+            });
+        }
+    };
+    
+    // Scroll back to overview cards
+    const scrollToOverview = () => {
+        const element = overviewCardsRef.current;
+        if (element) {
+            const headerHeight = 120;
+            const elementPosition = element.offsetTop - headerHeight;
+            
+            setActiveGraph(null);
             
             window.scrollTo({
                 top: elementPosition,
@@ -230,49 +252,26 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
 
                         {/* Resource Usage */}
                         <Grid item xs={12} md={4}>
-                            <Box
-                                sx={{
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    '&:hover': {
-                                        transform: 'translateY(-4px)',
-                                        '& .MuiCard-root': {
-                                            boxShadow: (theme) => `0 8px 25px ${theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
-                                        },
-                                        '& .click-indicator': {
-                                            opacity: 1,
-                                            transform: 'translateY(0)',
-                                        }
-                                    }
-                                }}
-                                onClick={() => scrollToGraph(cpuGraphRef)}
-                            >
-                                <ParentCard 
-                                    title="CPU Usage"
-                                    sx={{ 
-                                        mb: 0,
-                                        '& .MuiCard-root': {
-                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            <div ref={overviewCardsRef}>
+                                <Box
+                                    sx={{
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-4px)',
+                                            '& .MuiCard-root': {
+                                                boxShadow: (theme) => `0 8px 25px ${theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
+                                            },
+                                            '& .click-indicator': {
+                                                opacity: 1,
+                                                transform: 'translateY(0)',
+                                            }
                                         }
                                     }}
+                                    onClick={() => scrollToGraph(cpuGraphRef, 'cpu')}
                                 >
                                     <Box sx={{ position: 'relative' }}>
-                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                            <IconCpu size={32} color="#82ca9d" />
-                                            <Box>
-                                                <Typography variant="h4">
-                                                    {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent
-                                                        ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent).toFixed(2)}%`
-                                                        : vmTelemetry?.cpu_usage_avg 
-                                                            ? `${Number(vmTelemetry.cpu_usage_avg).toFixed(2)}%`
-                                                            : '0%'}
-                                                </Typography>
-                                                <Typography variant="subtitle2" color="textSecondary">
-                                                    {vmTelemetry?.cpu_count || 0} Cores ({vmTelemetry?.cpu_cores_per_socket || 0} per socket)
-                                                </Typography>
-                                            </Box>
-                                        </Stack>
-                                        <Box 
+                                        <Box
                                             className="click-indicator"
                                             sx={{
                                                 position: 'absolute',
@@ -297,8 +296,35 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                             View Graph
                                         </Box>
                                     </Box>
-                                </ParentCard>
-                            </Box>
+                                    <ParentCard 
+                                        title="CPU Usage"
+                                        sx={{ 
+                                            mb: 0,
+                                            '& .MuiCard-root': {
+                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            }
+                                        }}
+                                    >
+                                        <Box sx={{ position: 'relative' }}>
+                                            <Stack direction="row" alignItems="center" spacing={2}>
+                                                <IconCpu size={32} color="#82ca9d" />
+                                                <Box>
+                                                    <Typography variant="h4">
+                                                        {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent
+                                                            ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent).toFixed(2)}%`
+                                                            : vmTelemetry?.cpu_usage_avg 
+                                                                ? `${Number(vmTelemetry.cpu_usage_avg).toFixed(2)}%`
+                                                                : '0%'}
+                                                    </Typography>
+                                                    <Typography variant="subtitle2" color="textSecondary">
+                                                        {vmTelemetry?.cpu_count || 0} Cores ({vmTelemetry?.cpu_cores_per_socket || 0} per socket)
+                                                    </Typography>
+                                                </Box>
+                                            </Stack>
+                                        </Box>
+                                    </ParentCard>
+                                </Box>
+                            </div>
                         </Grid>
 
                         <Grid item xs={12} md={4}>
@@ -317,8 +343,34 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         }
                                     }
                                 }}
-                                onClick={() => scrollToGraph(memoryGraphRef)}
+                                onClick={() => scrollToGraph(memoryGraphRef, 'memory')}
                             >
+                                <Box sx={{ position: 'relative' }}>
+                                    <Box
+                                        className="click-indicator"
+                                        sx={{
+                                            position: 'absolute',
+                                            top: 8,
+                                            right: 8,
+                                            opacity: 0,
+                                            transform: 'translateY(-10px)',
+                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 0.5,
+                                            px: 1,
+                                            py: 0.5,
+                                            borderRadius: 1,
+                                            backgroundColor: (theme) => theme.palette.primary.main,
+                                            color: 'white',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 500
+                                        }}
+                                    >
+                                        <IconChartLine size={14} />
+                                        View Graph
+                                    </Box>
+                                </Box>
                                 <ParentCard 
                                     title="Memory Usage"
                                     sx={{ 
@@ -344,30 +396,6 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 </Typography>
                                             </Box>
                                         </Stack>
-                                        <Box 
-                                            className="click-indicator"
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 8,
-                                                right: 8,
-                                                opacity: 0,
-                                                transform: 'translateY(-10px)',
-                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 0.5,
-                                                px: 1,
-                                                py: 0.5,
-                                                borderRadius: 1,
-                                                backgroundColor: (theme) => theme.palette.primary.main,
-                                                color: 'white',
-                                                fontSize: '0.75rem',
-                                                fontWeight: 500
-                                            }}
-                                        >
-                                            <IconChartLine size={14} />
-                                            View Graph
-                                        </Box>
                                     </Box>
                                 </ParentCard>
                             </Box>
@@ -389,8 +417,34 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         }
                                     }
                                 }}
-                                onClick={() => scrollToGraph(diskGraphRef)}
+                                onClick={() => scrollToGraph(diskGraphRef, 'disk')}
                             >
+                                <Box sx={{ position: 'relative' }}>
+                                    <Box
+                                        className="click-indicator"
+                                        sx={{
+                                            position: 'absolute',
+                                            top: 8,
+                                            right: 8,
+                                            opacity: 0,
+                                            transform: 'translateY(-10px)',
+                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 0.5,
+                                            px: 1,
+                                            py: 0.5,
+                                            borderRadius: 1,
+                                            backgroundColor: (theme) => theme.palette.primary.main,
+                                            color: 'white',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 500
+                                        }}
+                                    >
+                                        <IconChartLine size={14} />
+                                        View Graph
+                                    </Box>
+                                </Box>
                                 <ParentCard 
                                     title="Disk Usage"
                                     sx={{ 
@@ -416,30 +470,6 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 </Typography>
                                             </Box>
                                         </Stack>
-                                        <Box 
-                                            className="click-indicator"
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 8,
-                                                right: 8,
-                                                opacity: 0,
-                                                transform: 'translateY(-10px)',
-                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 0.5,
-                                                px: 1,
-                                                py: 0.5,
-                                                borderRadius: 1,
-                                                backgroundColor: (theme) => theme.palette.primary.main,
-                                                color: 'white',
-                                                fontSize: '0.75rem',
-                                                fontWeight: 500
-                                            }}
-                                        >
-                                            <IconChartLine size={14} />
-                                            View Graph
-                                        </Box>
                                     </Box>
                                 </ParentCard>
                             </Box>
@@ -853,7 +883,38 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                         {/* CPU Usage Over Time */}
                         <Grid item xs={12}>
                             <div ref={cpuGraphRef}>
-                                <ParentCard title="CPU Usage Over Time">
+                                <ParentCard 
+                                    title={
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                            <Typography variant="h5">CPU Usage Over Time</Typography>
+                                            {activeGraph === 'cpu' && (
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    onClick={scrollToOverview}
+                                                    startIcon={<IconArrowUp size={16} />}
+                                                    sx={{
+                                                        borderRadius: 2,
+                                                        textTransform: 'none',
+                                                        fontWeight: 500,
+                                                        px: 2,
+                                                        py: 0.5,
+                                                        borderColor: (theme) => theme.palette.primary.main,
+                                                        color: (theme) => theme.palette.primary.main,
+                                                        ml: 2,
+                                                        '&:hover': {
+                                                            backgroundColor: (theme) => theme.palette.primary.main,
+                                                            color: 'white',
+                                                            borderColor: (theme) => theme.palette.primary.main,
+                                                        }
+                                                    }}
+                                                >
+                                                    Back to Overview
+                                                </Button>
+                                            )}
+                                        </Box>
+                                    }
+                                >
                                     {vmCpuRamData.length > 0 ? (
                                         <>
                                             <Box sx={{ height: 300, mt: 2 }}>
@@ -904,7 +965,6 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     </LineChart>
                                                 </ResponsiveContainer>
                                             </Box>
-                                            
                                             {isCpuInfoVisible ? (
                                                 <Paper variant="outlined" sx={{ p: 2, mt: 2, position: 'relative', backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'grey.50', borderRadius: 2 }}>
                                                     <Tooltip title="Dismiss explanation" arrow placement="top">
@@ -979,7 +1039,38 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                         {/* Memory Usage Over Time */}
                         <Grid item xs={12}>
                             <div ref={memoryGraphRef}>
-                                <ParentCard title="Memory Usage Over Time">
+                                <ParentCard 
+                                    title={
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                            <Typography variant="h5">Memory Usage Over Time</Typography>
+                                            {activeGraph === 'memory' && (
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    onClick={scrollToOverview}
+                                                    startIcon={<IconArrowUp size={16} />}
+                                                    sx={{
+                                                        borderRadius: 2,
+                                                        textTransform: 'none',
+                                                        fontWeight: 500,
+                                                        px: 2,
+                                                        py: 0.5,
+                                                        borderColor: (theme) => theme.palette.primary.main,
+                                                        color: (theme) => theme.palette.primary.main,
+                                                        ml: 2,
+                                                        '&:hover': {
+                                                            backgroundColor: (theme) => theme.palette.primary.main,
+                                                            color: 'white',
+                                                            borderColor: (theme) => theme.palette.primary.main,
+                                                        }
+                                                    }}
+                                                >
+                                                    Back to Overview
+                                                </Button>
+                                            )}
+                                        </Box>
+                                    }
+                                >
                                     {vmCpuRamData.length > 0 ? (
                                         <>
                                             <Box sx={{ height: 300, mt: 2 }}>
@@ -1030,7 +1121,6 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     </LineChart>
                                                 </ResponsiveContainer>
                                             </Box>
-                                            
                                             {isMemoryInfoVisible ? (
                                                 <Paper variant="outlined" sx={{ p: 2, mt: 2, position: 'relative', backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'grey.50', borderRadius: 2 }}>
                                                     <Tooltip title="Dismiss explanation" arrow placement="top">
@@ -1105,7 +1195,38 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                         {/* Disk Usage Over Time */}
                         <Grid item xs={12}>
                             <div ref={diskGraphRef}>
-                                <ParentCard title="Disk Usage Over Time">
+                                <ParentCard 
+                                    title={
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                            <Typography variant="h5">Disk Usage Over Time</Typography>
+                                            {activeGraph === 'disk' && (
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    onClick={scrollToOverview}
+                                                    startIcon={<IconArrowUp size={16} />}
+                                                    sx={{
+                                                        borderRadius: 2,
+                                                        textTransform: 'none',
+                                                        fontWeight: 500,
+                                                        px: 2,
+                                                        py: 0.5,
+                                                        borderColor: (theme) => theme.palette.primary.main,
+                                                        color: (theme) => theme.palette.primary.main,
+                                                        ml: 2,
+                                                        '&:hover': {
+                                                            backgroundColor: (theme) => theme.palette.primary.main,
+                                                            color: 'white',
+                                                            borderColor: (theme) => theme.palette.primary.main,
+                                                        }
+                                                    }}
+                                                >
+                                                    Back to Overview
+                                                </Button>
+                                            )}
+                                        </Box>
+                                    }
+                                >
                                     {vmDiskData.length > 0 ? (
                                         <>
                                             <Box sx={{ height: 300, mt: 2 }}>
