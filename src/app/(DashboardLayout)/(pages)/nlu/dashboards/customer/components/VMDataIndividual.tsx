@@ -192,6 +192,16 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
         }
     };
 
+    // Parse values for health, workload, and efficiency
+    const healthValue = vmHealthWindow.length > 0 ? parseFloat(vmHealthWindow[0].avg_badge_health) : 0;
+    const workloadValue = vmHealthWindow.length > 0 ? parseFloat(vmHealthWindow[0].avg_badge_workload) : 0;
+    const efficiencyValue = vmHealthWindow.length > 0 ? parseFloat(vmHealthWindow[0].avg_badge_efficiency) : 0;
+
+    // Color logic functions
+    const getHealthColor = (val: number) => val >= 75 ? '#4caf50' : val >= 50 ? '#ff9800' : '#f44336';
+    const getEfficiencyColor = (val: number) => val >= 75 ? '#4caf50' : val >= 50 ? '#ff9800' : '#f44336';
+    const getWorkloadColor = (val: number) => val < 60 ? '#4caf50' : val < 80 ? '#ff9800' : '#f44336';
+
     return (
         <ParentCard title={
             <Box sx={{ 
@@ -306,23 +316,23 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         }}
                                     >
                                         <Box sx={{ position: 'relative' }}>
-                                            <Stack direction="row" alignItems="center" spacing={2}>
-                                                <IconCpu size={32} color="#82ca9d" />
-                                                <Box>
-                                                    <Typography variant="h4">
-                                                        {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent
-                                                            ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent).toFixed(2)}%`
-                                                            : vmTelemetry?.cpu_usage_avg 
-                                                                ? `${Number(vmTelemetry.cpu_usage_avg).toFixed(2)}%`
-                                                                : '0%'}
-                                                    </Typography>
-                                                    <Typography variant="subtitle2" color="textSecondary">
-                                                        {vmTelemetry?.cpu_count || 0} Cores ({vmTelemetry?.cpu_cores_per_socket || 0} per socket)
-                                                    </Typography>
-                                                </Box>
-                                            </Stack>
+                                <Stack direction="row" alignItems="center" spacing={2}>
+                                    <IconCpu size={32} color="#82ca9d" />
+                                    <Box>
+                                        <Typography variant="h4">
+                                            {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent
+                                                ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent).toFixed(2)}%`
+                                                : vmTelemetry?.cpu_usage_avg 
+                                                    ? `${Number(vmTelemetry.cpu_usage_avg).toFixed(2)}%`
+                                                    : '0%'}
+                                        </Typography>
+                                        <Typography variant="subtitle2" color="textSecondary">
+                                            {vmTelemetry?.cpu_count || 0} Cores ({vmTelemetry?.cpu_cores_per_socket || 0} per socket)
+                                        </Typography>
+                                    </Box>
+                                </Stack>
                                         </Box>
-                                    </ParentCard>
+                            </ParentCard>
                                 </Box>
                             </div>
                         </Grid>
@@ -381,23 +391,23 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                     }}
                                 >
                                     <Box sx={{ position: 'relative' }}>
-                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                            <IconDatabase size={32} color="#8884d8" />
-                                            <Box>
-                                                <Typography variant="h4">
-                                                    {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_memory_usage_percent
-                                                        ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_memory_usage_percent).toFixed(2)}%`
-                                                        : vmTelemetry?.memory_usage_avg 
-                                                            ? `${Number(vmTelemetry.memory_usage_avg).toFixed(2)}%`
-                                                            : '0%'}
-                                                </Typography>
-                                                <Typography variant="subtitle2" color="textSecondary">
-                                                    {Math.round((vmTelemetry?.memory_size_mib || 0) / 1024)} GB Total
-                                                </Typography>
-                                            </Box>
-                                        </Stack>
+                                <Stack direction="row" alignItems="center" spacing={2}>
+                                    <IconDatabase size={32} color="#8884d8" />
+                                    <Box>
+                                        <Typography variant="h4">
+                                            {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_memory_usage_percent
+                                                ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_memory_usage_percent).toFixed(2)}%`
+                                                : vmTelemetry?.memory_usage_avg 
+                                                    ? `${Number(vmTelemetry.memory_usage_avg).toFixed(2)}%`
+                                                    : '0%'}
+                                        </Typography>
+                                        <Typography variant="subtitle2" color="textSecondary">
+                                            {Math.round((vmTelemetry?.memory_size_mib || 0) / 1024)} GB Total
+                                        </Typography>
                                     </Box>
-                                </ParentCard>
+                                </Stack>
+                                    </Box>
+                            </ParentCard>
                             </Box>
                         </Grid>
 
@@ -455,23 +465,23 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                     }}
                                 >
                                     <Box sx={{ position: 'relative' }}>
-                                        <Stack direction="row" alignItems="center" spacing={2}>
-                                            <IconServer size={32} color="#ffc658" />
-                                            <Box>
-                                                <Typography variant="h4">
-                                                    {vmDiskData.length > 0 && vmDiskData[vmDiskData.length - 1].avg_disk_usage_percent
-                                                        ? `${Number(vmDiskData[vmDiskData.length - 1].avg_disk_usage_percent).toFixed(2)}%`
-                                                        : '0%'}
-                                                </Typography>
-                                                <Typography variant="subtitle2" color="textSecondary">
-                                                    {vmDiskData.length > 0 
-                                                        ? `${Number(vmDiskData[vmDiskData.length - 1].avg_diskspace_used).toFixed(2)} GB Used / ${Number(vmDiskData[vmDiskData.length - 1].avg_diskspace_provisioned).toFixed(2)} GB Total`
-                                                        : 'No disk data available'}
-                                                </Typography>
-                                            </Box>
-                                        </Stack>
+                                <Stack direction="row" alignItems="center" spacing={2}>
+                                    <IconServer size={32} color="#ffc658" />
+                                    <Box>
+                                        <Typography variant="h4">
+                                            {vmDiskData.length > 0 && vmDiskData[vmDiskData.length - 1].avg_disk_usage_percent
+                                                ? `${Number(vmDiskData[vmDiskData.length - 1].avg_disk_usage_percent).toFixed(2)}%`
+                                                : '0%'}
+                                        </Typography>
+                                        <Typography variant="subtitle2" color="textSecondary">
+                                            {vmDiskData.length > 0 
+                                                ? `${Number(vmDiskData[vmDiskData.length - 1].avg_diskspace_used).toFixed(2)} GB Used / ${Number(vmDiskData[vmDiskData.length - 1].avg_diskspace_provisioned).toFixed(2)} GB Total`
+                                                : 'No disk data available'}
+                                        </Typography>
                                     </Box>
-                                </ParentCard>
+                                </Stack>
+                                    </Box>
+                            </ParentCard>
                             </Box>
                         </Grid>
 
@@ -495,11 +505,10 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             alignItems: 'center', 
                                                             justifyContent: 'center',
                                                             margin: '0 auto',
-                                                            backgroundColor: vmHealthWindow[0].badge_health_status === 'green' ? '#4caf50' :
-                                                                            vmHealthWindow[0].badge_health_status === 'amber' ? '#ff9800' : '#f44336'
+                                                            backgroundColor: getHealthColor(healthValue)
                                                         }}>
                                                             <Typography variant="h4" sx={{ color: 'white' }}>
-                                                                {parseFloat(vmHealthWindow[0].avg_badge_health).toFixed(1)}%
+                                                                {healthValue.toFixed(1)}%
                                                             </Typography>
                                                         </Box>
                                                     </Box>
@@ -517,11 +526,10 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             alignItems: 'center', 
                                                             justifyContent: 'center',
                                                             margin: '0 auto',
-                                                            backgroundColor: vmHealthWindow[0].badge_workload_status === 'green' ? '#4caf50' :
-                                                                            vmHealthWindow[0].badge_workload_status === 'amber' ? '#ff9800' : '#f44336'
+                                                            backgroundColor: getWorkloadColor(workloadValue)
                                                         }}>
                                                             <Typography variant="h4" sx={{ color: 'white' }}>
-                                                                {parseFloat(vmHealthWindow[0].avg_badge_workload).toFixed(1)}%
+                                                                {workloadValue.toFixed(1)}%
                                                             </Typography>
                                                         </Box>
                                                     </Box>
@@ -539,11 +547,10 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             alignItems: 'center', 
                                                             justifyContent: 'center',
                                                             margin: '0 auto',
-                                                            backgroundColor: vmHealthWindow[0].badge_efficiency_status === 'green' ? '#4caf50' :
-                                                                            vmHealthWindow[0].badge_efficiency_status === 'amber' ? '#ff9800' : '#f44336'
+                                                            backgroundColor: getEfficiencyColor(efficiencyValue)
                                                         }}>
                                                             <Typography variant="h4" sx={{ color: 'white' }}>
-                                                                {parseFloat(vmHealthWindow[0].avg_badge_efficiency).toFixed(1)}%
+                                                                {efficiencyValue.toFixed(1)}%
                                                             </Typography>
                                                         </Box>
                                                     </Box>
@@ -591,18 +598,34 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 </Typography>
                                                 <Box sx={{ mt: 1 }}>
                                                     <Typography variant="body2" fontWeight={600}>Color Codes:</Typography>
+                                                    <Typography variant="body2" fontWeight={500} sx={{ mt: 1 }}>Health/Efficiency:</Typography>
                                                     <Stack spacing={0.5} sx={{mt: 0.5}}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                             <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#4caf50' }} />
-                                                            <Typography variant="caption">Green: Good/Healthy (≥ 80%)</Typography>
+                                                            <Typography variant="caption">Green: Good/Healthy (≥75%)</Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                             <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
-                                                            <Typography variant="caption">Amber: Warning (50% - 79%)</Typography>
+                                                            <Typography variant="caption">Amber: Warning (50% - 74%)</Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                             <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#f44336' }} />
-                                                            <Typography variant="caption">Red: Critical (&lt; 50%)</Typography>
+                                                            <Typography variant="caption">Red: Critical (&lt;50%)</Typography>
+                                                        </Box>
+                                                    </Stack>
+                                                    <Typography variant="body2" fontWeight={500} sx={{ mt: 2 }}>Workload:</Typography>
+                                                    <Stack spacing={0.5} sx={{mt: 0.5}}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#4caf50' }} />
+                                                            <Typography variant="caption">Green: Utilisation is low (0 - &lt;60)</Typography>
+                                                        </Box>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
+                                                            <Typography variant="caption">Amber: Moderate utilisation (≥60 - &lt;80)</Typography>
+                                                        </Box>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#f44336' }} />
+                                                            <Typography variant="caption">Red: High utilisation, performance may be impacted (≥80 - 100)</Typography>
                                                         </Box>
                                                     </Stack>
                                                 </Box>
@@ -766,31 +789,31 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     />
                                                     <Legend />
                                                     {showTotalUsage && (
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="usage" 
-                                                            name="Total Usage" 
-                                                            stroke="#8884d8" 
-                                                            strokeWidth={2}
-                                                        />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="usage" 
+                                                        name="Total Usage" 
+                                                        stroke="#8884d8" 
+                                                        strokeWidth={2}
+                                                    />
                                                     )}
                                                     {showReceived && (
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="received" 
-                                                            name="Received" 
-                                                            stroke="#82ca9d" 
-                                                            strokeWidth={2}
-                                                        />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="received" 
+                                                        name="Received" 
+                                                        stroke="#82ca9d" 
+                                                        strokeWidth={2}
+                                                    />
                                                     )}
                                                     {showTransmitted && (
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="transmitted" 
-                                                            name="Transmitted" 
-                                                            stroke="#ffc658" 
-                                                            strokeWidth={2}
-                                                        />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="transmitted" 
+                                                        name="Transmitted" 
+                                                        stroke="#ffc658" 
+                                                        strokeWidth={2}
+                                                    />
                                                     )}
                                                 </LineChart>
                                             </ResponsiveContainer>
@@ -915,124 +938,124 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         </Box>
                                     }
                                 >
-                                    {vmCpuRamData.length > 0 ? (
-                                        <>
-                                            <Box sx={{ height: 300, mt: 2 }}>
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <LineChart
-                                                        data={vmCpuRamData.map(data => ({
-                                                            time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                                            cpu: parseFloat(data.avg_cpu_usage_percent)
-                                                        }))}
-                                                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                                                    >
-                                                        <CartesianGrid strokeDasharray="3 3" />
-                                                        <XAxis 
-                                                            dataKey="time"
-                                                            angle={-45}
-                                                            textAnchor="end"
-                                                            height={60}
-                                                            label={{ 
-                                                                value: 'Time of Data Collection', 
-                                                                position: 'insideBottom', 
-                                                                offset: -50,
-                                                                style: { textAnchor: 'middle', fontSize: '12px' }
-                                                            }}
-                                                        />
-                                                        <YAxis 
-                                                            label={{ 
-                                                                value: 'CPU Usage (%)', 
-                                                                angle: -90, 
-                                                                position: 'insideLeft',
-                                                                style: { textAnchor: 'middle', fontSize: '12px' }
-                                                            }}
-                                                        />
-                                                        <RechartsTooltip 
-                                                            formatter={(value, name) => [
-                                                                `${Number(value).toFixed(2)}%`, 
-                                                                'CPU Usage'
-                                                            ]}
-                                                            labelFormatter={(label) => `Time: ${label}`}
-                                                        />
-                                                        <Legend />
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="cpu" 
-                                                            name="CPU Usage" 
-                                                            stroke="#82ca9d" 
-                                                            strokeWidth={2}
-                                                        />
-                                                    </LineChart>
-                                                </ResponsiveContainer>
-                                            </Box>
-                                            {isCpuInfoVisible ? (
-                                                <Paper variant="outlined" sx={{ p: 2, mt: 2, position: 'relative', backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'grey.50', borderRadius: 2 }}>
-                                                    <Tooltip title="Dismiss explanation" arrow placement="top">
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={() => setIsCpuInfoVisible(false)}
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                top: 8,
-                                                                right: 8,
-                                                                color: (theme) => theme.palette.text.secondary,
-                                                                backgroundColor: 'rgba(0,0,0,0.04)',
-                                                                borderRadius: '50%',
-                                                                width: 32,
-                                                                height: 32,
-                                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                                '&:hover': {
-                                                                    color: (theme) => theme.palette.error.main,
-                                                                    backgroundColor: (theme) => theme.palette.error.light + '20',
-                                                                    transform: 'scale(1.1) rotate(90deg)',
-                                                                    boxShadow: (theme) => `0 4px 12px ${theme.palette.error.main}40`,
-                                                                },
-                                                                '&:active': {
-                                                                    transform: 'scale(0.95) rotate(90deg)',
-                                                                }
-                                                            }}
-                                                        >
-                                                            <IconX size={18} />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                    <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                                                        CPU Usage Over Time
-                                                    </Typography>
-                                                    <Typography variant="body2" gutterBottom>
-                                                        <b>X-Axis (Time):</b> Shows the time intervals when CPU data was collected
-                                                    </Typography>
-                                                    <Typography variant="body2" gutterBottom>
-                                                        <b>Y-Axis (Usage):</b> CPU usage percentage - higher values indicate more processing activity
-                                                    </Typography>
-                                                    <Box sx={{ mt: 1 }}>
-                                                        <Typography variant="body2" fontWeight={600}>Line Color:</Typography>
-                                                        <Stack spacing={0.5} sx={{mt: 0.5}}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#82ca9d' }} />
-                                                                <Typography variant="caption">Green: CPU Usage</Typography>
-                                                            </Box>
-                                                        </Stack>
-                                                    </Box>
-                                                </Paper>
-                                            ) : (
-                                                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                                                    <Button
+                                {vmCpuRamData.length > 0 ? (
+                                    <>
+                                        <Box sx={{ height: 300, mt: 2 }}>
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart
+                                                    data={vmCpuRamData.map(data => ({
+                                                        time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                                        cpu: parseFloat(data.avg_cpu_usage_percent)
+                                                    }))}
+                                                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                                                >
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis 
+                                                        dataKey="time"
+                                                        angle={-45}
+                                                        textAnchor="end"
+                                                        height={60}
+                                                        label={{ 
+                                                            value: 'Time of Data Collection', 
+                                                            position: 'insideBottom', 
+                                                            offset: -50,
+                                                            style: { textAnchor: 'middle', fontSize: '12px' }
+                                                        }}
+                                                    />
+                                                    <YAxis 
+                                                        label={{ 
+                                                            value: 'CPU Usage (%)', 
+                                                            angle: -90, 
+                                                            position: 'insideLeft',
+                                                            style: { textAnchor: 'middle', fontSize: '12px' }
+                                                        }}
+                                                    />
+                                                    <RechartsTooltip 
+                                                        formatter={(value, name) => [
+                                                            `${Number(value).toFixed(2)}%`, 
+                                                            'CPU Usage'
+                                                        ]}
+                                                        labelFormatter={(label) => `Time: ${label}`}
+                                                    />
+                                                    <Legend />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="cpu" 
+                                                        name="CPU Usage" 
+                                                        stroke="#82ca9d" 
+                                                        strokeWidth={2}
+                                                    />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </Box>
+                                        {isCpuInfoVisible ? (
+                                            <Paper variant="outlined" sx={{ p: 2, mt: 2, position: 'relative', backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'grey.50', borderRadius: 2 }}>
+                                                <Tooltip title="Dismiss explanation" arrow placement="top">
+                                                    <IconButton
                                                         size="small"
-                                                        onClick={() => setIsCpuInfoVisible(true)}
-                                                        startIcon={<IconInfoCircle size={16} />}
-                                                        variant="text"
+                                                        onClick={() => setIsCpuInfoVisible(false)}
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: 8,
+                                                            right: 8,
+                                                            color: (theme) => theme.palette.text.secondary,
+                                                            backgroundColor: 'rgba(0,0,0,0.04)',
+                                                            borderRadius: '50%',
+                                                            width: 32,
+                                                            height: 32,
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            '&:hover': {
+                                                                color: (theme) => theme.palette.error.main,
+                                                                backgroundColor: (theme) => theme.palette.error.light + '20',
+                                                                transform: 'scale(1.1) rotate(90deg)',
+                                                                boxShadow: (theme) => `0 4px 12px ${theme.palette.error.main}40`,
+                                                            },
+                                                            '&:active': {
+                                                                transform: 'scale(0.95) rotate(90deg)',
+                                                            }
+                                                        }}
                                                     >
-                                                        Show CPU Graph Explanation
-                                                    </Button>
+                                                        <IconX size={18} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                                                    CPU Usage Over Time
+                                                </Typography>
+                                                <Typography variant="body2" gutterBottom>
+                                                    <b>X-Axis (Time):</b> Shows the time intervals when CPU data was collected
+                                                </Typography>
+                                                <Typography variant="body2" gutterBottom>
+                                                    <b>Y-Axis (Usage):</b> CPU usage percentage - higher values indicate more processing activity
+                                                </Typography>
+                                                <Box sx={{ mt: 1 }}>
+                                                    <Typography variant="body2" fontWeight={600}>Line Color:</Typography>
+                                                    <Stack spacing={0.5} sx={{mt: 0.5}}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#82ca9d' }} />
+                                                            <Typography variant="caption">Green: CPU Usage</Typography>
+                                                        </Box>
+                                                    </Stack>
                                                 </Box>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <Typography variant="body2" color="textSecondary">
-                                            No CPU usage data available
-                                        </Typography>
-                                    )}
-                                </ParentCard>
+                                            </Paper>
+                                        ) : (
+                                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                                                <Button
+                                                    size="small"
+                                                    onClick={() => setIsCpuInfoVisible(true)}
+                                                    startIcon={<IconInfoCircle size={16} />}
+                                                    variant="text"
+                                                >
+                                                    Show CPU Graph Explanation
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    </>
+                                ) : (
+                                    <Typography variant="body2" color="textSecondary">
+                                        No CPU usage data available
+                                    </Typography>
+                                )}
+                            </ParentCard>
                             </div>
                         </Grid>
 
@@ -1071,124 +1094,124 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         </Box>
                                     }
                                 >
-                                    {vmCpuRamData.length > 0 ? (
-                                        <>
-                                            <Box sx={{ height: 300, mt: 2 }}>
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <LineChart
-                                                        data={vmCpuRamData.map(data => ({
-                                                            time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                                            memory: parseFloat(data.avg_memory_usage_percent)
-                                                        }))}
-                                                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                                                    >
-                                                        <CartesianGrid strokeDasharray="3 3" />
-                                                        <XAxis 
-                                                            dataKey="time"
-                                                            angle={-45}
-                                                            textAnchor="end"
-                                                            height={60}
-                                                            label={{ 
-                                                                value: 'Time of Data Collection', 
-                                                                position: 'insideBottom', 
-                                                                offset: -50,
-                                                                style: { textAnchor: 'middle', fontSize: '12px' }
-                                                            }}
-                                                        />
-                                                        <YAxis 
-                                                            label={{ 
-                                                                value: 'Memory Usage (%)', 
-                                                                angle: -90, 
-                                                                position: 'insideLeft',
-                                                                style: { textAnchor: 'middle', fontSize: '12px' }
-                                                            }}
-                                                        />
-                                                        <RechartsTooltip 
-                                                            formatter={(value, name) => [
-                                                                `${Number(value).toFixed(2)}%`, 
-                                                                'Memory Usage'
-                                                            ]}
-                                                            labelFormatter={(label) => `Time: ${label}`}
-                                                        />
-                                                        <Legend />
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="memory" 
-                                                            name="Memory Usage" 
-                                                            stroke="#8884d8" 
-                                                            strokeWidth={2}
-                                                        />
-                                                    </LineChart>
-                                                </ResponsiveContainer>
-                                            </Box>
-                                            {isMemoryInfoVisible ? (
-                                                <Paper variant="outlined" sx={{ p: 2, mt: 2, position: 'relative', backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'grey.50', borderRadius: 2 }}>
-                                                    <Tooltip title="Dismiss explanation" arrow placement="top">
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={() => setIsMemoryInfoVisible(false)}
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                top: 8,
-                                                                right: 8,
-                                                                color: (theme) => theme.palette.text.secondary,
-                                                                backgroundColor: 'rgba(0,0,0,0.04)',
-                                                                borderRadius: '50%',
-                                                                width: 32,
-                                                                height: 32,
-                                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                                '&:hover': {
-                                                                    color: (theme) => theme.palette.error.main,
-                                                                    backgroundColor: (theme) => theme.palette.error.light + '20',
-                                                                    transform: 'scale(1.1) rotate(90deg)',
-                                                                    boxShadow: (theme) => `0 4px 12px ${theme.palette.error.main}40`,
-                                                                },
-                                                                '&:active': {
-                                                                    transform: 'scale(0.95) rotate(90deg)',
-                                                                }
-                                                            }}
-                                                        >
-                                                            <IconX size={18} />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                    <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                                                        Memory Usage Over Time
-                                                    </Typography>
-                                                    <Typography variant="body2" gutterBottom>
-                                                        <b>X-Axis (Time):</b> Shows the time intervals when memory data was collected
-                                                    </Typography>
-                                                    <Typography variant="body2" gutterBottom>
-                                                        <b>Y-Axis (Usage):</b> Memory usage percentage - higher values indicate more RAM being utilized
-                                                    </Typography>
-                                                    <Box sx={{ mt: 1 }}>
-                                                        <Typography variant="body2" fontWeight={600}>Line Color:</Typography>
-                                                        <Stack spacing={0.5} sx={{mt: 0.5}}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#8884d8' }} />
-                                                                <Typography variant="caption">Purple: Memory Usage</Typography>
-                                                            </Box>
-                                                        </Stack>
-                                                    </Box>
-                                                </Paper>
-                                            ) : (
-                                                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                                                    <Button
+                                {vmCpuRamData.length > 0 ? (
+                                    <>
+                                        <Box sx={{ height: 300, mt: 2 }}>
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart
+                                                    data={vmCpuRamData.map(data => ({
+                                                        time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                                        memory: parseFloat(data.avg_memory_usage_percent)
+                                                    }))}
+                                                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                                                >
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis 
+                                                        dataKey="time"
+                                                        angle={-45}
+                                                        textAnchor="end"
+                                                        height={60}
+                                                        label={{ 
+                                                            value: 'Time of Data Collection', 
+                                                            position: 'insideBottom', 
+                                                            offset: -50,
+                                                            style: { textAnchor: 'middle', fontSize: '12px' }
+                                                        }}
+                                                    />
+                                                    <YAxis 
+                                                        label={{ 
+                                                            value: 'Memory Usage (%)', 
+                                                            angle: -90, 
+                                                            position: 'insideLeft',
+                                                            style: { textAnchor: 'middle', fontSize: '12px' }
+                                                        }}
+                                                    />
+                                                    <RechartsTooltip 
+                                                        formatter={(value, name) => [
+                                                            `${Number(value).toFixed(2)}%`, 
+                                                            'Memory Usage'
+                                                        ]}
+                                                        labelFormatter={(label) => `Time: ${label}`}
+                                                    />
+                                                    <Legend />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="memory" 
+                                                        name="Memory Usage" 
+                                                        stroke="#8884d8" 
+                                                        strokeWidth={2}
+                                                    />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </Box>
+                                        {isMemoryInfoVisible ? (
+                                            <Paper variant="outlined" sx={{ p: 2, mt: 2, position: 'relative', backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'grey.50', borderRadius: 2 }}>
+                                                <Tooltip title="Dismiss explanation" arrow placement="top">
+                                                    <IconButton
                                                         size="small"
-                                                        onClick={() => setIsMemoryInfoVisible(true)}
-                                                        startIcon={<IconInfoCircle size={16} />}
-                                                        variant="text"
+                                                        onClick={() => setIsMemoryInfoVisible(false)}
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: 8,
+                                                            right: 8,
+                                                            color: (theme) => theme.palette.text.secondary,
+                                                            backgroundColor: 'rgba(0,0,0,0.04)',
+                                                            borderRadius: '50%',
+                                                            width: 32,
+                                                            height: 32,
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            '&:hover': {
+                                                                color: (theme) => theme.palette.error.main,
+                                                                backgroundColor: (theme) => theme.palette.error.light + '20',
+                                                                transform: 'scale(1.1) rotate(90deg)',
+                                                                boxShadow: (theme) => `0 4px 12px ${theme.palette.error.main}40`,
+                                                            },
+                                                            '&:active': {
+                                                                transform: 'scale(0.95) rotate(90deg)',
+                                                            }
+                                                        }}
                                                     >
-                                                        Show Memory Graph Explanation
-                                                    </Button>
+                                                        <IconX size={18} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                                                    Memory Usage Over Time
+                                                </Typography>
+                                                <Typography variant="body2" gutterBottom>
+                                                    <b>X-Axis (Time):</b> Shows the time intervals when memory data was collected
+                                                </Typography>
+                                                <Typography variant="body2" gutterBottom>
+                                                    <b>Y-Axis (Usage):</b> Memory usage percentage - higher values indicate more RAM being utilized
+                                                </Typography>
+                                                <Box sx={{ mt: 1 }}>
+                                                    <Typography variant="body2" fontWeight={600}>Line Color:</Typography>
+                                                    <Stack spacing={0.5} sx={{mt: 0.5}}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#8884d8' }} />
+                                                            <Typography variant="caption">Purple: Memory Usage</Typography>
+                                                        </Box>
+                                                    </Stack>
                                                 </Box>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <Typography variant="body2" color="textSecondary">
-                                            No memory usage data available
-                                        </Typography>
-                                    )}
-                                </ParentCard>
+                                            </Paper>
+                                        ) : (
+                                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                                                <Button
+                                                    size="small"
+                                                    onClick={() => setIsMemoryInfoVisible(true)}
+                                                    startIcon={<IconInfoCircle size={16} />}
+                                                    variant="text"
+                                                >
+                                                    Show Memory Graph Explanation
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    </>
+                                ) : (
+                                    <Typography variant="body2" color="textSecondary">
+                                        No memory usage data available
+                                    </Typography>
+                                )}
+                            </ParentCard>
                             </div>
                         </Grid>
 
@@ -1227,139 +1250,139 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         </Box>
                                     }
                                 >
-                                    {vmDiskData.length > 0 ? (
-                                        <>
-                                            <Box sx={{ height: 300, mt: 2 }}>
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <LineChart
-                                                        data={vmDiskData.map(data => ({
-                                                            time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                                            used: parseFloat(data.avg_diskspace_used),
-                                                            provisioned: parseFloat(data.avg_diskspace_provisioned),
-                                                            percentage: parseFloat(data.avg_disk_usage_percent)
-                                                        }))}
-                                                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                                                    >
-                                                        <CartesianGrid strokeDasharray="3 3" />
-                                                        <XAxis 
-                                                            dataKey="time"
-                                                            angle={-45}
-                                                            textAnchor="end"
-                                                            height={60}
-                                                            label={{ 
-                                                                value: 'Time of Data Collection', 
-                                                                position: 'insideBottom', 
-                                                                offset: -50,
-                                                                style: { textAnchor: 'middle', fontSize: '12px' }
-                                                            }}
-                                                        />
-                                                        <YAxis 
-                                                            label={{ 
-                                                                value: 'Disk Space (GB)', 
-                                                                angle: -90, 
-                                                                position: 'insideLeft',
-                                                                style: { textAnchor: 'middle', fontSize: '12px' }
-                                                            }}
-                                                        />
-                                                        <RechartsTooltip 
-                                                            formatter={(value, name) => [
-                                                                name === 'percentage' ? `${Number(value).toFixed(2)}%` : `${Number(value).toFixed(2)} GB`, 
-                                                                name === 'used' ? 'Used Space' : 
-                                                                name === 'provisioned' ? 'Total Provisioned' : 'Usage Percentage'
-                                                            ]}
-                                                            labelFormatter={(label) => `Time: ${label}`}
-                                                        />
-                                                        <Legend />
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="used" 
-                                                            name="Used Space" 
-                                                            stroke="#ffc658" 
-                                                            strokeWidth={2}
-                                                        />
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="provisioned" 
-                                                            name="Total Provisioned" 
-                                                            stroke="#ff8042" 
-                                                            strokeWidth={2}
-                                                        />
-                                                    </LineChart>
-                                                </ResponsiveContainer>
-                                            </Box>
-                                            
-                                            {isDiskInfoVisible ? (
-                                                <Paper variant="outlined" sx={{ p: 2, mt: 2, position: 'relative', backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'grey.50', borderRadius: 2 }}>
-                                                    <Tooltip title="Dismiss explanation" arrow placement="top">
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={() => setIsDiskInfoVisible(false)}
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                top: 8,
-                                                                right: 8,
-                                                                color: (theme) => theme.palette.text.secondary,
-                                                                backgroundColor: 'rgba(0,0,0,0.04)',
-                                                                borderRadius: '50%',
-                                                                width: 32,
-                                                                height: 32,
-                                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                                '&:hover': {
-                                                                    color: (theme) => theme.palette.error.main,
-                                                                    backgroundColor: (theme) => theme.palette.error.light + '20',
-                                                                    transform: 'scale(1.1) rotate(90deg)',
-                                                                    boxShadow: (theme) => `0 4px 12px ${theme.palette.error.main}40`,
-                                                                },
-                                                                '&:active': {
-                                                                    transform: 'scale(0.95) rotate(90deg)',
-                                                                }
-                                                            }}
-                                                        >
-                                                            <IconX size={18} />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                    <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                                                        Disk Usage Over Time
-                                                    </Typography>
-                                                    <Typography variant="body2" gutterBottom>
-                                                        <b>X-Axis (Time):</b> Shows the time intervals when disk data was collected
-                                                    </Typography>
-                                                    <Typography variant="body2" gutterBottom>
-                                                        <b>Y-Axis (Space):</b> Disk space in gigabytes - shows both used and total provisioned space
-                                                    </Typography>
-                                                    <Box sx={{ mt: 1 }}>
-                                                        <Typography variant="body2" fontWeight={600}>Line Colors:</Typography>
-                                                        <Stack spacing={0.5} sx={{mt: 0.5}}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ffc658' }} />
-                                                                <Typography variant="caption">Yellow: Used Space</Typography>
-                                                            </Box>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff8042' }} />
-                                                                <Typography variant="caption">Orange: Total Provisioned</Typography>
-                                                            </Box>
-                                                        </Stack>
-                                                    </Box>
-                                                </Paper>
-                                            ) : (
-                                                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                                                    <Button
+                                {vmDiskData.length > 0 ? (
+                                    <>
+                                        <Box sx={{ height: 300, mt: 2 }}>
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <LineChart
+                                                    data={vmDiskData.map(data => ({
+                                                        time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                                        used: parseFloat(data.avg_diskspace_used),
+                                                        provisioned: parseFloat(data.avg_diskspace_provisioned),
+                                                        percentage: parseFloat(data.avg_disk_usage_percent)
+                                                    }))}
+                                                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                                                >
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis 
+                                                        dataKey="time"
+                                                        angle={-45}
+                                                        textAnchor="end"
+                                                        height={60}
+                                                        label={{ 
+                                                            value: 'Time of Data Collection', 
+                                                            position: 'insideBottom', 
+                                                            offset: -50,
+                                                            style: { textAnchor: 'middle', fontSize: '12px' }
+                                                        }}
+                                                    />
+                                                    <YAxis 
+                                                        label={{ 
+                                                            value: 'Disk Space (GB)', 
+                                                            angle: -90, 
+                                                            position: 'insideLeft',
+                                                            style: { textAnchor: 'middle', fontSize: '12px' }
+                                                        }}
+                                                    />
+                                                    <RechartsTooltip 
+                                                        formatter={(value, name) => [
+                                                            name === 'percentage' ? `${Number(value).toFixed(2)}%` : `${Number(value).toFixed(2)} GB`, 
+                                                            name === 'used' ? 'Used Space' : 
+                                                            name === 'provisioned' ? 'Total Provisioned' : 'Usage Percentage'
+                                                        ]}
+                                                        labelFormatter={(label) => `Time: ${label}`}
+                                                    />
+                                                    <Legend />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="used" 
+                                                        name="Used Space" 
+                                                        stroke="#ffc658" 
+                                                        strokeWidth={2}
+                                                    />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="provisioned" 
+                                                        name="Total Provisioned" 
+                                                        stroke="#ff8042" 
+                                                        strokeWidth={2}
+                                                    />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </Box>
+                                        
+                                        {isDiskInfoVisible ? (
+                                            <Paper variant="outlined" sx={{ p: 2, mt: 2, position: 'relative', backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'grey.50', borderRadius: 2 }}>
+                                                <Tooltip title="Dismiss explanation" arrow placement="top">
+                                                    <IconButton
                                                         size="small"
-                                                        onClick={() => setIsDiskInfoVisible(true)}
-                                                        startIcon={<IconInfoCircle size={16} />}
-                                                        variant="text"
+                                                        onClick={() => setIsDiskInfoVisible(false)}
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: 8,
+                                                            right: 8,
+                                                            color: (theme) => theme.palette.text.secondary,
+                                                            backgroundColor: 'rgba(0,0,0,0.04)',
+                                                            borderRadius: '50%',
+                                                            width: 32,
+                                                            height: 32,
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                            '&:hover': {
+                                                                color: (theme) => theme.palette.error.main,
+                                                                backgroundColor: (theme) => theme.palette.error.light + '20',
+                                                                transform: 'scale(1.1) rotate(90deg)',
+                                                                boxShadow: (theme) => `0 4px 12px ${theme.palette.error.main}40`,
+                                                            },
+                                                            '&:active': {
+                                                                transform: 'scale(0.95) rotate(90deg)',
+                                                            }
+                                                        }}
                                                     >
-                                                        Show Disk Graph Explanation
-                                                    </Button>
+                                                        <IconX size={18} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                                                    Disk Usage Over Time
+                                                </Typography>
+                                                <Typography variant="body2" gutterBottom>
+                                                    <b>X-Axis (Time):</b> Shows the time intervals when disk data was collected
+                                                </Typography>
+                                                <Typography variant="body2" gutterBottom>
+                                                    <b>Y-Axis (Space):</b> Disk space in gigabytes - shows both used and total provisioned space
+                                                </Typography>
+                                                <Box sx={{ mt: 1 }}>
+                                                    <Typography variant="body2" fontWeight={600}>Line Colors:</Typography>
+                                                    <Stack spacing={0.5} sx={{mt: 0.5}}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ffc658' }} />
+                                                            <Typography variant="caption">Yellow: Used Space</Typography>
+                                                        </Box>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff8042' }} />
+                                                            <Typography variant="caption">Orange: Total Provisioned</Typography>
+                                                        </Box>
+                                                    </Stack>
                                                 </Box>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <Typography variant="body2" color="textSecondary">
-                                            No disk usage data available
-                                        </Typography>
-                                    )}
-                                </ParentCard>
+                                            </Paper>
+                                        ) : (
+                                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                                                <Button
+                                                    size="small"
+                                                    onClick={() => setIsDiskInfoVisible(true)}
+                                                    startIcon={<IconInfoCircle size={16} />}
+                                                    variant="text"
+                                                >
+                                                    Show Disk Graph Explanation
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    </>
+                                ) : (
+                                    <Typography variant="body2" color="textSecondary">
+                                        No disk usage data available
+                                    </Typography>
+                                )}
+                            </ParentCard>
                             </div>
                         </Grid>
 
@@ -1478,31 +1501,31 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     />
                                                     <Legend />
                                                     {showCriticalAlerts && (
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="critical" 
-                                                            name="Critical" 
-                                                            stroke="#f44336" 
-                                                            strokeWidth={2}
-                                                        />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="critical" 
+                                                        name="Critical" 
+                                                        stroke="#f44336" 
+                                                        strokeWidth={2}
+                                                    />
                                                     )}
                                                     {showImmediateAlerts && (
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="immediate" 
-                                                            name="Immediate" 
-                                                            stroke="#2196f3" 
-                                                            strokeWidth={2}
-                                                        />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="immediate" 
+                                                        name="Immediate" 
+                                                        stroke="#2196f3" 
+                                                        strokeWidth={2}
+                                                    />
                                                     )}
                                                     {showWarningAlerts && (
-                                                        <Line 
-                                                            type="monotone" 
-                                                            dataKey="warning" 
-                                                            name="Warning" 
-                                                            stroke="#ff9800" 
-                                                            strokeWidth={2}
-                                                        />
+                                                    <Line 
+                                                        type="monotone" 
+                                                        dataKey="warning" 
+                                                        name="Warning" 
+                                                        stroke="#ff9800" 
+                                                        strokeWidth={2}
+                                                    />
                                                     )}
                                                 </LineChart>
                                             </ResponsiveContainer>
