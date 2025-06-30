@@ -1464,9 +1464,9 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <LineChart
                                                     data={vmAlertWindow.map(data => ({
                                                         time: new Date(data.bucket).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                                        critical: parseFloat(data.avg_critical),
-                                                        immediate: parseFloat(data.avg_immediate),
-                                                        warning: parseFloat(data.avg_warning)
+                                                        critical: Math.round(parseFloat(data.avg_critical)),
+                                                        immediate: Math.round(parseFloat(data.avg_immediate)),
+                                                        warning: Math.round(parseFloat(data.avg_warning))
                                                     }))}
                                                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                                                 >
@@ -1490,6 +1490,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             position: 'insideLeft',
                                                             style: { textAnchor: 'middle', fontSize: '12px' }
                                                         }}
+                                                        tickFormatter={(value) => Math.round(value).toString()}
                                                     />
                                                     <RechartsTooltip 
                                                         formatter={(value, name) => [
