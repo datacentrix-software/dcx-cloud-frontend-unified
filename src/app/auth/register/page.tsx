@@ -1,230 +1,37 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  Typography,
-  Paper,
-  Container,
-  Link,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Dialog,
-  Grid,
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  CircularProgress,
-  Autocomplete,
+  Box, Typography, Container, Link, Grid, TextField,
+  Checkbox, FormControlLabel, CircularProgress, Button,
+  Dialog, DialogTitle, DialogContent, DialogActions,
+  Stack
 } from '@mui/material';
-import axiosServices from '@/utils/axios';
-import { AxiosError } from 'axios';
-import LoadingPage from '@/app/components/LoadingPage';
-import { useRouter } from 'next/navigation';
 import InfoCarousel from '../authForms/InfoCarousel';
+import TermsDialog from './TermsDialog';
+import LoadingPage from '@/app/components/LoadingPage';
+import { useRegisterForm } from '@/hooks';
+import { useRouter } from 'next/navigation';
 
-export default function RegistrationPage() {
+export default function RegistrationForm() {
+  const {
+    isLoading, isRegistering, dialogMessage, dialogOpen, setDialogOpen,
+    msaAccepted, setMsaAccepted, showTerms, setShowTerms,
+    formData, setFormData, errors,
+    handleMobileChange, handleRegister, isFormValid,
+    touched, setTouched, validateField
+  } = useRegisterForm();
+
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState<string>('');
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [msaAccepted, setMsaAccepted] = useState<boolean>(false);
-  const [isTermsLoading, setIsTermsLoading] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
 
-  const [formData, setFormData] = React.useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    mobile: '+27',
-    organisation: {
-      organisation_name: '',
-      msa_accepted: false
-    }
-  });
-
-  const [errors, setErrors] = React.useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    mobile: '',
-    organisation_name: '',
-    organisation_type: '',
-    msa_accepted: ''
-  });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
-
-  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Ensure the value starts with +27
-    if (!value.startsWith('+27')) {
-      setFormData({ ...formData, mobile: '+27' });
-      return;
-    }
-    // Only allow numbers after +27
-    const numbersOnly = value.replace(/[^\d]/g, '');
-    if (numbersOnly.length <= 11) { // +27 + 9 digits
-      const newValue = '+27' + numbersOnly.slice(2);
-      setFormData({ ...formData, mobile: newValue });
-      setErrors({ ...errors, mobile: '' });
-    }
-  };
-
-  const validateForm = () => {
-    let tempErrors = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      mobile: '',
-      organisation_name: '',
-      organisation_type: '',
-      msa_accepted: ''
-    };
-    let isValid = true;
-
-    // First Name validation
-    if (!formData.firstName.trim()) {
-      tempErrors.firstName = 'First name is required';
-      isValid = false;
-    }
-
-    // Last Name validation
-    if (!formData.lastName.trim()) {
-      tempErrors.lastName = 'Last name is required';
-      isValid = false;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim()) {
-      tempErrors.email = 'Email is required';
-      isValid = false;
-    } else if (!emailRegex.test(formData.email)) {
-      tempErrors.email = 'Please enter a valid email address';
-      isValid = false;
-    }
-
-    // Mobile validation
-    const mobileRegex = /^\+27\d{9}$/;
-    if (!formData.mobile.trim()) {
-      tempErrors.mobile = 'Contact number is required';
-      isValid = false;
-    } else if (!mobileRegex.test(formData.mobile)) {
-      tempErrors.mobile = 'Please enter a valid contact number (Format: +27123456789)';
-      isValid = false;
-    }
-
-    // Organisation Name validation
-    if (!formData.organisation.organisation_name.trim()) {
-      tempErrors.organisation_name = 'Organisation name is required';
-      isValid = false;
-    }
-
-    // MSA acceptance validation
-    if (!msaAccepted) {
-      tempErrors.msa_accepted = 'You must accept the Master Service Agreement';
-      isValid = false;
-    }
-
-
-    setErrors(tempErrors);
-    return isValid;
-  };
-
-  const isFormValid = () => {
-    const valid = (
-      formData.firstName.trim() !== '' &&
-      formData.lastName.trim() !== '' &&
-      formData.email.trim() !== '' &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
-      /^\+27\d{9}$/.test(formData.mobile) &&
-      formData.organisation.organisation_name.trim() !== '' &&
-      msaAccepted
-    );
-
-    return valid;
-  };
-
-  // Add useEffect to log form state changes
-  useEffect(() => {
-  }, [formData, msaAccepted, errors]);
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsRegistering(true);
-    try {
-      const response = await axiosServices.post(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/users/registercustomer`,
-        {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          mobile: formData.mobile,
-          organisation: {
-            ...formData.organisation,
-            msa_accepted: msaAccepted,
-            email_domain: formData.email
-          },
-          status: 'Active',
-          msa_version_id: null,
-        }
-      );
-
-      if (response.status === 200 || response.status === 201) {
-        setDialogMessage('Successfully registered user. Please check your email for further instructions on completion registration.');
-        setDialogOpen(true);
-
-        setTimeout(() => {
-          setDialogOpen(false);
-          setIsLoading(true);
-          setTimeout(() => {
-            router.push('/auth/login');
-          }, 1000);
-        }, 1500);
-
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          mobile: '+27',
-          organisation: {
-            organisation_name: '',
-            msa_accepted: false
-          }
-        });
-        setMsaAccepted(false);
-      }
-    } catch (error: unknown) {
-      let errorMessage = 'Network error. Please try again.';
-      
-      if (error instanceof AxiosError) {
-        errorMessage = error.response?.data?.message || error.message || errorMessage;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      
-      setDialogMessage(errorMessage);
-      setDialogOpen(true);
-    } finally {
-      setIsRegistering(false);
-    }
-  };
+  const renderLabel = (label: string, required = false) => (
+    <Typography
+      variant="subtitle2"
+      sx={{ color: 'text.secondary', mb: 0.5 }}
+    >
+      {label}
+      {required && <Typography component="span" color="error.main"> *</Typography>}
+    </Typography>
+  );
 
   if (isLoading) {
     return <LoadingPage title="Loading Registration" subtitle="Please wait while we prepare your registration form" />;
@@ -232,335 +39,146 @@ export default function RegistrationPage() {
 
   return (
     <Grid container sx={{ height: '100vh', overflow: 'hidden' }}>
-      {/* Left side - Carousel */}
-      <Grid item xs={12} md={6} sx={{ 
-        display: { xs: 'none', md: 'flex' },
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        bgcolor: '#ffffff',
-        color: 'black',
-        minHeight: '100vh',
-      }}>
-        <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Box sx={{ width: '100%', height: '100%' }}>
-            <InfoCarousel />
-          </Box>
+      <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'flex' }, bgcolor: '#fff' }}>
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <InfoCarousel />
         </Box>
       </Grid>
 
-      {/* Right side - Registration Form */}
-      <Grid item xs={12} md={6} sx={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        p: 4,
-        minHeight: '100vh',
+      <Grid item xs={12} md={6} sx={{
         backgroundImage: 'url(/images/backgrounds/new-login-bg.jpeg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        position: { md: 'fixed' },
-        right: { md: 0 },
-        width: { md: '50%' }
+        p: 4, display: 'flex', alignItems: 'center'
       }}>
-        <Container maxWidth="sm" sx={{ 
-          py: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          minHeight: '100vh'
-        }}>
-          <Box
-            width="100%"
-            maxWidth={500}
-            sx={{
-              background: '#ffffff',
-              borderRadius: '12px',
-              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-              padding: 3,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-            }}
-          >
-            <Box textAlign="center" mb={3}>
-              <Typography variant="h4" fontWeight="bold"  gutterBottom>
-                Create Your Account
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Join us today and start your journey
-              </Typography>
-            </Box>
+        <Container maxWidth="sm">
+          <Box sx={{ background: '#fff', borderRadius: 2, boxShadow: 3, p: 4 }}>
+            <Typography variant="h4" textAlign="center" fontWeight="bold">Create Your Account</Typography>
+            <Typography variant="body1" color="text.secondary" textAlign="center" mb={3}>
+              Join us today and start your journey
+            </Typography>
 
-            <Box 
-              component="form" 
-              onSubmit={handleRegister}
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                width: '100%'
-              }}
-            >
-              <Grid container spacing={2}>
+            <Box component="form" onSubmit={handleRegister} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Grid container spacing={1}>
                 <Grid item xs={12} sm={6}>
+                  {renderLabel('First Name', true)}
                   <TextField
-                    required
-                    label="First Name"
+                    fullWidth
                     value={formData.firstName}
                     onChange={(e) => {
-                      const newValue = e.target.value;
-                      setFormData({ ...formData, firstName: newValue });
-                      setErrors({ ...errors, firstName: '' });
+                      setFormData({ ...formData, firstName: e.target.value });
+                      if (touched.firstName) validateField('firstName');
                     }}
-                    fullWidth
-                    size="medium"
-                    error={!!errors.firstName}
-                    helperText={errors.firstName}
-                    InputLabelProps={{
-                      shrink: true,
-                      sx: { 
-                        position: 'static',
-                        transform: 'none',
-                        fontSize: '0.875rem',
-                        color: 'text.secondary',
-                        mb: 0.5,
-                        '& .MuiFormLabel-asterisk': {
-                          color: 'error.main'
-                        }
-                      }
+                    onBlur={() => {
+                      setTouched(prev => ({ ...prev, firstName: true }));
+                      validateField('firstName');
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 1,
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        '&:hover fieldset': {
-                          borderColor: 'primary.main',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: 'primary.main',
-                        },
-                      },
-                    }}
+                    error={touched.firstName && !!errors.firstName}
+                    helperText={touched.firstName ? errors.firstName : ''}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
+                  {renderLabel('Last Name', true)}
                   <TextField
-                    required
-                    label="Last Name"
+                    fullWidth
                     value={formData.lastName}
                     onChange={(e) => {
-                      const newValue = e.target.value;
-                      setFormData({ ...formData, lastName: newValue });
-                      setErrors({ ...errors, lastName: '' });
+                      setFormData({ ...formData, lastName: e.target.value });
+                      if (touched.lastName) validateField('lastName');
                     }}
-                    fullWidth
-                    size="medium"
-                    error={!!errors.lastName}
-                    helperText={errors.lastName}
-                    InputLabelProps={{
-                      shrink: true,
-                      sx: { 
-                        position: 'static',
-                        transform: 'none',
-                        fontSize: '0.875rem',
-                        color: 'text.secondary',
-                        mb: 0.5,
-                        '& .MuiFormLabel-asterisk': {
-                          color: 'error.main'
-                        }
-                      }
+                    onBlur={() => {
+                      setTouched(prev => ({ ...prev, lastName: true }));
+                      validateField('lastName');
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 1,
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        '&:hover fieldset': {
-                          borderColor: 'primary.main',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: 'primary.main',
-                        },
-                      },
-                    }}
+                    error={touched.lastName && !!errors.lastName}
+                    helperText={touched.lastName ? errors.lastName : ''}
                   />
                 </Grid>
               </Grid>
 
-              <TextField
-                required
-                label="Email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => {
-                  const newValue = e.target.value;
-                  setFormData({ ...formData, email: newValue });
-                  setErrors({ ...errors, email: '' });
-                }}
-                fullWidth
-                size="medium"
-                error={!!errors.email}
-                helperText={errors.email}
-                InputLabelProps={{
-                  shrink: true,
-                  sx: { 
-                    position: 'static',
-                    transform: 'none',
-                    fontSize: '0.875rem',
-                    color: 'text.secondary',
-                    mb: 0.5,
-                    '& .MuiFormLabel-asterisk': {
-                      color: 'error.main'
-                    }
-                  }
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 1,
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    '&:hover fieldset': {
-                      borderColor: 'primary.main',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: 'primary.main',
-                    },
-                  },
-                }}
-              />
+              <Stack>
+                {renderLabel('Email', true)}
+                <TextField
+                  fullWidth
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    if (touched.email) validateField('email');
+                  }}
+                  onBlur={() => {
+                    setTouched(prev => ({ ...prev, email: true }));
+                    validateField('email');
+                  }}
+                  error={touched.email && !!errors.email}
+                  helperText={touched.email ? errors.email : ''}
+                />
+              </Stack>
 
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    label="Organisation Name"
-                    value={formData.organisation.organisation_name}
-                    onChange={(e) => {
-                      const newOrgData = {
+              <Stack>
+                {renderLabel('Organisation Name', true)}
+                <TextField
+                  fullWidth
+                  value={formData.organisation.organisation_name}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      organisation: {
                         ...formData.organisation,
                         organisation_name: e.target.value
-                      };
-
-                      setFormData({
-                        ...formData,
-                        organisation: newOrgData
-                      });
-                      setErrors({ ...errors, organisation_name: '' });
-                    }}
-                    fullWidth
-                    size="medium"
-                    error={!!errors.organisation_name}
-                    helperText={errors.organisation_name}
-                    InputLabelProps={{
-                      shrink: true,
-                      sx: { 
-                        position: 'static',
-                        transform: 'none',
-                        fontSize: '0.875rem',
-                        color: 'text.secondary',
-                        mb: 0.5,
-                        '& .MuiFormLabel-asterisk': {
-                          color: 'error.main'
-                        }
                       }
-                    }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 1,
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        '&:hover fieldset': {
-                          borderColor: 'primary.main',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: 'primary.main',
-                        },
-                      },
-                    }}
-                  />
-                </Grid>
-            
-            
-              </Grid>
+                    });
+                    if (touched.organisation_name) validateField('organisation_name');
+                  }}
+                  onBlur={() => {
+                    setTouched(prev => ({ ...prev, organisation_name: true }));
+                    validateField('organisation_name');
+                  }}
+                  error={touched.organisation_name && !!errors.organisation_name}
+                  helperText={touched.organisation_name ? errors.organisation_name : ''}
+                />
+              </Stack>
 
-              <TextField
-                required
-                label="Contact Number"
-                value={formData.mobile}
-                onChange={handleMobileChange}
-                fullWidth
-                size="medium"
-                error={!!errors.mobile}
-                inputProps={{
-                  maxLength: 12,
-                  pattern: "\\+27\\d{9}"
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                  sx: { 
-                    position: 'static',
-                    transform: 'none',
-                    fontSize: '0.875rem',
-                    color: 'text.secondary',
-                    mb: 0.5,
-                    '& .MuiFormLabel-asterisk': {
-                      color: 'error.main'
-                    }
-                  }
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 1,
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    '&:hover fieldset': {
-                      borderColor: 'primary.main',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: 'primary.main',
-                    },
-                  },
-                }}
-              />
+              <Stack>
+                {renderLabel('Contact Number', true)}
+                <TextField
+                  fullWidth
+                  value={formData.mobile}
+                  onChange={handleMobileChange}
+                  onBlur={() => {
+                    setTouched(prev => ({ ...prev, mobile: true }));
+                    validateField('mobile');
+                  }}
+                  inputProps={{ maxLength: 12 }}
+                  error={touched.mobile && !!errors.mobile}
+                  helperText={touched.mobile ? errors.mobile : ''}
+                />
+              </Stack>
 
-              <Box sx={{ mt: 1 }}>
+              <Stack>
                 <FormControlLabel
                   control={
                     <Checkbox
                       checked={msaAccepted}
-                      onChange={(e) => {
-                        const newValue = e.target.checked;
-                        setMsaAccepted(newValue);
-                        setErrors({ ...errors, msa_accepted: '' });
-                      }}
-                      sx={{
-                        color: 'primary.main',
-                        '&.Mui-checked': {
-                          color: 'primary.main',
-                        },
-                      }}
+                      onChange={(e) => setMsaAccepted(e.target.checked)}
                     />
                   }
                   label={
                     <Typography variant="body2" color={errors.msa_accepted ? 'error' : 'text.secondary'}>
                       I accept the Master Service Agreement
-                      <Typography component="span" color="error.main" sx={{ ml: 0.5 }}>*</Typography>
+                      <Typography component="span" color="error.main"> *</Typography>
                     </Typography>
                   }
                 />
                 {errors.msa_accepted && (
-                  <Typography variant="caption" color="error" sx={{ display: 'block', mt: 0.5, ml: 3 }}>
-                    {errors.msa_accepted}
-                  </Typography>
+                  <Typography variant="caption" color="error" ml={3}>{errors.msa_accepted}</Typography>
                 )}
-              </Box>
+              </Stack>
 
               <Button
                 type="submit"
                 variant="contained"
-                color="primary"
                 fullWidth
-                size="large"
-                disabled={!isFormValid() || isRegistering}
                 sx={{
                   mt: 2,
                   py: 1.5,
@@ -577,142 +195,44 @@ export default function RegistrationPage() {
                     color: 'rgba(0, 0, 0, 0.26)'
                   }
                 }}
+                disabled={!isFormValid() || isRegistering}
               >
                 {isRegistering ? (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <CircularProgress size={20} color="inherit" />
-                    Creating Account...
+                    <CircularProgress size={20} color="inherit" /> Creating Account...
                   </Box>
-                ) : (
-                  'Create Account'
-                )}
+                ) : 'Create Account'}
               </Button>
 
-              <Box textAlign="center" mt={2}>
-                <Typography variant="body2" color="text.secondary">
-                  Already have an account?{' '}
-                  <Link 
-                    href="/auth/login" 
-                    underline="hover"
-                    sx={{
-                      color: 'primary.main',
-                      fontWeight: 500,
-                      '&:hover': {
-                        color: 'primary.dark',
-                      },
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsLoading(true);
-                      setTimeout(() => {
-                        router.push('/auth/login');
-                      }, 1000);
-                    }}
-                  >
-                    Sign in
-                  </Link>
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  By registering you agree to our{' '}
-                  <Link
-                    component="button"
-                    variant="body2"
-                    onClick={() => setShowTerms(true)}
-                    sx={{
-                      color: 'primary.main',
-                      fontWeight: 500,
-                      '&:hover': {
-                        color: 'primary.dark',
-                      },
-                      border: 'none',
-                      background: 'none',
-                      padding: 0,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Terms and Conditions *
-                  </Link>
-                </Typography>
-              </Box>
+              <Typography variant="body2" color="text.secondary" textAlign="center">
+                Already have an account?{' '}
+                <Link href="/auth/login" onClick={(e) => {
+                  e.preventDefault();
+                  router.push('/auth/login');
+                }}>
+                  Sign in
+                </Link>
+              </Typography>
+
+              <Typography variant="body2" color="text.secondary" textAlign="center">
+                By registering you agree to our{' '}
+                <Link component="button" onClick={() => setShowTerms(true)}>Terms and Conditions *</Link>
+              </Typography>
             </Box>
           </Box>
         </Container>
 
-        <Dialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          maxWidth="xs"
-          PaperProps={{
-            sx: {
-              minWidth: 'auto',
-              maxWidth: '90vw',
-              m: 1,
-              '& .MuiDialogTitle-root': {
-                py: 1
-              },
-              '& .MuiDialogContent-root': {
-                py: 1,
-                px: 2,
-                minWidth: '200px'
-              },
-              '& .MuiDialogActions-root': {
-                p: 1
-              }
-            }
-          }}
-        >
+        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
           <DialogTitle>Notification</DialogTitle>
           <DialogContent>
             <Typography>{dialogMessage}</Typography>
           </DialogContent>
           <DialogActions>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => setDialogOpen(false)}
-            >
-              Close
-            </Button>
+            <Button variant="contained" onClick={() => setDialogOpen(false)}>Close</Button>
           </DialogActions>
         </Dialog>
 
-        {showTerms && (
-          <Dialog
-            open={showTerms}
-            onClose={() => setShowTerms(false)}
-            maxWidth="md"
-            fullWidth
-          >
-            <DialogTitle>Terms and Conditions</DialogTitle>
-            <DialogContent>
-              <Box sx={{ p: 2 }}>
-                <Typography variant="body1" paragraph>
-                  Please read these terms and conditions carefully before using our service.
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  1. By accessing and using this service, you accept and agree to be bound by the terms and provision of this agreement.
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  2. All content included on this site is the property of our company or its content suppliers and protected by international copyright laws.
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  3. We reserve the right to modify these terms at any time. We do so by posting modified terms on this website.
-                </Typography>
-                <Typography variant="body1" paragraph>
-                  4. Your use of the service is at your sole risk. The service is provided on an &quotas is&quot and &quotas available&quot basis.
-                </Typography>
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                variant="contained"
-                onClick={() => setShowTerms(false)}
-              >
-                Close
-              </Button>
-            </DialogActions>
-          </Dialog>
-        )}
+        {showTerms && <TermsDialog showTerms={showTerms} setShowTerms={setShowTerms} />}
       </Grid>
     </Grid>
   );
