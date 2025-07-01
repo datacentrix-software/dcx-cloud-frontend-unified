@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { IconServer, IconCpu, IconDatabase, IconPower, IconInfoCircle, IconX, IconChartLine, IconBulb, IconArrowUp } from '@tabler/icons-react';
 import ParentCard from '@/app/components/shared/ParentCard';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, Area } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, Area, BarChart, Bar } from 'recharts';
 
 interface VMData {
     identity_instance_uuid: string;
@@ -140,7 +140,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
     const [isCpuInfoVisible, setIsCpuInfoVisible] = useState(true);
     const [isMemoryInfoVisible, setIsMemoryInfoVisible] = useState(true);
     const [isDiskInfoVisible, setIsDiskInfoVisible] = useState(true);
-    
+
     // Network graph line visibility states
     const [showTotalUsage, setShowTotalUsage] = useState(true);
     const [showReceived, setShowReceived] = useState(true);
@@ -202,7 +202,50 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
     const getEfficiencyColor = (val: number) => val >= 75 ? '#4caf50' : val >= 50 ? '#ff9800' : '#f44336';
     const getWorkloadColor = (val: number) => val < 60 ? '#4caf50' : val < 80 ? '#ff9800' : '#f44336';
 
+    // --- DUMMY DATA FOR REV COUNTERS (for visual testing) ---
+    // Comment out the real calculations and use these values to showcase RAG states
+    // const avgCritical = vmAlertWindow.length > 0 ? Math.round(
+    //   vmAlertWindow.reduce((sum, d) => sum + parseFloat(d.avg_critical), 0) / vmAlertWindow.length
+    // ) : 0;
+    // const avgImmediate = vmAlertWindow.length > 0 ? Math.round(
+    //   vmAlertWindow.reduce((sum, d) => sum + parseFloat(d.avg_immediate), 0) / vmAlertWindow.length
+    // ) : 0;
+    // const avgWarning = vmAlertWindow.length > 0 ? Math.round(
+    //   vmAlertWindow.reduce((sum, d) => sum + parseFloat(d.avg_warning), 0) / vmAlertWindow.length
+    // ) : 0;
+    // const avgTotal = avgCritical + avgImmediate + avgWarning;
+    const avgCritical = 0;    // Green
+    const avgImmediate = 2;  // Amber
+    const avgWarning = 5;    // Red
+    const avgTotal = 7;      // Red
+    // --- END DUMMY DATA ---
+
+    // RAG color logic
+    const getAlertColor = (val: number) => val <= 1 ? '#4caf50' : val <= 3 ? '#ff9800' : '#f44336';
+
+    // Simple SVG rev counter component
+    const RevCounter = ({ value, label }: { value: number, label: string }) => {
+        const color = getAlertColor(value);
+        const angle = Math.min(180, Math.max(0, value * 36)); // 0 alerts = 0deg, 5 alerts = 180deg
+        const needleX = 50 + 40 * Math.cos(Math.PI * (1 - angle / 180));
+        const needleY = 60 - 40 * Math.sin(Math.PI * (1 - angle / 180));
     return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mx: 2 }}>
+                <svg width="100" height="60">
+                    <path d="M10,60 A40,40 0 0,1 90,60" fill="#eee" />
+                    <path d="M10,60 A40,40 0 0,1 90,60" fill="none" stroke="#ccc" strokeWidth="6" />
+                    <path d="M10,60 A40,40 0 0,1 90,60" fill="none" stroke={color} strokeWidth="6" strokeDasharray={`${angle/180*126},126`} />
+                    <line x1="50" y1="60" x2={needleX} y2={needleY} stroke={color} strokeWidth="3" />
+                    <circle cx="50" cy="60" r="4" fill={color} />
+                </svg>
+                <Typography variant="caption" sx={{ fontWeight: 600 }}>{label}</Typography>
+                <Typography variant="h6" sx={{ color, fontWeight: 700 }}>{value}</Typography>
+            </Box>
+        );
+    };
+
+    return (
+        <>
         <ParentCard title={
             <Box sx={{ 
                 display: 'flex', 
@@ -262,7 +305,82 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
 
                         {/* Resource Usage */}
                         <Grid item xs={12} md={4}>
-                            <div ref={overviewCardsRef}>
+                                <div ref={overviewCardsRef}>
+                                    <Box
+                                        sx={{
+                                            cursor: 'pointer',
+                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            '&:hover': {
+                                                transform: 'translateY(-4px)',
+                                                '& .MuiCard-root': {
+                                                    boxShadow: (theme) => `0 8px 25px ${theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
+                                                },
+                                                '& .click-indicator': {
+                                                    opacity: 1,
+                                                    transform: 'translateY(0)',
+                                                }
+                                            }
+                                        }}
+                                        onClick={() => scrollToGraph(cpuGraphRef, 'cpu')}
+                                    >
+                                        <Box sx={{ position: 'relative' }}>
+                                            <Box
+                                                className="click-indicator"
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: 8,
+                                                    right: 8,
+                                                    opacity: 0,
+                                                    transform: 'translateY(-10px)',
+                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 0.5,
+                                                    px: 1,
+                                                    py: 0.5,
+                                                    borderRadius: 1,
+                                                    backgroundColor: (theme) => theme.palette.primary.main,
+                                                    color: 'white',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 500
+                                                }}
+                                            >
+                                                <IconChartLine size={14} />
+                                                View Graph
+                                            </Box>
+                                        </Box>
+                                        <ParentCard 
+                                            title="CPU Usage"
+                                            sx={{ 
+                                                mb: 0,
+                                                '& .MuiCard-root': {
+                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                }
+                                            }}
+                                        >
+                                            <Box sx={{ position: 'relative' }}>
+                                <Stack direction="row" alignItems="center" spacing={2}>
+                                    <IconCpu size={32} color="#82ca9d" />
+                                    <Box>
+                                        <Typography variant="h4">
+                                            {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent
+                                                ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent).toFixed(2)}%`
+                                                : vmTelemetry?.cpu_usage_avg 
+                                                    ? `${Number(vmTelemetry.cpu_usage_avg).toFixed(2)}%`
+                                                    : '0%'}
+                                        </Typography>
+                                        <Typography variant="subtitle2" color="textSecondary">
+                                            {vmTelemetry?.cpu_count || 0} Cores ({vmTelemetry?.cpu_cores_per_socket || 0} per socket)
+                                        </Typography>
+                                    </Box>
+                                </Stack>
+                                            </Box>
+                            </ParentCard>
+                                    </Box>
+                                </div>
+                        </Grid>
+
+                        <Grid item xs={12} md={4}>
                                 <Box
                                     sx={{
                                         cursor: 'pointer',
@@ -278,7 +396,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                             }
                                         }
                                     }}
-                                    onClick={() => scrollToGraph(cpuGraphRef, 'cpu')}
+                                    onClick={() => scrollToGraph(memoryGraphRef, 'memory')}
                                 >
                                     <Box sx={{ position: 'relative' }}>
                                         <Box
@@ -307,7 +425,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         </Box>
                                     </Box>
                                     <ParentCard 
-                                        title="CPU Usage"
+                                        title="Memory Usage"
                                         sx={{ 
                                             mb: 0,
                                             '& .MuiCard-root': {
@@ -316,81 +434,6 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         }}
                                     >
                                         <Box sx={{ position: 'relative' }}>
-                                <Stack direction="row" alignItems="center" spacing={2}>
-                                    <IconCpu size={32} color="#82ca9d" />
-                                    <Box>
-                                        <Typography variant="h4">
-                                            {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent
-                                                ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent).toFixed(2)}%`
-                                                : vmTelemetry?.cpu_usage_avg 
-                                                    ? `${Number(vmTelemetry.cpu_usage_avg).toFixed(2)}%`
-                                                    : '0%'}
-                                        </Typography>
-                                        <Typography variant="subtitle2" color="textSecondary">
-                                            {vmTelemetry?.cpu_count || 0} Cores ({vmTelemetry?.cpu_cores_per_socket || 0} per socket)
-                                        </Typography>
-                                    </Box>
-                                </Stack>
-                                        </Box>
-                            </ParentCard>
-                                </Box>
-                            </div>
-                        </Grid>
-
-                        <Grid item xs={12} md={4}>
-                            <Box
-                                sx={{
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    '&:hover': {
-                                        transform: 'translateY(-4px)',
-                                        '& .MuiCard-root': {
-                                            boxShadow: (theme) => `0 8px 25px ${theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
-                                        },
-                                        '& .click-indicator': {
-                                            opacity: 1,
-                                            transform: 'translateY(0)',
-                                        }
-                                    }
-                                }}
-                                onClick={() => scrollToGraph(memoryGraphRef, 'memory')}
-                            >
-                                <Box sx={{ position: 'relative' }}>
-                                    <Box
-                                        className="click-indicator"
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 8,
-                                            right: 8,
-                                            opacity: 0,
-                                            transform: 'translateY(-10px)',
-                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 0.5,
-                                            px: 1,
-                                            py: 0.5,
-                                            borderRadius: 1,
-                                            backgroundColor: (theme) => theme.palette.primary.main,
-                                            color: 'white',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 500
-                                        }}
-                                    >
-                                        <IconChartLine size={14} />
-                                        View Graph
-                                    </Box>
-                                </Box>
-                                <ParentCard 
-                                    title="Memory Usage"
-                                    sx={{ 
-                                        mb: 0,
-                                        '& .MuiCard-root': {
-                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        }
-                                    }}
-                                >
-                                    <Box sx={{ position: 'relative' }}>
                                 <Stack direction="row" alignItems="center" spacing={2}>
                                     <IconDatabase size={32} color="#8884d8" />
                                     <Box>
@@ -406,65 +449,65 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         </Typography>
                                     </Box>
                                 </Stack>
-                                    </Box>
+                                        </Box>
                             </ParentCard>
-                            </Box>
+                                </Box>
                         </Grid>
 
                         <Grid item xs={12} md={4}>
-                            <Box
-                                sx={{
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    '&:hover': {
-                                        transform: 'translateY(-4px)',
-                                        '& .MuiCard-root': {
-                                            boxShadow: (theme) => `0 8px 25px ${theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
-                                        },
-                                        '& .click-indicator': {
-                                            opacity: 1,
-                                            transform: 'translateY(0)',
-                                        }
-                                    }
-                                }}
-                                onClick={() => scrollToGraph(diskGraphRef, 'disk')}
-                            >
-                                <Box sx={{ position: 'relative' }}>
-                                    <Box
-                                        className="click-indicator"
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 8,
-                                            right: 8,
-                                            opacity: 0,
-                                            transform: 'translateY(-10px)',
-                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 0.5,
-                                            px: 1,
-                                            py: 0.5,
-                                            borderRadius: 1,
-                                            backgroundColor: (theme) => theme.palette.primary.main,
-                                            color: 'white',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 500
-                                        }}
-                                    >
-                                        <IconChartLine size={14} />
-                                        View Graph
-                                    </Box>
-                                </Box>
-                                <ParentCard 
-                                    title="Disk Usage"
-                                    sx={{ 
-                                        mb: 0,
-                                        '& .MuiCard-root': {
-                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                <Box
+                                    sx={{
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-4px)',
+                                            '& .MuiCard-root': {
+                                                boxShadow: (theme) => `0 8px 25px ${theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.15)'}`,
+                                            },
+                                            '& .click-indicator': {
+                                                opacity: 1,
+                                                transform: 'translateY(0)',
+                                            }
                                         }
                                     }}
+                                    onClick={() => scrollToGraph(diskGraphRef, 'disk')}
                                 >
                                     <Box sx={{ position: 'relative' }}>
+                                        <Box
+                                            className="click-indicator"
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 8,
+                                                right: 8,
+                                                opacity: 0,
+                                                transform: 'translateY(-10px)',
+                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 0.5,
+                                                px: 1,
+                                                py: 0.5,
+                                                borderRadius: 1,
+                                                backgroundColor: (theme) => theme.palette.primary.main,
+                                                color: 'white',
+                                                fontSize: '0.75rem',
+                                                fontWeight: 500
+                                            }}
+                                        >
+                                            <IconChartLine size={14} />
+                                            View Graph
+                                        </Box>
+                                    </Box>
+                                    <ParentCard 
+                                        title="Disk Usage"
+                                        sx={{ 
+                                            mb: 0,
+                                            '& .MuiCard-root': {
+                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            }
+                                        }}
+                                    >
+                                        <Box sx={{ position: 'relative' }}>
                                 <Stack direction="row" alignItems="center" spacing={2}>
                                     <IconServer size={32} color="#ffc658" />
                                     <Box>
@@ -480,9 +523,9 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         </Typography>
                                     </Box>
                                 </Stack>
-                                    </Box>
+                                        </Box>
                             </ParentCard>
-                            </Box>
+                                </Box>
                         </Grid>
 
                         {/* System Health and Alerts in a row */}
@@ -505,10 +548,10 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             alignItems: 'center', 
                                                             justifyContent: 'center',
                                                             margin: '0 auto',
-                                                            backgroundColor: getHealthColor(healthValue)
+                                                                backgroundColor: getHealthColor(healthValue)
                                                         }}>
                                                             <Typography variant="h4" sx={{ color: 'white' }}>
-                                                                {healthValue.toFixed(1)}%
+                                                                    {healthValue.toFixed(1)}%
                                                             </Typography>
                                                         </Box>
                                                     </Box>
@@ -526,10 +569,10 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             alignItems: 'center', 
                                                             justifyContent: 'center',
                                                             margin: '0 auto',
-                                                            backgroundColor: getWorkloadColor(workloadValue)
+                                                                backgroundColor: getWorkloadColor(workloadValue)
                                                         }}>
                                                             <Typography variant="h4" sx={{ color: 'white' }}>
-                                                                {workloadValue.toFixed(1)}%
+                                                                    {workloadValue.toFixed(1)}%
                                                             </Typography>
                                                         </Box>
                                                     </Box>
@@ -547,10 +590,10 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             alignItems: 'center', 
                                                             justifyContent: 'center',
                                                             margin: '0 auto',
-                                                            backgroundColor: getEfficiencyColor(efficiencyValue)
+                                                                backgroundColor: getEfficiencyColor(efficiencyValue)
                                                         }}>
                                                             <Typography variant="h4" sx={{ color: 'white' }}>
-                                                                {efficiencyValue.toFixed(1)}%
+                                                                    {efficiencyValue.toFixed(1)}%
                                                             </Typography>
                                                         </Box>
                                                     </Box>
@@ -598,34 +641,34 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 </Typography>
                                                 <Box sx={{ mt: 1 }}>
                                                     <Typography variant="body2" fontWeight={600}>Color Codes:</Typography>
-                                                    <Typography variant="body2" fontWeight={500} sx={{ mt: 1 }}>Health/Efficiency:</Typography>
+                                                        <Typography variant="body2" fontWeight={500} sx={{ mt: 1 }}>Health/Efficiency:</Typography>
                                                     <Stack spacing={0.5} sx={{mt: 0.5}}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                             <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#4caf50' }} />
-                                                            <Typography variant="caption">Green: Good/Healthy (≥75%)</Typography>
+                                                                <Typography variant="caption">Green: Good/Healthy (≥75%)</Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                             <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
-                                                            <Typography variant="caption">Amber: Warning (50% - 74%)</Typography>
+                                                                <Typography variant="caption">Amber: Warning (50% - 74%)</Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                                             <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#f44336' }} />
-                                                            <Typography variant="caption">Red: Critical (&lt;50%)</Typography>
-                                                        </Box>
-                                                    </Stack>
-                                                    <Typography variant="body2" fontWeight={500} sx={{ mt: 2 }}>Workload:</Typography>
-                                                    <Stack spacing={0.5} sx={{mt: 0.5}}>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#4caf50' }} />
-                                                            <Typography variant="caption">Green: Utilisation is low (0 - &lt;60)</Typography>
-                                                        </Box>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
-                                                            <Typography variant="caption">Amber: Moderate utilisation (≥60 - &lt;80)</Typography>
-                                                        </Box>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#f44336' }} />
-                                                            <Typography variant="caption">Red: High utilisation, performance may be impacted (≥80 - 100)</Typography>
+                                                                <Typography variant="caption">Red: Critical (&lt;50%)</Typography>
+                                                            </Box>
+                                                        </Stack>
+                                                        <Typography variant="body2" fontWeight={500} sx={{ mt: 2 }}>Workload:</Typography>
+                                                        <Stack spacing={0.5} sx={{mt: 0.5}}>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#4caf50' }} />
+                                                                <Typography variant="caption">Green: Utilisation is low (0 - &lt;60)</Typography>
+                                                            </Box>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
+                                                                <Typography variant="caption">Amber: Moderate utilisation (≥60 - &lt;80)</Typography>
+                                                            </Box>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#f44336' }} />
+                                                                <Typography variant="caption">Red: High utilisation, performance may be impacted (≥80 - 100)</Typography>
                                                         </Box>
                                                     </Stack>
                                                 </Box>
@@ -682,70 +725,70 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     : '0.00'} kbps
                                             </Typography>
                                         </Box>
-                                        
-                                        {/* Graph Line Toggle Controls */}
-                                        <Box sx={{ mb: 2 }}>
-                                            <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ mb: 1 }}>
-                                                <IconChartLine size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                                                Toggle Graph Lines (Click to show/hide):
-                                            </Typography>
-                                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                                <Button
-                                                    size="small"
-                                                    variant={showTotalUsage ? "contained" : "outlined"}
-                                                    onClick={() => setShowTotalUsage(!showTotalUsage)}
-                                                    sx={{
-                                                        minWidth: 'auto',
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        backgroundColor: showTotalUsage ? '#8884d8' : 'transparent',
-                                                        color: showTotalUsage ? 'white' : '#8884d8',
-                                                        borderColor: '#8884d8',
-                                                        '&:hover': {
-                                                            backgroundColor: showTotalUsage ? '#7a73c7' : 'rgba(136, 132, 216, 0.1)',
-                                                        }
-                                                    }}
-                                                >
-                                                    Total Usage
-                                                </Button>
-                                                <Button
-                                                    size="small"
-                                                    variant={showReceived ? "contained" : "outlined"}
-                                                    onClick={() => setShowReceived(!showReceived)}
-                                                    sx={{
-                                                        minWidth: 'auto',
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        backgroundColor: showReceived ? '#82ca9d' : 'transparent',
-                                                        color: showReceived ? 'white' : '#82ca9d',
-                                                        borderColor: '#82ca9d',
-                                                        '&:hover': {
-                                                            backgroundColor: showReceived ? '#6bb88c' : 'rgba(130, 202, 157, 0.1)',
-                                                        }
-                                                    }}
-                                                >
-                                                    Received
-                                                </Button>
-                                                <Button
-                                                    size="small"
-                                                    variant={showTransmitted ? "contained" : "outlined"}
-                                                    onClick={() => setShowTransmitted(!showTransmitted)}
-                                                    sx={{
-                                                        minWidth: 'auto',
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        backgroundColor: showTransmitted ? '#ffc658' : 'transparent',
-                                                        color: showTransmitted ? 'white' : '#ffc658',
-                                                        borderColor: '#ffc658',
-                                                        '&:hover': {
-                                                            backgroundColor: showTransmitted ? '#e6b24f' : 'rgba(255, 198, 88, 0.1)',
-                                                        }
-                                                    }}
-                                                >
-                                                    Transmitted
-                                                </Button>
+                                            
+                                            {/* Graph Line Toggle Controls */}
+                                            <Box sx={{ mb: 2 }}>
+                                                <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ mb: 1 }}>
+                                                    <IconChartLine size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                                                    Toggle Graph Lines (Click to show/hide):
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                                    <Button
+                                                        size="small"
+                                                        variant={showTotalUsage ? "contained" : "outlined"}
+                                                        onClick={() => setShowTotalUsage(!showTotalUsage)}
+                                                        sx={{
+                                                            minWidth: 'auto',
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            backgroundColor: showTotalUsage ? '#8884d8' : 'transparent',
+                                                            color: showTotalUsage ? 'white' : '#8884d8',
+                                                            borderColor: '#8884d8',
+                                                            '&:hover': {
+                                                                backgroundColor: showTotalUsage ? '#7a73c7' : 'rgba(136, 132, 216, 0.1)',
+                                                            }
+                                                        }}
+                                                    >
+                                                        Total Usage
+                                                    </Button>
+                                                    <Button
+                                                        size="small"
+                                                        variant={showReceived ? "contained" : "outlined"}
+                                                        onClick={() => setShowReceived(!showReceived)}
+                                                        sx={{
+                                                            minWidth: 'auto',
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            backgroundColor: showReceived ? '#82ca9d' : 'transparent',
+                                                            color: showReceived ? 'white' : '#82ca9d',
+                                                            borderColor: '#82ca9d',
+                                                            '&:hover': {
+                                                                backgroundColor: showReceived ? '#6bb88c' : 'rgba(130, 202, 157, 0.1)',
+                                                            }
+                                                        }}
+                                                    >
+                                                        Received
+                                                    </Button>
+                                                    <Button
+                                                        size="small"
+                                                        variant={showTransmitted ? "contained" : "outlined"}
+                                                        onClick={() => setShowTransmitted(!showTransmitted)}
+                                                        sx={{
+                                                            minWidth: 'auto',
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            backgroundColor: showTransmitted ? '#ffc658' : 'transparent',
+                                                            color: showTransmitted ? 'white' : '#ffc658',
+                                                            borderColor: '#ffc658',
+                                                            '&:hover': {
+                                                                backgroundColor: showTransmitted ? '#e6b24f' : 'rgba(255, 198, 88, 0.1)',
+                                                            }
+                                                        }}
+                                                    >
+                                                        Transmitted
+                                                    </Button>
+                                                </Box>
                                             </Box>
-                                        </Box>
                                         
                                         <Box sx={{ height: 300, mt: 2 }}>
                                             <ResponsiveContainer width="100%" height="100%">
@@ -788,7 +831,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         labelFormatter={(label) => `Time: ${label}`}
                                                     />
                                                     <Legend />
-                                                    {showTotalUsage && (
+                                                        {showTotalUsage && (
                                                     <Line 
                                                         type="monotone" 
                                                         dataKey="usage" 
@@ -796,8 +839,8 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         stroke="#8884d8" 
                                                         strokeWidth={2}
                                                     />
-                                                    )}
-                                                    {showReceived && (
+                                                        )}
+                                                        {showReceived && (
                                                     <Line 
                                                         type="monotone" 
                                                         dataKey="received" 
@@ -805,8 +848,8 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         stroke="#82ca9d" 
                                                         strokeWidth={2}
                                                     />
-                                                    )}
-                                                    {showTransmitted && (
+                                                        )}
+                                                        {showTransmitted && (
                                                     <Line 
                                                         type="monotone" 
                                                         dataKey="transmitted" 
@@ -814,7 +857,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         stroke="#ffc658" 
                                                         strokeWidth={2}
                                                     />
-                                                    )}
+                                                        )}
                                                 </LineChart>
                                             </ResponsiveContainer>
                                         </Box>
@@ -875,12 +918,12 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         </Box>
                                                     </Stack>
                                                 </Box>
-                                                <Box sx={{ mt: 2, p: 1.5, backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.1)' : 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid', borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.3)' : 'rgba(25, 118, 210, 0.2)' }}>
-                                                    <Typography variant="body2" sx={{ color: (theme) => theme.palette.primary.main, fontWeight: 500 }}>
-                                                        <IconBulb size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                                                        <b>Tip:</b> Use the toggle buttons above the graph to show/hide specific network metrics for better analysis!
-                                                    </Typography>
-                                                </Box>
+                                                    <Box sx={{ mt: 2, p: 1.5, backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.1)' : 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid', borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.3)' : 'rgba(25, 118, 210, 0.2)' }}>
+                                                        <Typography variant="body2" sx={{ color: (theme) => theme.palette.primary.main, fontWeight: 500 }}>
+                                                            <IconBulb size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                                            <b>Tip:</b> Use the toggle buttons above the graph to show/hide specific network metrics for better analysis!
+                                                        </Typography>
+                                                    </Box>
                                             </Paper>
                                         ) : (
                                             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
@@ -905,39 +948,39 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
 
                         {/* CPU Usage Over Time */}
                         <Grid item xs={12}>
-                            <div ref={cpuGraphRef}>
-                                <ParentCard 
-                                    title={
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                            <Typography variant="h5">CPU Usage Over Time</Typography>
-                                            {activeGraph === 'cpu' && (
-                                                <Button
-                                                    variant="outlined"
-                                                    size="small"
-                                                    onClick={scrollToOverview}
-                                                    startIcon={<IconArrowUp size={16} />}
-                                                    sx={{
-                                                        borderRadius: 2,
-                                                        textTransform: 'none',
-                                                        fontWeight: 500,
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        borderColor: (theme) => theme.palette.primary.main,
-                                                        color: (theme) => theme.palette.primary.main,
-                                                        ml: 2,
-                                                        '&:hover': {
-                                                            backgroundColor: (theme) => theme.palette.primary.main,
-                                                            color: 'white',
+                                <div ref={cpuGraphRef}>
+                                    <ParentCard 
+                                        title={
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                                <Typography variant="h5">CPU Usage Over Time</Typography>
+                                                {activeGraph === 'cpu' && (
+                                                    <Button
+                                                        variant="outlined"
+                                                        size="small"
+                                                        onClick={scrollToOverview}
+                                                        startIcon={<IconArrowUp size={16} />}
+                                                        sx={{
+                                                            borderRadius: 2,
+                                                            textTransform: 'none',
+                                                            fontWeight: 500,
+                                                            px: 2,
+                                                            py: 0.5,
                                                             borderColor: (theme) => theme.palette.primary.main,
-                                                        }
-                                                    }}
-                                                >
-                                                    Back to Overview
-                                                </Button>
-                                            )}
-                                        </Box>
-                                    }
-                                >
+                                                            color: (theme) => theme.palette.primary.main,
+                                                            ml: 2,
+                                                            '&:hover': {
+                                                                backgroundColor: (theme) => theme.palette.primary.main,
+                                                                color: 'white',
+                                                                borderColor: (theme) => theme.palette.primary.main,
+                                                            }
+                                                        }}
+                                                    >
+                                                        Back to Overview
+                                                    </Button>
+                                                )}
+                                            </Box>
+                                        }
+                                    >
                                 {vmCpuRamData.length > 0 ? (
                                     <>
                                         <Box sx={{ height: 300, mt: 2 }}>
@@ -1056,44 +1099,44 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                     </Typography>
                                 )}
                             </ParentCard>
-                            </div>
+                                </div>
                         </Grid>
 
                         {/* Memory Usage Over Time */}
                         <Grid item xs={12}>
-                            <div ref={memoryGraphRef}>
-                                <ParentCard 
-                                    title={
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                            <Typography variant="h5">Memory Usage Over Time</Typography>
-                                            {activeGraph === 'memory' && (
-                                                <Button
-                                                    variant="outlined"
-                                                    size="small"
-                                                    onClick={scrollToOverview}
-                                                    startIcon={<IconArrowUp size={16} />}
-                                                    sx={{
-                                                        borderRadius: 2,
-                                                        textTransform: 'none',
-                                                        fontWeight: 500,
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        borderColor: (theme) => theme.palette.primary.main,
-                                                        color: (theme) => theme.palette.primary.main,
-                                                        ml: 2,
-                                                        '&:hover': {
-                                                            backgroundColor: (theme) => theme.palette.primary.main,
-                                                            color: 'white',
+                                <div ref={memoryGraphRef}>
+                                    <ParentCard 
+                                        title={
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                                <Typography variant="h5">Memory Usage Over Time</Typography>
+                                                {activeGraph === 'memory' && (
+                                                    <Button
+                                                        variant="outlined"
+                                                        size="small"
+                                                        onClick={scrollToOverview}
+                                                        startIcon={<IconArrowUp size={16} />}
+                                                        sx={{
+                                                            borderRadius: 2,
+                                                            textTransform: 'none',
+                                                            fontWeight: 500,
+                                                            px: 2,
+                                                            py: 0.5,
                                                             borderColor: (theme) => theme.palette.primary.main,
-                                                        }
-                                                    }}
-                                                >
-                                                    Back to Overview
-                                                </Button>
-                                            )}
-                                        </Box>
-                                    }
-                                >
+                                                            color: (theme) => theme.palette.primary.main,
+                                                            ml: 2,
+                                                            '&:hover': {
+                                                                backgroundColor: (theme) => theme.palette.primary.main,
+                                                                color: 'white',
+                                                                borderColor: (theme) => theme.palette.primary.main,
+                                                            }
+                                                        }}
+                                                    >
+                                                        Back to Overview
+                                                    </Button>
+                                                )}
+                                            </Box>
+                                        }
+                                    >
                                 {vmCpuRamData.length > 0 ? (
                                     <>
                                         <Box sx={{ height: 300, mt: 2 }}>
@@ -1212,44 +1255,44 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                     </Typography>
                                 )}
                             </ParentCard>
-                            </div>
+                                </div>
                         </Grid>
 
                         {/* Disk Usage Over Time */}
                         <Grid item xs={12}>
-                            <div ref={diskGraphRef}>
-                                <ParentCard 
-                                    title={
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                            <Typography variant="h5">Disk Usage Over Time</Typography>
-                                            {activeGraph === 'disk' && (
-                                                <Button
-                                                    variant="outlined"
-                                                    size="small"
-                                                    onClick={scrollToOverview}
-                                                    startIcon={<IconArrowUp size={16} />}
-                                                    sx={{
-                                                        borderRadius: 2,
-                                                        textTransform: 'none',
-                                                        fontWeight: 500,
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        borderColor: (theme) => theme.palette.primary.main,
-                                                        color: (theme) => theme.palette.primary.main,
-                                                        ml: 2,
-                                                        '&:hover': {
-                                                            backgroundColor: (theme) => theme.palette.primary.main,
-                                                            color: 'white',
+                                <div ref={diskGraphRef}>
+                                    <ParentCard 
+                                        title={
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                                <Typography variant="h5">Disk Usage Over Time</Typography>
+                                                {activeGraph === 'disk' && (
+                                                    <Button
+                                                        variant="outlined"
+                                                        size="small"
+                                                        onClick={scrollToOverview}
+                                                        startIcon={<IconArrowUp size={16} />}
+                                                        sx={{
+                                                            borderRadius: 2,
+                                                            textTransform: 'none',
+                                                            fontWeight: 500,
+                                                            px: 2,
+                                                            py: 0.5,
                                                             borderColor: (theme) => theme.palette.primary.main,
-                                                        }
-                                                    }}
-                                                >
-                                                    Back to Overview
-                                                </Button>
-                                            )}
-                                        </Box>
-                                    }
-                                >
+                                                            color: (theme) => theme.palette.primary.main,
+                                                            ml: 2,
+                                                            '&:hover': {
+                                                                backgroundColor: (theme) => theme.palette.primary.main,
+                                                                color: 'white',
+                                                                borderColor: (theme) => theme.palette.primary.main,
+                                                            }
+                                                        }}
+                                                    >
+                                                        Back to Overview
+                                                    </Button>
+                                                )}
+                                            </Box>
+                                        }
+                                    >
                                 {vmDiskData.length > 0 ? (
                                     <>
                                         <Box sx={{ height: 300, mt: 2 }}>
@@ -1383,7 +1426,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                     </Typography>
                                 )}
                             </ParentCard>
-                            </div>
+                                </div>
                         </Grid>
 
                         {/* System Alerts */}
@@ -1394,79 +1437,114 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         <Typography variant="subtitle1" gutterBottom>
                                             3-Day Alert Trends
                                         </Typography>
-                                        
-                                        {/* Alert Graph Line Toggle Controls */}
-                                        <Box sx={{ mb: 2 }}>
-                                            <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ mb: 1 }}>
-                                                <IconChartLine size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                                                Toggle Alert Lines (Click to show/hide):
-                                            </Typography>
-                                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                                <Button
-                                                    size="small"
-                                                    variant={showCriticalAlerts ? "contained" : "outlined"}
-                                                    onClick={() => setShowCriticalAlerts(!showCriticalAlerts)}
-                                                    sx={{
-                                                        minWidth: 'auto',
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        backgroundColor: showCriticalAlerts ? '#f44336' : 'transparent',
-                                                        color: showCriticalAlerts ? 'white' : '#f44336',
-                                                        borderColor: '#f44336',
-                                                        '&:hover': {
-                                                            backgroundColor: showCriticalAlerts ? '#d32f2f' : 'rgba(244, 67, 54, 0.1)',
-                                                        }
-                                                    }}
-                                                >
-                                                    Critical
-                                                </Button>
-                                                <Button
-                                                    size="small"
-                                                    variant={showImmediateAlerts ? "contained" : "outlined"}
-                                                    onClick={() => setShowImmediateAlerts(!showImmediateAlerts)}
-                                                    sx={{
-                                                        minWidth: 'auto',
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        backgroundColor: showImmediateAlerts ? '#2196f3' : 'transparent',
-                                                        color: showImmediateAlerts ? 'white' : '#2196f3',
-                                                        borderColor: '#2196f3',
-                                                        '&:hover': {
-                                                            backgroundColor: showImmediateAlerts ? '#1976d2' : 'rgba(33, 150, 243, 0.1)',
-                                                        }
-                                                    }}
-                                                >
-                                                    Immediate
-                                                </Button>
-                                                <Button
-                                                    size="small"
-                                                    variant={showWarningAlerts ? "contained" : "outlined"}
-                                                    onClick={() => setShowWarningAlerts(!showWarningAlerts)}
-                                                    sx={{
-                                                        minWidth: 'auto',
-                                                        px: 2,
-                                                        py: 0.5,
-                                                        backgroundColor: showWarningAlerts ? '#ff9800' : 'transparent',
-                                                        color: showWarningAlerts ? 'white' : '#ff9800',
-                                                        borderColor: '#ff9800',
-                                                        '&:hover': {
-                                                            backgroundColor: showWarningAlerts ? '#f57c00' : 'rgba(255, 152, 0, 0.1)',
-                                                        }
-                                                    }}
-                                                >
-                                                    Warning
-                                                </Button>
+                                            
+                                            {/* Alert Graph Line Toggle Controls */}
+                                            <Box sx={{ mb: 2 }}>
+                                                <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ mb: 1 }}>
+                                                    <IconChartLine size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                                                    Toggle Alert Lines (Click to show/hide):
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                                    <Button
+                                                        size="small"
+                                                        variant={showCriticalAlerts ? "contained" : "outlined"}
+                                                        onClick={() => setShowCriticalAlerts(!showCriticalAlerts)}
+                                                        sx={{
+                                                            minWidth: 'auto',
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            backgroundColor: showCriticalAlerts ? '#f44336' : 'transparent',
+                                                            color: showCriticalAlerts ? 'white' : '#f44336',
+                                                            borderColor: '#f44336',
+                                                            '&:hover': {
+                                                                backgroundColor: showCriticalAlerts ? '#d32f2f' : 'rgba(244, 67, 54, 0.1)',
+                                                            }
+                                                        }}
+                                                    >
+                                                        Critical
+                                                    </Button>
+                                                    <Button
+                                                        size="small"
+                                                        variant={showImmediateAlerts ? "contained" : "outlined"}
+                                                        onClick={() => setShowImmediateAlerts(!showImmediateAlerts)}
+                                                        sx={{
+                                                            minWidth: 'auto',
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            backgroundColor: showImmediateAlerts ? '#ff9800' : 'transparent',
+                                                            color: showImmediateAlerts ? 'white' : '#ff9800',
+                                                            borderColor: '#ff9800',
+                                                            '&:hover': {
+                                                                backgroundColor: showImmediateAlerts ? '#f57c00' : 'rgba(255, 152, 0, 0.1)',
+                                                            }
+                                                        }}
+                                                    >
+                                                        Immediate
+                                                    </Button>
+                                                    <Button
+                                                        size="small"
+                                                        variant={showWarningAlerts ? "contained" : "outlined"}
+                                                        onClick={() => setShowWarningAlerts(!showWarningAlerts)}
+                                                        sx={{
+                                                            minWidth: 'auto',
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            backgroundColor: showWarningAlerts ? '#4caf50' : 'transparent',
+                                                            color: showWarningAlerts ? 'white' : '#4caf50',
+                                                            borderColor: '#4caf50',
+                                                            '&:hover': {
+                                                                backgroundColor: showWarningAlerts ? '#388e3c' : 'rgba(76, 175, 80, 0.1)',
+                                                            }
+                                                        }}
+                                                    >
+                                                        Warning
+                                                    </Button>
+                                                </Box>
                                             </Box>
-                                        </Box>
-                                        
+                                            
+                                            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, flexWrap: 'wrap', alignItems: 'flex-end', gap: 4 }}>
+                                                <RevCounter value={avgCritical} label="Critical" />
+                                                <RevCounter value={avgImmediate} label="Immediate" />
+                                                <RevCounter value={avgWarning} label="Warning" />
+                                                {/* Stacked Bar Graph (inline, compact) */}
+                                                <Box sx={{ minWidth: 220, maxWidth: 320, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                                    <Typography variant="caption" sx={{ color: 'error.main', fontWeight: 600, mb: 0.5 }}>
+                                                        (Demo: Using dummy data)
+                                                    </Typography>
+                                                    <ResponsiveContainer width="100%" height={70}>
+                                                        <BarChart
+                                                            data={[
+                                                                { period: 'Day 1', critical: 1, immediate: 2, warning: 3 },
+                                                                { period: 'Day 2', critical: 0, immediate: 1, warning: 5 },
+                                                                { period: 'Day 3', critical: 2, immediate: 3, warning: 1 },
+                                                                { period: 'Current', critical: avgCritical, immediate: avgImmediate, warning: avgWarning }
+                                                            ]}
+                                                            margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
+                                                        >
+                                                            <XAxis dataKey="period" />
+                                                            <YAxis hide />
+                                                            <Bar dataKey="critical" name="Critical" stackId="a" fill="#f44336" />
+                                                            <Bar dataKey="immediate" name="Immediate" stackId="a" fill="#ff9800" />
+                                                            <Bar dataKey="warning" name="Warning" stackId="a" fill="#4caf50" />
+                                                        </BarChart>
+                                                    </ResponsiveContainer>
+                                                    <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
+                                                        <Box sx={{ width: 10, height: 10, bgcolor: '#f44336', borderRadius: '2px' }} />
+                                                        <Box sx={{ width: 10, height: 10, bgcolor: '#ff9800', borderRadius: '2px' }} />
+                                                        <Box sx={{ width: 10, height: 10, bgcolor: '#4caf50', borderRadius: '2px' }} />
+                                                    </Box>
+                                                </Box>
+                                            </Box>
+                                            
+                                            {/* Time-based Alert Graph */}
                                         <Box sx={{ height: 200, mt: 2 }}>
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart
                                                     data={vmAlertWindow.map(data => ({
                                                         time: new Date(data.bucket).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                                        critical: Math.round(parseFloat(data.avg_critical)),
-                                                        immediate: Math.round(parseFloat(data.avg_immediate)),
-                                                        warning: Math.round(parseFloat(data.avg_warning))
+                                                            critical: Math.round(parseFloat(data.avg_critical)),
+                                                            immediate: Math.round(parseFloat(data.avg_immediate)),
+                                                            warning: Math.round(parseFloat(data.avg_warning))
                                                     }))}
                                                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                                                 >
@@ -1490,7 +1568,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             position: 'insideLeft',
                                                             style: { textAnchor: 'middle', fontSize: '12px' }
                                                         }}
-                                                        tickFormatter={(value) => Math.round(value).toString()}
+                                                            tickFormatter={(value) => Math.round(value).toString()}
                                                     />
                                                     <RechartsTooltip 
                                                         formatter={(value, name) => [
@@ -1501,7 +1579,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         labelFormatter={(label) => `Time: ${label}`}
                                                     />
                                                     <Legend />
-                                                    {showCriticalAlerts && (
+                                                        {showCriticalAlerts && (
                                                     <Line 
                                                         type="monotone" 
                                                         dataKey="critical" 
@@ -1509,28 +1587,77 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         stroke="#f44336" 
                                                         strokeWidth={2}
                                                     />
-                                                    )}
-                                                    {showImmediateAlerts && (
+                                                        )}
+                                                        {showImmediateAlerts && (
                                                     <Line 
                                                         type="monotone" 
                                                         dataKey="immediate" 
                                                         name="Immediate" 
-                                                        stroke="#2196f3" 
+                                                        stroke="#ff9800" 
                                                         strokeWidth={2}
                                                     />
-                                                    )}
-                                                    {showWarningAlerts && (
+                                                        )}
+                                                        {showWarningAlerts && (
                                                     <Line 
                                                         type="monotone" 
                                                         dataKey="warning" 
                                                         name="Warning" 
-                                                        stroke="#ff9800" 
+                                                        stroke="#4caf50" 
                                                         strokeWidth={2}
                                                     />
-                                                    )}
+                                                        )}
                                                 </LineChart>
                                             </ResponsiveContainer>
                                         </Box>
+                                            
+                                            {/* Stacked Bar Graph */}
+                                            <Box sx={{ mt: 4 }}>
+                                                <Typography variant="h6" gutterBottom sx={{ textAlign: 'center', mb: 1 }}>
+                                                    Alert Distribution (Stacked Bar View)
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+                                                    <Typography variant="caption" sx={{ color: 'error.main', fontWeight: 600 }}>
+                                                        (Demo: Using dummy data for visualization)
+                                                    </Typography>
+                                                </Box>
+                                                <Box sx={{ height: 200, mt: 2 }}>
+                                                    <ResponsiveContainer width="100%" height="100%">
+                                                        <BarChart
+                                                            data={[
+                                                                {
+                                                                    period: 'Current',
+                                                                    critical: avgCritical,
+                                                                    immediate: avgImmediate,
+                                                                    warning: avgWarning
+                                                                }
+                                                            ]}
+                                                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                                                        >
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="period" />
+                                                            <YAxis 
+                                                                label={{ 
+                                                                    value: 'Alert Count', 
+                                                                    angle: -90, 
+                                                                    position: 'insideLeft',
+                                                                    style: { textAnchor: 'middle', fontSize: '12px' }
+                                                                }}
+                                                            />
+                                                            <RechartsTooltip 
+                                                                formatter={(value, name) => [
+                                                                    `${Number(value).toFixed(0)} alerts`, 
+                                                                    name === 'critical' ? 'Critical Alerts' : 
+                                                                    name === 'immediate' ? 'Immediate Alerts' : 'Warning Alerts'
+                                                                ]}
+                                                            />
+                                                            <Legend />
+                                                            <Bar dataKey="critical" name="Critical" stackId="a" fill="#f44336" />
+                                                            <Bar dataKey="immediate" name="Immediate" stackId="a" fill="#ff9800" />
+                                                            <Bar dataKey="warning" name="Warning" stackId="a" fill="#4caf50" />
+                                                        </BarChart>
+                                                    </ResponsiveContainer>
+                                                </Box>
+                                            </Box>
                                         
                                         {isAlertInfoVisible ? (
                                             <Paper variant="outlined" sx={{ p: 2, mt: 2, position: 'relative', backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'grey.50', borderRadius: 2 }}>
@@ -1579,21 +1706,21 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             <Typography variant="caption">Red: Critical Alerts</Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#2196f3' }} />
-                                                            <Typography variant="caption">Blue: Immediate Alerts</Typography>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
+                                                            <Typography variant="caption">Amber: Immediate Alerts</Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
-                                                            <Typography variant="caption">Orange: Warning Alerts</Typography>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#4caf50' }} />
+                                                            <Typography variant="caption">Green: Warning Alerts</Typography>
                                                         </Box>
                                                     </Stack>
                                                 </Box>
-                                                <Box sx={{ mt: 2, p: 1.5, backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.1)' : 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid', borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.3)' : 'rgba(25, 118, 210, 0.2)' }}>
-                                                    <Typography variant="body2" sx={{ color: (theme) => theme.palette.primary.main, fontWeight: 500 }}>
-                                                        <IconBulb size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                                                        <b>Tip:</b> Use the toggle buttons above the graph to show/hide specific alert types for better analysis!
-                                                    </Typography>
-                                                </Box>
+                                                    <Box sx={{ mt: 2, p: 1.5, backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.1)' : 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid', borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.3)' : 'rgba(25, 118, 210, 0.2)' }}>
+                                                        <Typography variant="body2" sx={{ color: (theme) => theme.palette.primary.main, fontWeight: 500 }}>
+                                                            <IconBulb size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                                            <b>Tip:</b> Use the toggle buttons above the graph to show/hide specific alert types for better analysis!
+                                                        </Typography>
+                                                    </Box>
                                             </Paper>
                                         ) : (
                                             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
@@ -1623,6 +1750,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                 </Typography>
             )}
         </ParentCard>
+        </>
     );
 };
 

@@ -668,10 +668,10 @@ export default function VirtualMachinesPage() {
                   },
                 }}
               >
-                Clear Quote
+                Clear Estimate
               </Button>
               <Button variant="contained" color="primary" onClick={() => setQuoteDialogOpen(true)}>
-                View Quote
+                View Estimate
               </Button>
             </Box>
           </Box>
