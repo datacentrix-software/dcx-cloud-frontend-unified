@@ -1,6 +1,5 @@
 import { Box, Typography, Paper } from '@mui/material';
 import MultiSelect from '@/app/components/forms/theme-elements/MultiSelect';
-import { useEffect } from 'react';
 import { ISimpleProduct } from '@/types';
 
 interface BackupServicesProps {
@@ -35,13 +34,16 @@ export default function BackupServices({ onSelect, products, selected, setSelect
     return options.filter((opt) => idSet.has(String(opt.value))).map((opt) => opt.product);
   };
 
-  useEffect(() => {
+  // Helper to notify parent with all selected product objects
+  const notifyParent = (next: Partial<{ baas: string[]; draas: string[] }>) => {
+    const baas = next.baas ?? selected.baas;
+    const draas = next.draas ?? selected.draas;
     const all = [
-      ...getSelectedProducts(selected.baas || [], toOptions(baasProducts)),
-      ...getSelectedProducts(selected.draas || [], toOptions(draasProducts)),
+      ...getSelectedProducts(baas || [], toOptions(baasProducts)),
+      ...getSelectedProducts(draas || [], toOptions(draasProducts)),
     ];
     onSelect(all);
-  }, [selected.baas, selected.draas, onSelect, baasProducts, draasProducts]);
+  };
 
   return (
     <Box mb={"95px"}>
@@ -56,7 +58,10 @@ export default function BackupServices({ onSelect, products, selected, setSelect
           label="Backup as a Service (BaaS)"
           options={toOptions(baasProducts)}
           value={selected.baas || []}
-          onChange={(value) => setSelected({ ...selected, baas: value })}
+          onChange={(value) => {
+            setSelected({ ...selected, baas: value });
+            notifyParent({ baas: value });
+          }}
           placeholder="Select Backup Service..."
         />
       </Paper>
@@ -71,7 +76,10 @@ export default function BackupServices({ onSelect, products, selected, setSelect
           label="Disaster Recovery as a Service (DraaS)"
           options={toOptions(draasProducts)}
           value={selected.draas || []}
-          onChange={(value) => setSelected({ ...selected, draas: value })}
+          onChange={(value) => {
+            setSelected({ ...selected, draas: value });
+            notifyParent({ draas: value });
+          }}
           placeholder="Choose Recovery policy..."
         />
       </Paper>

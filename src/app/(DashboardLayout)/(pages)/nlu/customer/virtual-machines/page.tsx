@@ -350,18 +350,44 @@ export default function VirtualMachinesPage() {
   };
 
   const handleAdditionalProductsUpdate = (newProducts: ISimpleProduct[]) => {
+    // Separate VMs from additional products
+    const vms = newProducts.filter(product => product.type === 'virtualMachine').map(product => {
+      // Convert ISimpleProduct to IVMConfig format
+      const vmProduct = product as any;
+      return {
+        id: String(vmProduct.id),
+        region: vmProduct.region || vmProduct.details?.region || '',
+        os: vmProduct.os || vmProduct.details?.os || '',
+        serverName: vmProduct.serverName || vmProduct.title?.split(' - ')[0] || '',
+        description: vmProduct.description || '',
+        tier: vmProduct.tier || vmProduct.details?.tier || '',
+        configuration: vmProduct.configuration || vmProduct.details?.configuration || { 
+          type: 'template', 
+          specs: { vcpus: 0, memory: 0, storage: 0, ghz: 0 },
+          templateId: ''
+        },
+        price: vmProduct.price || 0,
+        type: 'virtualMachine'
+      } as IVMConfig;
+    });
+    
+    const additionalProducts = newProducts.filter(product => product.type !== 'virtualMachine');
+    
+    // Update VMs in the createdVMs state
+    setCreatedVMs(vms);
+    
     // Handle additional products separately from VMs
     // Separate products by their Category and update the appropriate state
-    const backupServices = newProducts.filter(product => 
+    const backupServices = additionalProducts.filter(product => 
       product.Category?.name?.includes('Backup as a Service') ||
       product.Category?.name?.includes('Disaster Recovery')
     );
     
-    const softwareLicensing = newProducts.filter(product => 
+    const softwareLicensing = additionalProducts.filter(product => 
       product.Category?.name?.includes('M365')
     );
     
-    const additionalServices = newProducts.filter(product => 
+    const additionalServices = additionalProducts.filter(product => 
       product.Category?.name?.includes('Professional Services') ||
       product.Category?.name?.includes('Network as a Service') ||
       product.Category?.name?.includes('Firewall as a Service') ||
@@ -370,7 +396,7 @@ export default function VirtualMachinesPage() {
     
     // Update the selectedOptions state for each category
     setSelectedOptions({
-      virtualMachine: selectedOptions.virtualMachine,
+      virtualMachine: vms, // Update VMs in selectedOptions as well
       backupServices,
       softwareLicensing,
       additionalServices
@@ -386,6 +412,11 @@ export default function VirtualMachinesPage() {
           vmTemplates={vmTemplates}
           products={products}
           selectedVMs={selectedVMs}
+          additionalProducts={[
+            ...(Array.isArray(selectedOptions.backupServices) ? selectedOptions.backupServices : []),
+            ...(Array.isArray(selectedOptions.softwareLicensing) ? selectedOptions.softwareLicensing : []),
+            ...(Array.isArray(selectedOptions.additionalServices) ? selectedOptions.additionalServices : [])
+          ]}
         />;
       default:
         return null;

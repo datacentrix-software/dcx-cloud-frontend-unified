@@ -108,9 +108,10 @@ interface CreateVirtualMachineProps {
   vmTemplates: VMTemplate[];
   products: ISimpleProduct[];
   selectedVMs?: IVMConfig[];
+  additionalProducts?: ISimpleProduct[];
 }
 
-export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpdate, vmTemplates, products, selectedVMs = [] }: CreateVirtualMachineProps) {
+export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpdate, vmTemplates, products, selectedVMs = [], additionalProducts = [] }: CreateVirtualMachineProps) {
 
 
   // Use selectedVMs from props instead of local state
@@ -670,7 +671,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
               >
                   <Button
                     variant="outlined"
-                    disabled={createdVMs.length === 0}
+                    // disabled={createdVMs.length === 0}
                     sx={{ textTransform: 'none' }}
                     onClick={handleOpenAdditionalProducts}
                   >
@@ -1587,7 +1588,7 @@ export default function CreateVirtualMachine({ onSelect, onAdditionalProductsUpd
         onClose={handleCloseAdditionalProducts}
         products={products}
         onProductsUpdate={handleAdditionalProductsUpdate}
-        existingProducts={createdVMs}
+        existingProducts={[...createdVMs, ...additionalProducts]}
       />
     </>
   );
