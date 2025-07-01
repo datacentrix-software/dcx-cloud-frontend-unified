@@ -158,35 +158,26 @@
             state: started
             enabled: yes
 
-        - name: Perform health check
+        - name: Perform health check on each endpoint
           uri:
-            url: "{{ health_check_url }}"
+            url: "{{ item }}"
             method: GET
             status_code: 200
             timeout: 30
             validate_certs: false
-          register: health_check
+          register: hc
           retries: 5
           delay: 10
-          until: health_check.status == 200
+          until: hc.status == 200
+          loop: "{{ health_check_urls }}"
 
-        - name: Run OWASP ZAP full scan
-          shell: zap.sh -cmd -autorun "{{ project_dir }}/src/zap/zap-dev.yaml"
-          args:
-            chdir: "{{ project_dir }}"
-          register: zap_output
-          failed_when: false
-
-        - name: Upload ZAP HTML report to /tmp
+        - name: Upload ZAP reports to /tmp
           copy:
-            src: "{{ project_dir }}/src/zap/zap_full_scan_report.html"
-            dest: "/tmp/zap-report-{{ env_name }}.html"
-          ignore_errors: yes
-
-        - name: Upload ZAP JSON report to /tmp
-          copy:
-            src: "{{ project_dir }}/src/zap/zap_full_scan_report.json"
-            dest: "/tmp/zap-report-{{ env_name }}.json"
+            src: "{{ item.src }}"
+            dest: "/tmp/{{ item.dest }}-{{ env_name }}{{ item.ext }}"
+          loop:
+            - { src: "{{ project_dir }}/src/zap/zap_full_scan_report.html", dest: zap-report, ext: ".html" }
+            - { src: "{{ project_dir }}/src/zap/zap_full_scan_report.json", dest: zap-report, ext: ".json" }
           ignore_errors: yes
 
         - name: Notify Slack (success)
