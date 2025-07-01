@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/application/package.json" 
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-type: "UAT" 
+      - dependency-name: "express" 
+ 
+  - package-ecosystem: "github-actions"
+    directory: "/application/package.json"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+    reviewers:
+      - "KanyaRamncwana"
+      - "MulaloDzivhani"

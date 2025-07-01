@@ -1,0 +1,81 @@
+env:
+  vars:
+    STATIC_COOKIE: "connect.sid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDUsImVtYWlsIjoia3JhbW5jd2FuYUBkYXRhY2VudHJpeC5jby56YSIsInJvbGUiOiJDdXN0b21lciIsImZpcnN0TmFtZSI6IkthbnlhIiwibGFzdE5hbWUiOiJSYW1uY3dhbmEiLCJvcmdhbmlzYXRpb24iOnsiaWQiOjE2LCJvcmdhbmlzYXRpb25fbmFtZSI6IkFkY29jayIsIm9yZ2FuaXNhdGlvbl90eXBlIjoiUHJpdmF0ZSIsImNvdW50cnkiOiJTb3V0aCBBZnJpY2EiLCJ2YXRfbnVtYmVyIjoiMTIzNDU2Nzg5MCIsImNvbXBhbnlfcmVnaXN0cmF0aW9uX251bWJlciI6IjIwMTIvMTIzNDU2LzA3IiwicmVnaXN0ZXJlZF9hZGRyZXNzIjoiMTIzIEZhcm0gTGFuZSwgUHJldG9yaWEsIFNvdXRoIEFmcmljYSIsImJpbGxpbmdfY29udGFjdF9lbWFpbCI6ImJpbGxpbmdAbWFpbC5jby56YSIsInBvX3JlcXVpcmVkIjp0cnVlLCJwYXltZW50X21ldGhvZCI6ImNyZWRpdF9jYXJkIiwib3JnX2Rlc2NyaXB0aW9uIjoiIiwic2FsZXNwZXJzb25faWQiOjEsIm1zYV9hY2NlcHRlZCI6dHJ1ZSwibXNhX3ZlcnNpb25faWQiOjEsIm9yZ2FuaXNhdGlvbl9zdGF0dXMiOiJ2YWxpZCIsImNyZWF0ZWRfYXQiOiIyMDI1LTA2LTExVDExOjE1OjIwLjE4MVoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA2LTEyVDExOjM1OjM5Ljc4MFoiLCJlbWFpbCI6bnVsbCwibXNhX2FjY2VwdGVkX2F0IjpudWxsLCJ2Y2VudGVyT3JnX2lkIjoyfSwiaWF0IjoxNzUwNDI1MDEwLCJleHAiOjE3NTA0MzIyMTB9.qh6PN3DJq7XBCB_ZZHNKe4M_ipLPqp4um3pFDta03pw"
+
+  contexts:
+    - name: full-scan-context
+      urls:
+        - https://dev.frontend.test.daas.datacentrix.cloud
+        - https://dcx.dev.datacentrix.cloud
+      authentication:
+        method: manual
+      sessionManagement:
+        method: cookie
+      users:
+        - name: session-cookie-user
+          credentials:
+            cookieAuth: ${STATIC_COOKIE}
+
+  parameters:
+    failOnError: false
+    failOnWarning: false
+    progressToStdout: true
+    timeoutInSecs: 1800
+
+jobs:
+
+  - type: replacer
+    rules:
+      - description: "Inject session cookie for auth"
+        matchType: "REQ_HEADER"
+        matchString: "Cookie"
+        replacementString: "${STATIC_COOKIE}"
+        matchRegex: false
+
+  # - type: openapi  # Optional if you have OpenAPI spec
+  #   parameters:
+  #     context: full-scan-context
+  #     url: https://dev.frontend.test.daas.datacentrix.cloud/swagger.json
+  #   risks: [high, medium, low, info]
+
+  - type: spiderAjax
+    parameters:
+      context: full-scan-context
+      user: session-cookie-user
+      maxCrawlDepth: 10
+      maxDuration: 10
+
+  - type: spider
+    parameters:
+      context: full-scan-context
+      user: session-cookie-user
+      recurse: true
+      subtreeOnly: false
+      maxDuration: 15
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 180
+
+  - type: activeScan
+    parameters:
+      context: full-scan-context
+      user: session-cookie-user
+      recurse: true
+      policy: Default Policy
+      maxRuleDurationInMins: 10
+      maxScanDurationInMins: 30
+      attackStrength: HIGH
+      alertThreshold: LOW
+
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /home/dev_frontend_user/datacentrix-software/nlu-platform-front-end/application/zap/
+      reportFile: zap_full_scan_report.html
+
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: /home/dev_frontend_user/datacentrix-software/nlu-platform-front-end/application/zap/
+      reportFile: zap_full_scan_report.json
