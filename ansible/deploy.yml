@@ -20,8 +20,6 @@
         - https://dev.frontend.test.daas.datacentrix.cloud/
       Development:
         - https://dcx.dev.datacentrix.cloud
-      Staging:
-        - https://dcx.dev.datacentrix.cloud
 
     health_check_urls: "{{ health_check_url_map.get(env_name, health_check_url_map.Development) }}"
 
