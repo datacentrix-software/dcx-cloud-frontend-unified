@@ -60,18 +60,38 @@ export default function AdditionalProductsDialog({
       };
 
       // Update backup services state
-      const backupBaasIds = getProductIds(['Backup as a Service']);
-      const backupDraasIds = getProductIds(['Disaster Recovery']);
-      setBackupServicesSelected({
-        baas: backupBaasIds,
-        draas: backupDraasIds
+      const backupBaasIds = getProductIds(['Backup as a Service (BaaS)']);
+      const backupDraasIds = getProductIds(['Disaster Recovery as a Service (DraaS)']);
+      
+      // Only update if the values are different to prevent infinite loops
+      setBackupServicesSelected(prev => {
+        if (prev.baas.length !== backupBaasIds.length || 
+            prev.draas.length !== backupDraasIds.length ||
+            !backupBaasIds.every(id => prev.baas.includes(id)) ||
+            !backupDraasIds.every(id => prev.draas.includes(id))) {
+          return {
+            baas: backupBaasIds,
+            draas: backupDraasIds
+          };
+        }
+        return prev;
       });
 
       // Update software licensing state
       const softwareLicensingProducts = additionalProducts.filter(product => 
-        product.Category?.name?.includes('M365')
+        product.Category?.name === 'Cloud Services - M365'
       );
-      setSoftwareLicensingSelected(softwareLicensingProducts);
+      
+      // Only update if the values are different
+      setSoftwareLicensingSelected(prev => {
+        const prevIds = prev.map(p => String(p.id)).sort();
+        const newIds = softwareLicensingProducts.map(p => String(p.id)).sort();
+        
+        if (prevIds.length !== newIds.length || !prevIds.every((id, index) => id === newIds[index])) {
+          return softwareLicensingProducts;
+        }
+        return prev;
+      });
 
       // Update additional services state
       const professionalIds = getProductIds(['Professional Services']);
@@ -79,11 +99,24 @@ export default function AdditionalProductsDialog({
       const faasIds = getProductIds(['Firewall as a Service']);
       const collocationIds = getProductIds(['Collocation']);
       
-      setAdditionalServicesSelected({
-        professional: professionalIds,
-        naas: naasIds,
-        faas: faasIds,
-        collocation: collocationIds
+      // Only update if the values are different
+      setAdditionalServicesSelected(prev => {
+        if (prev.professional.length !== professionalIds.length ||
+            prev.naas.length !== naasIds.length ||
+            prev.faas.length !== faasIds.length ||
+            prev.collocation.length !== collocationIds.length ||
+            !professionalIds.every(id => prev.professional.includes(id)) ||
+            !naasIds.every(id => prev.naas.includes(id)) ||
+            !faasIds.every(id => prev.faas.includes(id)) ||
+            !collocationIds.every(id => prev.collocation.includes(id))) {
+          return {
+            professional: professionalIds,
+            naas: naasIds,
+            faas: faasIds,
+            collocation: collocationIds
+          };
+        }
+        return prev;
       });
     }
   }, [open, existingProducts]);
@@ -116,16 +149,16 @@ export default function AdditionalProductsDialog({
     setExpanded(isExpanded ? panel : false);
   };
 
-  const handleBackupServicesSelect = (options: ISimpleProduct[]) => {
-    // The BackupServices component handles its own state, we just need to update all products
-    updateAllProducts();
-  };
-
   const handleSoftwareLicensingSelect = (options: ISimpleProduct[]) => {
     // Update the state with the new options
     setSoftwareLicensingSelected(options);
     // Update all products with the new options
     updateAllProductsWithSoftwareLicensing(options);
+  };
+
+  const handleBackupServicesSelect = (options: ISimpleProduct[]) => {
+    // The BackupServices component manages its own state, we just need to update all products
+    updateAllProducts();
   };
 
   const handleAdditionalServicesSelect = (options: ISimpleProduct[]) => {
