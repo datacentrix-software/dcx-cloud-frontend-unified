@@ -15,14 +15,15 @@
       {% else %}
         main
       {% endif %}
-    health_check_urls: >-
-      {% if env_name == 'Testing' %}
-        [ "https://dev.frontend.test.daas.datacentrix.cloud/" ]
-      {% elif env_name == 'Development' %}
-        [ "https://dcx.dev.datacentrix.cloud" ]
-      {% else %}
-        [ "https://dcx.dev.datacentrix.cloud" ]
-      {% endif %}
+    health_check_url_map:
+      Testing:
+        - https://dev.frontend.test.daas.datacentrix.cloud/
+      Development:
+        - https://dcx.dev.datacentrix.cloud
+      Staging:
+        - https://dcx.dev.datacentrix.cloud
+
+    health_check_urls: "{{ health_check_url_map.get(env_name, health_check_url_map.Development) }}"
 
   tasks:
     - block:
@@ -212,7 +213,7 @@
 
         - name: Health check after rollback
           uri:
-            url: "{{ health_check_url }}"
+            url: "{{ health_check_urls[0] }}"
             method: GET
             status_code: 200
             timeout: 30
