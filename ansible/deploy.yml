@@ -1,0 +1,245 @@
+---
+- name: Deploy Frontend Application to {{ env_name }} Environment
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  vars:
+    node_version: "20.x"
+    project_dir: "{{ project_dir | default(lookup('env','GITHUB_WORKSPACE')) }}"
+    git_branch: >-
+      {% if env_name == 'Development' %}
+        main
+      {% elif env_name == 'Testing' %}
+        feature/deployment
+      {% else %}
+        main
+      {% endif %}
+    health_check_urls: >-
+      {% if env_name == 'Testing' %}
+        [ "https://dev.frontend.test.daas.datacentrix.cloud/" ]
+      {% elif env_name == 'Development' %}
+        [ "https://dcx.dev.datacentrix.cloud" ]
+      {% else %}
+        [ "https://dcx.dev.datacentrix.cloud" ]
+      {% endif %}
+
+  tasks:
+    - block:
+        - name: Kill any stale apt/dpkg processes
+          become: yes
+          shell: |
+            for pid in $(ps -eo pid,comm | awk '$2 ~ /apt|dpkg/ {print $1}'); do
+              if [ "$pid" != "$$" ]; then
+                kill -9 "$pid" || true
+              fi
+            done
+          ignore_errors: yes
+
+        - name: Set Git remote to HTTPS using token
+          shell: |
+            git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/datacentrix-software/nlu-platform-front-end.git"
+          args:
+            chdir: "{{ project_dir }}"
+          environment:
+            GITHUB_TOKEN: "{{ github_token }}"
+
+        - name: Pull latest code from correct branch
+          shell: |
+            git fetch --all
+            git checkout "{{ git_branch | trim }}" \
+              || git checkout -b "{{ git_branch | trim }}" origin/"{{ git_branch | trim }}"
+            git reset --hard origin/"{{ git_branch | trim }}"
+            git clean -fd
+          args:
+            chdir: "{{ project_dir }}"
+          environment:
+            GIT_ASKPASS: "/bin/echo"
+            GIT_TERMINAL_PROMPT: "0"
+            GITHUB_TOKEN: "{{ github_token }}"
+
+        - name: Install prerequisites for Node.js
+          become: yes
+          apt:
+            name:
+              - curl
+              - ca-certificates
+              - gnupg
+            state: present
+            update_cache: yes
+
+        - name: Add NodeSource APT repository for Node.js {{ node_version }}
+          shell: |
+            curl -fsSL https://deb.nodesource.com/setup_{{ node_version }} | bash -
+          args:
+            executable: /bin/bash
+
+        - name: Install Node.js and npm
+          become: yes
+          apt:
+            name: nodejs
+            state: present
+            update_cache: yes
+
+        - name: Verify Node.js installation
+          command: node -v
+          register: node_version_output
+
+        - name: Display installed Node.js version
+          debug:
+            msg: "Installed Node.js version: {{ node_version_output.stdout }}"
+
+        - name: Verify npm installation
+          command: npm -v
+          register: npm_version_output
+
+        - name: Install dependencies
+          shell: |
+            npm install
+            npm install zustand
+          args:
+            chdir: "{{ project_dir }}/src"
+
+        - name: Build frontend application
+          shell: npm run build
+          args:
+            chdir: "{{ project_dir }}/src"
+
+        - name: Create timestamped GitHub tag
+          uri:
+            url: "https://api.github.com/repos/datacentrix-software/nlu-platform-front-end/git/refs"
+            method: POST
+            headers:
+              Authorization: "Bearer {{ github_token }}"
+              Content-Type: "application/json"
+            body_format: json
+            body:
+              ref: "refs/tags/successful-deploy-{{ env_name }}-{{ ansible_date_time.iso8601_basic_short }}"
+              sha: "{{ github_sha }}"
+          register: tag_push
+          failed_when: tag_push.status not in [201, 422]
+
+        - name: Delete old rollback tag if exists
+          uri:
+            url: "https://api.github.com/repos/datacentrix-software/nlu-platform-front-end/git/refs/tags/successful-deploy-{{ env_name }}"
+            method: DELETE
+            headers:
+              Authorization: "Bearer {{ github_token }}"
+            status_code: [204, 404]
+          ignore_errors: true
+
+        - name: Recreate rollback tag
+          uri:
+            url: "https://api.github.com/repos/datacentrix-software/nlu-platform-front-end/git/refs"
+            method: POST
+            headers:
+              Authorization: "Bearer {{ github_token }}"
+              Content-Type: "application/json"
+            body_format: json
+            body:
+              ref: "refs/tags/successful-deploy-{{ env_name }}"
+              sha: "{{ github_sha }}"
+          register: create_rollback_tag
+          failed_when: create_rollback_tag.status not in [201, 422]
+
+        - name: Stop frontend service
+          become: yes
+          systemd:
+            name: frontend
+            state: stopped
+            enabled: yes
+
+        - name: Start frontend service
+          become: yes
+          systemd:
+            name: frontend
+            state: started
+            enabled: yes
+
+        - name: Perform health check
+          uri:
+            url: "{{ health_check_url }}"
+            method: GET
+            status_code: 200
+            timeout: 30
+            validate_certs: false
+          register: health_check
+          retries: 5
+          delay: 10
+          until: health_check.status == 200
+
+        - name: Run OWASP ZAP full scan
+          shell: zap.sh -cmd -autorun "{{ project_dir }}/src/zap/zap-dev.yaml"
+          args:
+            chdir: "{{ project_dir }}"
+          register: zap_output
+          failed_when: false
+
+        - name: Upload ZAP HTML report to /tmp
+          copy:
+            src: "{{ project_dir }}/src/zap/zap_full_scan_report.html"
+            dest: "/tmp/zap-report-{{ env_name }}.html"
+          ignore_errors: yes
+
+        - name: Upload ZAP JSON report to /tmp
+          copy:
+            src: "{{ project_dir }}/src/zap/zap_full_scan_report.json"
+            dest: "/tmp/zap-report-{{ env_name }}.json"
+          ignore_errors: yes
+
+        - name: Notify Slack (success)
+          when: env_name != 'Testing'
+          uri:
+            url: "{{ slack_webhook_url }}"
+            method: POST
+            headers:
+              Content-Type: "application/json"
+            body_format: json
+            body:
+              text: |
+                *Frontend deployed to `{{ env_name }}`*  
+                • Branch: `{{ git_branch }}`  
+                • SHA: `{{ github_sha }}`  
+                • Health check: Passed
+
+      rescue:
+        - name: Reset to rollback tag
+          shell: |
+            git fetch --tags
+            git reset --hard successful-deploy-{{ env_name }}
+            git clean -fd
+          args:
+            chdir: "{{ project_dir }}"
+
+        - name: Restart frontend service after rollback
+          become: yes
+          systemd:
+            name: nlu-platform-frontend
+            state: restarted
+
+        - name: Health check after rollback
+          uri:
+            url: "{{ health_check_url }}"
+            method: GET
+            status_code: 200
+            timeout: 30
+            validate_certs: false
+          register: rollback_health
+          retries: 5
+          delay: 10
+          until: rollback_health.status == 200
+
+        - name: Notify Slack (rollback)
+          when: env_name != 'Testing'
+          uri:
+            url: "{{ slack_webhook_url }}"
+            method: POST
+            headers:
+              Content-Type: "application/json"
+            body_format: json
+            body:
+              text: |
+                *Deployment failed on `{{ env_name }}`*  
+                • Rolled back using tag  
+                • Health after rollback: {{ 'Passed' if rollback_health.status == 200 else 'Failing' }}  
+                • Triggered by: `{{ triggered_by | default('Unknown') }}`

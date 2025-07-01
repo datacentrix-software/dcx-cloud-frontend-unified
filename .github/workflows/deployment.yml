@@ -1,0 +1,94 @@
+name: Deploy Frontend via Self-hosted Runners
+
+on:
+  push:
+    branches:
+      - main
+      - feature/deployment
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select the deployment environment"
+        required: true
+        default: "development"
+        type: choice
+        options: [development, testing]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy-development:
+    name: Deploy to Development
+    if: github.ref_name == 'main' || github.event.inputs.environment == 'development'
+    runs-on: [self-hosted, frontenddev]
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "ENV_NAME=Development" >> $GITHUB_ENV
+          echo "TRIGGERED_BY=${{ github.actor }}" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ensure deployment directory exists
+        run: mkdir -p /home/dev_frontend_user/datacentrix-software/dcx-cloud-frontend
+
+      - name: Sync code to deployment folder
+        run: |
+          rsync -a "$GITHUB_WORKSPACE/" /home/dev_frontend_user/datacentrix-software/dcx-cloud-frontend/
+
+      - name: Run Ansible Deployment
+        working-directory: /home/dev_frontend_user/datacentrix-software/dcx-cloud-frontend
+        run: |
+          ansible-playbook -i localhost, -c local -vv ansible/deploy.yml \
+            -e env_name="Development" \
+            -e project_dir="/home/dev_frontend_user/datacentrix-software/dcx-cloud-frontend" \
+            -e github_sha="${{ github.sha }}" \
+            -e sentry_auth_token="${{ secrets.SENTRY_AUTH_TOKEN }}" \
+            -e slack_webhook_url="${{ secrets.SLACK_WEBHOOK_URL }}" \
+            -e triggered_by="${{ env.TRIGGERED_BY }}" \
+            -e github_token="${{ secrets.GITHUB_TOKEN }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Save Ansible log path
+        run: echo "Ansible log saved to /home/dev_frontend_user/deploy-Development.log"
+
+  deploy-testing:
+    name: Deploy to Testing
+    if: github.ref_name == 'feature/deployment' || github.event.inputs.environment == 'testing'
+    runs-on: [self-hosted, frontendtest]
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "ENV_NAME=Testing" >> $GITHUB_ENV
+          echo "TRIGGERED_BY=${{ github.actor }}" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ensure deployment directory exists
+        run: mkdir -p /home/small_user/datacentrix-software/dcx-cloud-frontend
+
+      - name: Sync code to deployment folder
+        run: |
+          rsync -a "$GITHUB_WORKSPACE/" /home/small_user/datacentrix-software/dcx-cloud-frontend/
+
+      - name: Run Ansible Deployment
+        working-directory: /home/small_user/datacentrix-software/dcx-cloud-frontend
+        run: |
+          ansible-playbook -i localhost, -c local -vv ansible/deploy.yml \
+            -e env_name="Testing" \
+            -e project_dir="/home/small_user/datacentrix-software/dcx-cloud-frontend" \
+            -e github_sha="${{ github.sha }}" \
+            -e sentry_auth_token="${{ secrets.SENTRY_AUTH_TOKEN }}" \
+            -e slack_webhook_url="${{ secrets.SLACK_WEBHOOK_URL }}" \
+            -e triggered_by="${{ env.TRIGGERED_BY }}" \
+            -e github_token="${{ secrets.GITHUB_TOKEN }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Save Ansible log path
+        run: echo "Ansible log saved to /home/small_user/deploy-Testing.log"
