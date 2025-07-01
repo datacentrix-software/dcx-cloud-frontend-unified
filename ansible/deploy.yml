@@ -70,12 +70,12 @@
           shell: curl -fsSL https://deb.nodesource.com/setup_{{ node_version }} | bash -
           args:
             executable: /bin/bash
-            creates: /etc/apt/sources.list.d/nodesource.list   # idempotent
+            creates: /etc/apt/sources.list.d/nodesource.list
 
         - name: Install Node.js {{ node_version }}
           become: true
           apt:
-            name: nodejs          # npm comes with NodeSource’s nodejs pkg
+            name: nodejs
             state: latest
             update_cache: yes
 
@@ -87,7 +87,7 @@
         - name: Abort if Node < 20
           fail:
             msg: "Node.js {{ nodever.stdout }} is < 20 — aborting."
-          when: nodever.stdout is version('20.0.0', '<')
+          when: (nodever.stdout | regex_replace('^v', '')) is version('20.0.0', '<')
 
         - name: Display installed Node.js / npm versions
           debug:
