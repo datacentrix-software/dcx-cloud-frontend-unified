@@ -58,42 +58,42 @@
             GIT_TERMINAL_PROMPT: "0"
             GITHUB_TOKEN: "{{ github_token }}"
 
-        - name: Install prerequisites for Node.js
-          become: yes
-          apt:
-            name:
-              - curl
-              - ca-certificates
-              - gnupg
-            state: present
-            update_cache: yes
-
-        - name: Add NodeSource APT repository for Node.js {{ node_version }}
-          shell: |
-            curl -fsSL https://deb.nodesource.com/setup_{{ node_version }} | bash -
-          args:
-            executable: /bin/bash
-
-        - name: Install Node.js and npm
+        - name: Ensure curl, ca-certificates, gnupg present
           become: true
           apt:
-            name:
-              - nodejs
-              - npm
+            name: [ curl, ca-certificates, gnupg ]
             state: present
             update_cache: yes
 
-        - name: Verify Node.js installation
+        - name: Add NodeSource repo (Node {{ node_version }})
+          become: true
+          shell: curl -fsSL https://deb.nodesource.com/setup_{{ node_version }} | bash -
+          args:
+            executable: /bin/bash
+            creates: /etc/apt/sources.list.d/nodesource.list   # idempotent
+
+        - name: Install Node.js {{ node_version }}
+          become: true
+          apt:
+            name: nodejs          # npm comes with NodeSource’s nodejs pkg
+            state: latest
+            update_cache: yes
+
+        - name: Verify Node.js version ≥ 20
           command: node -v
-          register: node_version_output
+          register: nodever
+          changed_when: false
 
-        - name: Display installed Node.js version
+        - name: Abort if Node < 20
+          fail:
+            msg: "Node.js {{ nodever.stdout }} is < 20 — aborting."
+          when: nodever.stdout is version('20.0.0', '<')
+
+        - name: Display installed Node.js / npm versions
           debug:
-            msg: "Installed Node.js version: {{ node_version_output.stdout }}"
-
-        - name: Verify npm installation
-          command: npm -v
-          register: npm_version_output
+            msg:
+              - "Node: {{ nodever.stdout }}"
+              - "npm : {{ lookup('pipe', 'npm -v') | trim }}"
 
         - name: Install dependencies
           shell: |
