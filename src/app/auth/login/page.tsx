@@ -52,7 +52,7 @@ const AuthLogin = () => {
             );
         }
 
-        const handleGitHubSession = async () => {
+        const handleSSOSession = async () => {
             const token = new URLSearchParams(window.location.search)?.get('accessToken');
             const refreshToken = new URLSearchParams(window.location.search)?.get('refreshToken');
 
@@ -72,17 +72,17 @@ const AuthLogin = () => {
 
                 setUser(userDetails.data || null);
 
-                const redirectRoute = userDetails.data?.role?.name === 'SDM' ? '/nlu/sdm/dashboard' : '/';
+                const redirectRoute = '/nlu/dashboards/customer';
                 window.location.href = redirectRoute;
             } catch (error) {
-                setErrorMessage('Failed to initiate GitHub login. Please try again.');
+                setErrorMessage('Failed to initiate Single Sign On. Please try again.');
                 setOpenErrorDialog(true);
             } finally {
                 setIsLoading(false);
             }
         }
 
-        handleGitHubSession();
+        handleSSOSession();
     }, [setToken, setUser, token]);
 
 
@@ -125,6 +125,10 @@ const AuthLogin = () => {
 
     const triggerGitHubSignIn = () => {
         window.open(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/auth/github`, '_self');
+    }
+
+    const triggerKeycloakSignIn = () => {
+        window.open(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/auth/keycloak`, '_self');
     }
 
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -418,7 +422,7 @@ const AuthLogin = () => {
                                                     fullWidth
                                                     variant="outlined"
                                                     color="primary"
-                                                    onClick={triggerGitHubSignIn}
+                                                    onClick={triggerKeycloakSignIn}
                                                     startIcon={<Key />}
                                                     size="large"
                                                     sx={{
@@ -429,7 +433,7 @@ const AuthLogin = () => {
                                                         }
                                                     }}
                                                 >
-                                                    Sign in with Single Sign-On (SSO)
+                                                    Sign in with Keycloak
                                                 </Button>
                                             </Box>
                                         </Box>
