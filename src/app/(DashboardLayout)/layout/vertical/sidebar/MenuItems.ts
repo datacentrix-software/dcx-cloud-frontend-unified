@@ -38,7 +38,7 @@ const Menuitems: MenuItem[] = [
   },
   {
     id: uniqueId(),
-    title: "Generate Virtual Machines",
+    title: "Create Virtual Machines",
     icon: IconFileDescription,
     href: "/nlu/customer/virtual-machines",
     allowedRoles: ["Admin", "Customer", "Root"],

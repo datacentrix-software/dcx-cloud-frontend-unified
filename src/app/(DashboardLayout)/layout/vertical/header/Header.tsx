@@ -24,7 +24,7 @@ import axios, { AxiosError } from 'axios';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
 import { IPaymentCard } from '@/types';
 import WalletStatusPopover from '@/app/(DashboardLayout)/(pages)/nlu/customer/virtual-machines/components/WalletStatusPopover';
-import NotificationPopover from '@/app/(DashboardLayout)/(pages)/nlu/customer/virtual-machines/components/NotificationPopover';
+import NotificationPopover from './NotificationPopover';
 import { getUserRoleDisplay } from '@/app/(DashboardLayout)/utilities/helpers/user.helper';
 
 const Header = () => {
@@ -177,7 +177,10 @@ const Header = () => {
   }, [primaryOrgId, token, setField, setPaymentCards]);
 
   useEffect(() => {
-    setIsCustomer(getUserRoleDisplay(authUser)?.includes('Customer') as boolean);
+    const userRole = getUserRoleDisplay(authUser);
+    console.log('User role:', userRole);
+    console.log('Auth user:', authUser);
+    setIsCustomer(userRole?.includes('Customer') as boolean);
     fetchCardDetails();
   }, [authUser, fetchCardDetails]);
 
@@ -309,11 +312,9 @@ const Header = () => {
           )}
           {
             isCustomer &&
-            <>
-              <WalletStatusPopover wallet={wallet} />
-              <NotificationPopover alerts={alerts} onDismiss={handleDismissAlert} />
-            </>
+            <WalletStatusPopover wallet={wallet} />
           }
+          <NotificationPopover />
 
           <Tooltip title="Profile Settings">
             <span><Profile /></span>

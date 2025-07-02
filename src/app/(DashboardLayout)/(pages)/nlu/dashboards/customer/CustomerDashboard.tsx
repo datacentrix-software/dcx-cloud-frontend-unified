@@ -461,11 +461,6 @@ const CustomerDashboard = () => {
         setCurrentTab(newValue);
     };
 
-    const handleCategoryChange = (event: any) => {
-        setSelectedCategory(event.target.value);
-        setPage(0);
-    };
-
     const handleProductSort = (property: keyof Product) => {
         const isAsc = productOrderBy === property && productOrder === 'asc';
         setProductOrder(isAsc ? 'desc' : 'asc');

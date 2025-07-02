@@ -35,16 +35,9 @@ import {
 import Image from "next/image";
 import axios from "axios";
 import { useAuthStore } from "@/store";
+import { useNotificationStore, Notification } from "@/store/useNotificationStore";
 
-interface Notification {
-  id: string;
-  type: 'maintenance' | 'warning' | 'news' | 'info' | 'success' | 'update';
-  title: string;
-  message: string;
-  timestamp: string;
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  read: boolean;
-}
+
 
 const WelcomeCard = () => {
   const { user: authUser, token, primaryOrgId } = useAuthStore();
@@ -56,54 +49,7 @@ const WelcomeCard = () => {
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const isNewCustomer = !vcenterOrgId;
 
-  // Mock notifications - in real app, these would come from API
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      type: 'maintenance',
-      title: 'Scheduled Maintenance',
-      message: 'System maintenance scheduled for tomorrow at 2:00 AM. Expected downtime: 30 minutes.',
-      timestamp: '2024-01-15T10:00:00Z',
-      priority: 'medium',
-      read: false
-    },
-    {
-      id: '2',
-      type: 'warning',
-      title: 'High CPU Usage',
-      message: 'VM "web-server-01" is experiencing high CPU usage (85%). Consider scaling up.',
-      timestamp: '2024-01-15T09:30:00Z',
-      priority: 'high',
-      read: false
-    },
-    {
-      id: '3',
-      type: 'news',
-      title: 'New Features Available',
-      message: 'Enhanced monitoring dashboard and automated backup features are now available.',
-      timestamp: '2024-01-15T08:00:00Z',
-      priority: 'low',
-      read: false
-    },
-    {
-      id: '4',
-      type: 'success',
-      title: 'Backup Completed',
-      message: 'Daily backup completed successfully. All data is secure and up to date.',
-      timestamp: '2024-01-15T06:00:00Z',
-      priority: 'low',
-      read: true
-    },
-    {
-      id: '5',
-      type: 'update',
-      title: 'Security Update',
-      message: 'Critical security patches have been applied to your infrastructure.',
-      timestamp: '2024-01-15T05:00:00Z',
-      priority: 'critical',
-      read: false
-    }
-  ]);
+  const { notifications, removeNotification, markAsRead } = useNotificationStore();
 
   useEffect(() => {
     // Check if welcome card was dismissed in current session
@@ -160,7 +106,7 @@ const WelcomeCard = () => {
   };
 
   const handleNotificationDismiss = (notificationId: string) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== notificationId));
+    removeNotification(notificationId);
   };
 
   const getNotificationIcon = (type: Notification['type']) => {
@@ -260,9 +206,9 @@ const WelcomeCard = () => {
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               Notifications
             </Typography>
-            {unreadNotifications.length > 0 && (
+            {notifications.length > 0 && (
               <Badge 
-                badgeContent={unreadNotifications.length} 
+                badgeContent={notifications.length} 
                 color="error"
                 sx={{
                   '& .MuiBadge-badge': {
@@ -285,6 +231,11 @@ const WelcomeCard = () => {
             {sortedNotifications.map((notification, index) => (
               <Box
                 key={notification.id}
+                onClick={() => {
+                  if (!notification.read) {
+                    markAsRead(notification.id);
+                  }
+                }}
                 sx={{
                   p: 1.5,
                   borderRadius: 1,
@@ -298,6 +249,7 @@ const WelcomeCard = () => {
                   marginBottom: showAllNotifications || index < 2 ? undefined : 0,
                   padding: showAllNotifications || index < 2 ? 1.5 : 0,
                   overflow: 'hidden',
+                  cursor: 'pointer',
                   '&:hover': {
                     backgroundColor: getSeverityColor(notification.priority) + '12',
                     transform: (showAllNotifications || index < 2) ? 'translateX(2px)' : 'translateY(-20px)',
@@ -358,7 +310,10 @@ const WelcomeCard = () => {
                     </Typography>
                   </Box>
                   <IconButton
-                    onClick={() => handleNotificationDismiss(notification.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNotificationDismiss(notification.id);
+                    }}
                     size="small"
                     sx={{
                       color: theme.palette.text.secondary,
@@ -532,9 +487,9 @@ const WelcomeCard = () => {
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
                       Notifications
                     </Typography>
-                    {unreadNotifications.length > 0 && (
+                    {notifications.length > 0 && (
                       <Badge 
-                        badgeContent={unreadNotifications.length} 
+                        badgeContent={notifications.length} 
                         color="error"
                         sx={{
                           '& .MuiBadge-badge': {
@@ -557,6 +512,11 @@ const WelcomeCard = () => {
                     {sortedNotifications.map((notification, index) => (
                       <Box
                         key={notification.id}
+                        onClick={() => {
+                          if (!notification.read) {
+                            markAsRead(notification.id);
+                          }
+                        }}
                         sx={{
                           p: 1.5,
                           borderRadius: 1,
@@ -570,6 +530,7 @@ const WelcomeCard = () => {
                           marginBottom: showAllNotifications || index < 2 ? undefined : 0,
                           padding: showAllNotifications || index < 2 ? 1.5 : 0,
                           overflow: 'hidden',
+                          cursor: 'pointer',
                           '&:hover': {
                             backgroundColor: getSeverityColor(notification.priority) + '12',
                             transform: (showAllNotifications || index < 2) ? 'translateX(2px)' : 'translateY(-20px)',
@@ -630,7 +591,10 @@ const WelcomeCard = () => {
                             </Typography>
                           </Box>
                           <IconButton
-                            onClick={() => handleNotificationDismiss(notification.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleNotificationDismiss(notification.id);
+                            }}
                             size="small"
                             sx={{
                               color: theme.palette.text.secondary,
