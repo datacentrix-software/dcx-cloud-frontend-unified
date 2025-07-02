@@ -44,6 +44,12 @@ interface LineItem {
     billing_month: string;
 }
 
+interface VMBillingData {
+    cost_estimate: string;
+    license_cost: string;
+    // Siya to check 1
+}
+
 interface LineItemSortConfig {
     key: keyof LineItem;
     direction: 'asc' | 'desc';
@@ -62,7 +68,8 @@ interface LineItemFilter {
 
 interface BillingProps {
     billingData: BillingData | null;
-    vmData: any[];
+    vmData: VMBillingData[];
+    // Siya to check 2
     pastBills: PastBill[];
     selectedMonth: string | null;
     lineItems: LineItem[];
