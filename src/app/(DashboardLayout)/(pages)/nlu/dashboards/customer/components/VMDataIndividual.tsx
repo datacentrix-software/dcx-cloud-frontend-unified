@@ -12,7 +12,7 @@ import {
     Popover,
     IconButton
 } from '@mui/material';
-import { IconServer, IconCpu, IconDatabase, IconPower, IconInfoCircle, IconX, IconChartLine, IconBulb, IconArrowUp } from '@tabler/icons-react';
+import { IconServer, IconCpu, IconDatabase, IconPower, IconInfoCircle, IconX, IconChartLine, IconBulb, IconArrowUp, IconDownload } from '@tabler/icons-react';
 import ParentCard from '@/app/components/shared/ParentCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, Area, BarChart, Bar } from 'recharts';
 
@@ -192,6 +192,37 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
         }
     };
 
+    // CSV Export function for network data
+    const exportNetworkDataToCSV = () => {
+        if (!vmNetworkData || vmNetworkData.length === 0) {
+            alert('No network data available to export');
+            return;
+        }
+
+        // Create CSV content with all fields quoted
+        const headers = ['Time', 'Total Usage (kbps)', 'Data Received (kbps)', 'Data Sent (kbps)'];
+        const csvContent = [
+            headers.map(h => `"${h}"`).join(','),
+            ...vmNetworkData.map(data => [
+                new Date(data.interval_start).toLocaleString(),
+                parseFloat(data.avg_net_usage_kbps).toFixed(2),
+                parseFloat(data.avg_net_received_kbps).toFixed(2),
+                parseFloat(data.avg_net_transmit_kbps).toFixed(2)
+            ].map(field => `"${field}"`).join(','))
+        ].join('\n');
+
+        // Create and download file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `DaaS App- Network Usage-${selectedVM?.identity_name || 'vm'}-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     // Parse values for health, workload, and efficiency
     const healthValue = vmHealthWindow.length > 0 ? parseFloat(vmHealthWindow[0].avg_badge_health) : 0;
     const workloadValue = vmHealthWindow.length > 0 ? parseFloat(vmHealthWindow[0].avg_badge_workload) : 0;
@@ -244,6 +275,190 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
         );
     };
 
+    // CSV Export function for alerts data
+    const exportAlertsDataToCSV = () => {
+        if (!vmAlertWindow || vmAlertWindow.length === 0) {
+            alert('No alert data available to export');
+            return;
+        }
+        const headers = ['Time', 'Critical', 'Immediate', 'Warning'];
+        const csvContent = [
+            headers.map(h => `"${h}"`).join(','),
+            ...vmAlertWindow.map(data => [
+                new Date(data.bucket).toLocaleString(),
+                Math.round(parseFloat(data.avg_critical)),
+                Math.round(parseFloat(data.avg_immediate)),
+                Math.round(parseFloat(data.avg_warning))
+            ].map(field => `"${field}"`).join(','))
+        ].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `DaaS App- System Alerts-${selectedVM?.identity_name || 'vm'}-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // CSV Export function for CPU usage data
+    const exportCpuDataToCSV = () => {
+        if (!vmCpuRamData || vmCpuRamData.length === 0) {
+            alert('No CPU usage data available to export');
+            return;
+        }
+        const headers = ['Time', 'CPU Usage (%)'];
+        const csvContent = [
+            headers.map(h => `"${h}"`).join(','),
+            ...vmCpuRamData.map(data => [
+                new Date(data.interval_start).toLocaleString(),
+                parseFloat(data.avg_cpu_usage_percent).toFixed(2)
+            ].map(field => `"${field}"`).join(','))
+        ].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `DaaS App- CPU Usage-${selectedVM?.identity_name || 'vm'}-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // CSV Export function for Memory usage data
+    const exportMemoryDataToCSV = () => {
+        if (!vmCpuRamData || vmCpuRamData.length === 0) {
+            alert('No memory usage data available to export');
+            return;
+        }
+        const headers = ['Time', 'Memory Usage (%)'];
+        const csvContent = [
+            headers.map(h => `"${h}"`).join(','),
+            ...vmCpuRamData.map(data => [
+                new Date(data.interval_start).toLocaleString(),
+                parseFloat(data.avg_memory_usage_percent).toFixed(2)
+            ].map(field => `"${field}"`).join(','))
+        ].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `DaaS App- Memory Usage-${selectedVM?.identity_name || 'vm'}-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // CSV Export function for Disk usage data
+    const exportDiskDataToCSV = () => {
+        if (!vmDiskData || vmDiskData.length === 0) {
+            alert('No disk usage data available to export');
+            return;
+        }
+        const headers = ['Time', 'Used (GB)', 'Provisioned (GB)', 'Usage (%)'];
+        const csvContent = [
+            headers.map(h => `"${h}"`).join(','),
+            ...vmDiskData.map(data => [
+                new Date(data.interval_start).toLocaleString(),
+                parseFloat(data.avg_diskspace_used).toFixed(2),
+                parseFloat(data.avg_diskspace_provisioned).toFixed(2),
+                parseFloat(data.avg_disk_usage_percent).toFixed(2)
+            ].map(field => `"${field}"`).join(','))
+        ].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `DaaS App- Disk Usage-${selectedVM?.identity_name || 'vm'}-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // CSV Export function for all graphing data
+    const exportAllGraphDataToCSV = () => {
+        let csvSections = [];
+        // Network Usage
+        if (vmNetworkData && vmNetworkData.length > 0) {
+            csvSections.push('[Network Usage]');
+            const headers = ['Time', 'Total Usage (kbps)', 'Data Received (kbps)', 'Data Sent (kbps)'];
+            csvSections.push(headers.map(h => `"${h}"`).join(','));
+            csvSections.push(...vmNetworkData.map(data => [
+                new Date(data.interval_start).toLocaleString(),
+                parseFloat(data.avg_net_usage_kbps).toFixed(2),
+                parseFloat(data.avg_net_received_kbps).toFixed(2),
+                parseFloat(data.avg_net_transmit_kbps).toFixed(2)
+            ].map(field => `"${field}"`).join(',')));
+            csvSections.push('');
+        }
+        // System Alerts
+        if (vmAlertWindow && vmAlertWindow.length > 0) {
+            csvSections.push('[System Alerts]');
+            const headers = ['Time', 'Critical', 'Immediate', 'Warning'];
+            csvSections.push(headers.map(h => `"${h}"`).join(','));
+            csvSections.push(...vmAlertWindow.map(data => [
+                new Date(data.bucket).toLocaleString(),
+                Math.round(parseFloat(data.avg_critical)),
+                Math.round(parseFloat(data.avg_immediate)),
+                Math.round(parseFloat(data.avg_warning))
+            ].map(field => `"${field}"`).join(',')));
+            csvSections.push('');
+        }
+        // CPU Usage
+        if (vmCpuRamData && vmCpuRamData.length > 0) {
+            csvSections.push('[CPU Usage Over Time]');
+            const headers = ['Time', 'CPU Usage (%)'];
+            csvSections.push(headers.map(h => `"${h}"`).join(','));
+            csvSections.push(...vmCpuRamData.map(data => [
+                new Date(data.interval_start).toLocaleString(),
+                parseFloat(data.avg_cpu_usage_percent).toFixed(2)
+            ].map(field => `"${field}"`).join(',')));
+            csvSections.push('');
+        }
+        // Memory Usage
+        if (vmCpuRamData && vmCpuRamData.length > 0) {
+            csvSections.push('[Memory Usage Over Time]');
+            const headers = ['Time', 'Memory Usage (%)'];
+            csvSections.push(headers.map(h => `"${h}"`).join(','));
+            csvSections.push(...vmCpuRamData.map(data => [
+                new Date(data.interval_start).toLocaleString(),
+                parseFloat(data.avg_memory_usage_percent).toFixed(2)
+            ].map(field => `"${field}"`).join(',')));
+            csvSections.push('');
+        }
+        // Disk Usage
+        if (vmDiskData && vmDiskData.length > 0) {
+            csvSections.push('[Disk Usage Over Time]');
+            const headers = ['Time', 'Used (GB)', 'Provisioned (GB)', 'Usage (%)'];
+            csvSections.push(headers.map(h => `"${h}"`).join(','));
+            csvSections.push(...vmDiskData.map(data => [
+                new Date(data.interval_start).toLocaleString(),
+                parseFloat(data.avg_diskspace_used).toFixed(2),
+                parseFloat(data.avg_diskspace_provisioned).toFixed(2),
+                parseFloat(data.avg_disk_usage_percent).toFixed(2)
+            ].map(field => `"${field}"`).join(',')));
+            csvSections.push('');
+        }
+        if (csvSections.length === 0) {
+            alert('No graph data available to export');
+            return;
+        }
+        const csvContent = csvSections.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `DaaS App- All Graph Data-${selectedVM?.identity_name || 'vm'}-${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <>
         <ParentCard title={
@@ -255,6 +470,29 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                 gap: 3
             }}>
                 <Typography variant="h5">Individual VM Details</Typography>
+                <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={exportAllGraphDataToCSV}
+                    startIcon={<IconDownload size={16} />}
+                    sx={{
+                        borderRadius: 2,
+                        textTransform: 'none',
+                        fontWeight: 500,
+                        px: 2,
+                        py: 0.5,
+                        borderColor: (theme) => theme.palette.success.main,
+                        color: (theme) => theme.palette.success.main,
+                        ml: 2,
+                        '&:hover': {
+                            backgroundColor: (theme) => theme.palette.success.main,
+                            color: 'white',
+                            borderColor: (theme) => theme.palette.success.main,
+                        }
+                    }}
+                >
+                    Export All CSV
+                </Button>
                 {selectedVM && (
                     <Box sx={{ ml: 'auto' }}>
                         {/* <Button
@@ -696,7 +934,36 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
 
                         {/* Network Usage */}
                         <Grid item xs={12}>
-                            <ParentCard title="Network Usage">
+                            <ParentCard title={
+                                <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <Typography variant="h5" sx={{ flex: 1 }}>Network Usage</Typography>
+                                    {vmNetworkData.length > 0 && (
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
+                                            onClick={exportNetworkDataToCSV}
+                                            startIcon={<IconDownload size={16} />}
+                                            sx={{
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                fontWeight: 500,
+                                                px: 2,
+                                                py: 0.5,
+                                                borderColor: (theme) => theme.palette.success.main,
+                                                color: (theme) => theme.palette.success.main,
+                                                ml: 2,
+                                                '&:hover': {
+                                                    backgroundColor: (theme) => theme.palette.success.main,
+                                                    color: 'white',
+                                                    borderColor: (theme) => theme.palette.success.main,
+                                                }
+                                            }}
+                                        >
+                                            Export CSV
+                                        </Button>
+                                    )}
+                                </Box>
+                            }>
                                 {vmNetworkData.length > 0 ? (
                                     <>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -951,8 +1218,33 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                 <div ref={cpuGraphRef}>
                                     <ParentCard 
                                         title={
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                                <Typography variant="h5">CPU Usage Over Time</Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                <Typography variant="h5" sx={{ flex: 1 }}>CPU Usage Over Time</Typography>
+                                                {vmCpuRamData.length > 0 && (
+                                                    <Button
+                                                        variant="outlined"
+                                                        size="small"
+                                                        onClick={exportCpuDataToCSV}
+                                                        startIcon={<IconDownload size={16} />}
+                                                        sx={{
+                                                            borderRadius: 2,
+                                                            textTransform: 'none',
+                                                            fontWeight: 500,
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            borderColor: (theme) => theme.palette.success.main,
+                                                            color: (theme) => theme.palette.success.main,
+                                                            ml: 2,
+                                                            '&:hover': {
+                                                                backgroundColor: (theme) => theme.palette.success.main,
+                                                                color: 'white',
+                                                                borderColor: (theme) => theme.palette.success.main,
+                                                            }
+                                                        }}
+                                                    >
+                                                        Export CSV
+                                                    </Button>
+                                                )}
                                                 {activeGraph === 'cpu' && (
                                                     <Button
                                                         variant="outlined"
@@ -1107,8 +1399,33 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                 <div ref={memoryGraphRef}>
                                     <ParentCard 
                                         title={
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                                <Typography variant="h5">Memory Usage Over Time</Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                <Typography variant="h5" sx={{ flex: 1 }}>Memory Usage Over Time</Typography>
+                                                {vmCpuRamData.length > 0 && (
+                                                    <Button
+                                                        variant="outlined"
+                                                        size="small"
+                                                        onClick={exportMemoryDataToCSV}
+                                                        startIcon={<IconDownload size={16} />}
+                                                        sx={{
+                                                            borderRadius: 2,
+                                                            textTransform: 'none',
+                                                            fontWeight: 500,
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            borderColor: (theme) => theme.palette.success.main,
+                                                            color: (theme) => theme.palette.success.main,
+                                                            ml: 2,
+                                                            '&:hover': {
+                                                                backgroundColor: (theme) => theme.palette.success.main,
+                                                                color: 'white',
+                                                                borderColor: (theme) => theme.palette.success.main,
+                                                            }
+                                                        }}
+                                                    >
+                                                        Export CSV
+                                                    </Button>
+                                                )}
                                                 {activeGraph === 'memory' && (
                                                     <Button
                                                         variant="outlined"
@@ -1263,8 +1580,33 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                 <div ref={diskGraphRef}>
                                     <ParentCard 
                                         title={
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                                                <Typography variant="h5">Disk Usage Over Time</Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                <Typography variant="h5" sx={{ flex: 1 }}>Disk Usage Over Time</Typography>
+                                                {vmDiskData.length > 0 && (
+                                                    <Button
+                                                        variant="outlined"
+                                                        size="small"
+                                                        onClick={exportDiskDataToCSV}
+                                                        startIcon={<IconDownload size={16} />}
+                                                        sx={{
+                                                            borderRadius: 2,
+                                                            textTransform: 'none',
+                                                            fontWeight: 500,
+                                                            px: 2,
+                                                            py: 0.5,
+                                                            borderColor: (theme) => theme.palette.success.main,
+                                                            color: (theme) => theme.palette.success.main,
+                                                            ml: 2,
+                                                            '&:hover': {
+                                                                backgroundColor: (theme) => theme.palette.success.main,
+                                                                color: 'white',
+                                                                borderColor: (theme) => theme.palette.success.main,
+                                                            }
+                                                        }}
+                                                    >
+                                                        Export CSV
+                                                    </Button>
+                                                )}
                                                 {activeGraph === 'disk' && (
                                                     <Button
                                                         variant="outlined"
@@ -1431,7 +1773,36 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
 
                         {/* System Alerts */}
                         <Grid item xs={12}>
-                            <ParentCard title="System Alerts">
+                            <ParentCard title={
+                                <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <Typography variant="h5" sx={{ flex: 1 }}>System Alerts</Typography>
+                                    {vmAlertWindow.length > 0 && (
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
+                                            onClick={exportAlertsDataToCSV}
+                                            startIcon={<IconDownload size={16} />}
+                                            sx={{
+                                                borderRadius: 2,
+                                                textTransform: 'none',
+                                                fontWeight: 500,
+                                                px: 2,
+                                                py: 0.5,
+                                                borderColor: (theme) => theme.palette.success.main,
+                                                color: (theme) => theme.palette.success.main,
+                                                ml: 2,
+                                                '&:hover': {
+                                                    backgroundColor: (theme) => theme.palette.success.main,
+                                                    color: 'white',
+                                                    borderColor: (theme) => theme.palette.success.main,
+                                                }
+                                            }}
+                                        >
+                                            Export CSV
+                                        </Button>
+                                    )}
+                                </Box>
+                            }>
                                 {vmAlertWindow.length > 0 && (
                                     <Box sx={{ mt: 3 }}>
                                         <Typography variant="subtitle1" gutterBottom>
