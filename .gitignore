@@ -19,6 +19,24 @@
 .DS_Store
 *.pem
 
+# vault certificates (contains sensitive CA certs)
+.vault-certs/
+
+# Claude AI documentation and files (NEVER COMMIT TO GITHUB)
+CLAUDE.md
+claude-*.md
+*claude*
+ARCHITECTURE_DIAGRAM.md
+ROLLBACK_SAFETY.md
+fetch-vault-secrets*.sh
+
+# Test coverage reports
+coverage/
+*.lcov
+
+# Test artifacts
+__tests__/coverage/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -26,6 +44,17 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env.local.vault
+
+# Database dumps (contain production data)
+*_dump.sql
+*.sql
+
+# Backend startup scripts (contain hardcoded credentials)
+start-backend*.sh
+fix-and-start-backend.sh
+final-backend-start.sh
+backend.log
 
 # vercel
 .vercel
