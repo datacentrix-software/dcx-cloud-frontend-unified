@@ -44,6 +44,14 @@ const LoginForm = ({ onOtpSent, onError, onBackToOptions }: LoginFormProps) => {
           router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
         } else {
           onOtpSent(email);
+          // ⚠️ SECURITY WARNING: Development Mode Only! ⚠️
+          // TODO: Remove this block before production deployment
+          // This exposes OTPs in the browser - NEVER use in production!
+          if (data.devOtp) {
+            console.warn('⚠️ DEVELOPMENT MODE: OTP exposed in UI - Remove before production!');
+            console.log('🔑 Development OTP:', data.devOtp);
+            alert(`⚠️ DEVELOPMENT MODE ONLY ⚠️\n\nYour OTP is: ${data.devOtp}\n\nThis feature MUST be removed before production!`);
+          }
           // router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
         }
       }
