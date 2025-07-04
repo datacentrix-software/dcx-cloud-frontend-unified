@@ -15,7 +15,9 @@ import {
     Button,
     CircularProgress
 } from '@mui/material';
-import { IconServer, IconCpu, IconDownload } from '@tabler/icons-react';
+import ComputerIcon from '@mui/icons-material/Computer';
+import MemoryIcon from '@mui/icons-material/Memory';
+import DownloadIcon from '@mui/icons-material/Download';
 import ParentCard from '@/app/components/shared/ParentCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, Area } from 'recharts';
 
@@ -144,7 +146,7 @@ const Billing: React.FC<BillingProps> = ({
                     </Typography>
                     <Button
                         variant="contained"
-                        startIcon={<IconDownload />}
+                        startIcon={<DownloadIcon />}
                         sx={{ mt: 2 }}
                     >
                         Download Current Bill
@@ -173,7 +175,7 @@ const Billing: React.FC<BillingProps> = ({
                     </Box>
                     <Button
                         variant="outlined"
-                        startIcon={<IconDownload />}
+                        startIcon={<DownloadIcon />}
                         sx={{ mt: 2 }}
                     >
                         Download VM Details
@@ -185,7 +187,7 @@ const Billing: React.FC<BillingProps> = ({
             <Grid item xs={12}>
                 <ParentCard title={
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <IconServer size={24} color="#8884d8" />
+                        <ComputerIcon fontSize="medium" sx={{ color: "#8884d8" }} />
                         <Typography variant="h5">
                             Past Bills for {pastBills[0]?.organisation}
                         </Typography>
@@ -231,7 +233,7 @@ const Billing: React.FC<BillingProps> = ({
                                                         >
                                                             <TableCell>
                                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                                    <IconCpu size={16} color="#8884d8" />
+                                                                    <MemoryIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                                                     {bill.billing_month}
                                                                 </Box>
                                                             </TableCell>
@@ -347,7 +349,7 @@ const Billing: React.FC<BillingProps> = ({
                 <Grid item xs={12}>
                     <ParentCard title={
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <IconServer size={24} color="#8884d8" />
+                            <ComputerIcon fontSize="medium" sx={{ color: "#8884d8" }} />
                             <Typography variant="h5">
                                 Line Items for {selectedMonth}
                             </Typography>
@@ -383,7 +385,7 @@ const Billing: React.FC<BillingProps> = ({
                                                     }}
                                                 >
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                        <IconServer size={16} color="#8884d8" />
+                                                        <ComputerIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                                         VM Name {lineItemSortConfig.key === 'vm_name' && (lineItemSortConfig.direction === 'asc' ? '↑' : '↓')}
                                                     </Box>
                                                 </TableCell>
@@ -399,7 +401,7 @@ const Billing: React.FC<BillingProps> = ({
                                                     }}
                                                 >
                                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                        <IconCpu size={16} color="#8884d8" />
+                                                        <MemoryIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                                         OS {lineItemSortConfig.key === 'guest_os' && (lineItemSortConfig.direction === 'asc' ? '↑' : '↓')}
                                                     </Box>
                                                 </TableCell>
@@ -474,13 +476,13 @@ const Billing: React.FC<BillingProps> = ({
                                                 >
                                                     <TableCell>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <IconServer size={16} color="#8884d8" />
+                                                            <ComputerIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                                             {item.vm_name}
                                                         </Box>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <IconCpu size={16} color="#8884d8" />
+                                                            <MemoryIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                                             {item.guest_os}
                                                         </Box>
                                                     </TableCell>

@@ -12,7 +12,16 @@ import {
     Popover,
     IconButton
 } from '@mui/material';
-import { IconServer, IconCpu, IconDatabase, IconPower, IconInfoCircle, IconX, IconChartLine, IconBulb, IconArrowUp, IconDownload } from '@tabler/icons-react';
+import ComputerIcon from '@mui/icons-material/Computer';
+import MemoryIcon from '@mui/icons-material/Memory';
+import StorageIcon from '@mui/icons-material/Storage';
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+import InfoIcon from '@mui/icons-material/Info';
+import CloseIcon from '@mui/icons-material/Close';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import DownloadIcon from '@mui/icons-material/Download';
 import ParentCard from '@/app/components/shared/ParentCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, Area, BarChart, Bar } from 'recharts';
 
@@ -474,7 +483,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                     variant="outlined"
                     size="small"
                     onClick={exportAllGraphDataToCSV}
-                    startIcon={<IconDownload size={16} />}
+                    startIcon={<DownloadIcon fontSize="small" />}
                     sx={{
                         borderRadius: 2,
                         textTransform: 'none',
@@ -498,7 +507,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                         {/* <Button
                             variant="contained"
                             color={isVMPoweredOn ? "error" : "success"}
-                            startIcon={<IconPower size={20} />}
+                            startIcon={<PowerSettingsNewIcon size={20} />}
                             onClick={onVMPowerToggle}
                             disabled={isPowerActionLoading}
                             sx={{
@@ -583,7 +592,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     fontWeight: 500
                                                 }}
                                             >
-                                                <IconChartLine size={14} />
+                                                <ShowChartIcon fontSize="small" />
                                                 View Graph
                                             </Box>
                                         </Box>
@@ -598,7 +607,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         >
                                             <Box sx={{ position: 'relative' }}>
                                 <Stack direction="row" alignItems="center" spacing={2}>
-                                    <IconCpu size={32} color="#82ca9d" />
+                                    <MemoryIcon sx={{ fontSize: 32, color: "#82ca9d" }} />
                                     <Box>
                                         <Typography variant="h4">
                                             {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent
@@ -658,7 +667,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 fontWeight: 500
                                             }}
                                         >
-                                            <IconChartLine size={14} />
+                                            <ShowChartIcon fontSize="small" />
                                             View Graph
                                         </Box>
                                     </Box>
@@ -673,7 +682,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                     >
                                         <Box sx={{ position: 'relative' }}>
                                 <Stack direction="row" alignItems="center" spacing={2}>
-                                    <IconDatabase size={32} color="#8884d8" />
+                                    <StorageIcon sx={{ fontSize: 32 , color: "#8884d8" }} />
                                     <Box>
                                         <Typography variant="h4">
                                             {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_memory_usage_percent
@@ -732,7 +741,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 fontWeight: 500
                                             }}
                                         >
-                                            <IconChartLine size={14} />
+                                            <ShowChartIcon fontSize="small" />
                                             View Graph
                                         </Box>
                                     </Box>
@@ -747,7 +756,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                     >
                                         <Box sx={{ position: 'relative' }}>
                                 <Stack direction="row" alignItems="center" spacing={2}>
-                                    <IconServer size={32} color="#ffc658" />
+                                    <ComputerIcon sx={{ fontSize: 32 , color: "#ffc658" }} />
                                     <Box>
                                         <Typography variant="h4">
                                             {vmDiskData.length > 0 && vmDiskData[vmDiskData.length - 1].avg_disk_usage_percent
@@ -866,7 +875,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <IconX size={18} />
+                                                        <CloseIcon fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -916,7 +925,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsHealthInfoVisible(true)}
-                                                    startIcon={<IconInfoCircle size={16} />}
+                                                    startIcon={<InfoIcon fontSize="small" />}
                                                     variant="text"
                                                 >
                                                     Show Health Score Explanation
@@ -942,7 +951,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                             variant="outlined"
                                             size="small"
                                             onClick={exportNetworkDataToCSV}
-                                            startIcon={<IconDownload size={16} />}
+                                            startIcon={<DownloadIcon fontSize="small" />}
                                             sx={{
                                                 borderRadius: 2,
                                                 textTransform: 'none',
@@ -996,7 +1005,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                             {/* Graph Line Toggle Controls */}
                                             <Box sx={{ mb: 2 }}>
                                                 <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ mb: 1 }}>
-                                                    <IconChartLine size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                                                    <ShowChartIcon fontSize="small" style={{ marginRight: '8px', verticalAlign: 'middle' }} />
                                                     Toggle Graph Lines (Click to show/hide):
                                                 </Typography>
                                                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -1156,7 +1165,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <IconX size={18} />
+                                                        <CloseIcon fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -1187,7 +1196,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 </Box>
                                                     <Box sx={{ mt: 2, p: 1.5, backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.1)' : 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid', borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.3)' : 'rgba(25, 118, 210, 0.2)' }}>
                                                         <Typography variant="body2" sx={{ color: (theme) => theme.palette.primary.main, fontWeight: 500 }}>
-                                                            <IconBulb size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                                            <LightbulbIcon fontSize="small" style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                                                             <b>Tip:</b> Use the toggle buttons above the graph to show/hide specific network metrics for better analysis!
                                                         </Typography>
                                                     </Box>
@@ -1197,7 +1206,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsNetworkInfoVisible(true)}
-                                                    startIcon={<IconInfoCircle size={16} />}
+                                                    startIcon={<InfoIcon fontSize="small" />}
                                                     variant="text"
                                                 >
                                                     Show Network Graph Explanation
@@ -1225,7 +1234,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         variant="outlined"
                                                         size="small"
                                                         onClick={exportCpuDataToCSV}
-                                                        startIcon={<IconDownload size={16} />}
+                                                        startIcon={<DownloadIcon fontSize="small" />}
                                                         sx={{
                                                             borderRadius: 2,
                                                             textTransform: 'none',
@@ -1250,7 +1259,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         variant="outlined"
                                                         size="small"
                                                         onClick={scrollToOverview}
-                                                        startIcon={<IconArrowUp size={16} />}
+                                                        startIcon={<ArrowUpwardIcon fontSize="small" />}
                                                         sx={{
                                                             borderRadius: 2,
                                                             textTransform: 'none',
@@ -1350,7 +1359,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <IconX size={18} />
+                                                        <CloseIcon fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -1377,7 +1386,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsCpuInfoVisible(true)}
-                                                    startIcon={<IconInfoCircle size={16} />}
+                                                    startIcon={<InfoIcon fontSize="small" />}
                                                     variant="text"
                                                 >
                                                     Show CPU Graph Explanation
@@ -1406,7 +1415,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         variant="outlined"
                                                         size="small"
                                                         onClick={exportMemoryDataToCSV}
-                                                        startIcon={<IconDownload size={16} />}
+                                                        startIcon={<DownloadIcon fontSize="small" />}
                                                         sx={{
                                                             borderRadius: 2,
                                                             textTransform: 'none',
@@ -1431,7 +1440,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         variant="outlined"
                                                         size="small"
                                                         onClick={scrollToOverview}
-                                                        startIcon={<IconArrowUp size={16} />}
+                                                        startIcon={<ArrowUpwardIcon fontSize="small" />}
                                                         sx={{
                                                             borderRadius: 2,
                                                             textTransform: 'none',
@@ -1531,7 +1540,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <IconX size={18} />
+                                                        <CloseIcon fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -1558,7 +1567,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsMemoryInfoVisible(true)}
-                                                    startIcon={<IconInfoCircle size={16} />}
+                                                    startIcon={<InfoIcon fontSize="small" />}
                                                     variant="text"
                                                 >
                                                     Show Memory Graph Explanation
@@ -1587,7 +1596,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         variant="outlined"
                                                         size="small"
                                                         onClick={exportDiskDataToCSV}
-                                                        startIcon={<IconDownload size={16} />}
+                                                        startIcon={<DownloadIcon fontSize="small" />}
                                                         sx={{
                                                             borderRadius: 2,
                                                             textTransform: 'none',
@@ -1612,7 +1621,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         variant="outlined"
                                                         size="small"
                                                         onClick={scrollToOverview}
-                                                        startIcon={<IconArrowUp size={16} />}
+                                                        startIcon={<ArrowUpwardIcon fontSize="small" />}
                                                         sx={{
                                                             borderRadius: 2,
                                                             textTransform: 'none',
@@ -1723,7 +1732,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <IconX size={18} />
+                                                        <CloseIcon fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -1754,7 +1763,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsDiskInfoVisible(true)}
-                                                    startIcon={<IconInfoCircle size={16} />}
+                                                    startIcon={<InfoIcon fontSize="small" />}
                                                     variant="text"
                                                 >
                                                     Show Disk Graph Explanation
@@ -1781,7 +1790,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                             variant="outlined"
                                             size="small"
                                             onClick={exportAlertsDataToCSV}
-                                            startIcon={<IconDownload size={16} />}
+                                            startIcon={<DownloadIcon fontSize="small" />}
                                             sx={{
                                                 borderRadius: 2,
                                                 textTransform: 'none',
@@ -1812,7 +1821,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                             {/* Alert Graph Line Toggle Controls */}
                                             <Box sx={{ mb: 2 }}>
                                                 <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ mb: 1 }}>
-                                                    <IconChartLine size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                                                    <ShowChartIcon fontSize="small" style={{ marginRight: '8px', verticalAlign: 'middle' }} />
                                                     Toggle Alert Lines (Click to show/hide):
                                                 </Typography>
                                                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -2057,7 +2066,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <IconX size={18} />
+                                                        <CloseIcon fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -2088,7 +2097,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 </Box>
                                                     <Box sx={{ mt: 2, p: 1.5, backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.1)' : 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid', borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.3)' : 'rgba(25, 118, 210, 0.2)' }}>
                                                         <Typography variant="body2" sx={{ color: (theme) => theme.palette.primary.main, fontWeight: 500 }}>
-                                                            <IconBulb size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                                            <LightbulbIcon fontSize="small" style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                                                             <b>Tip:</b> Use the toggle buttons above the graph to show/hide specific alert types for better analysis!
                                                         </Typography>
                                                     </Box>
@@ -2098,7 +2107,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsAlertInfoVisible(true)}
-                                                    startIcon={<IconInfoCircle size={16} />}
+                                                    startIcon={<InfoIcon fontSize="small" />}
                                                     variant="text"
                                                 >
                                                     Show Alert Graph Explanation

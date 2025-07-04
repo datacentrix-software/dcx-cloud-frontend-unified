@@ -30,7 +30,6 @@ import {
     LinearProgress
 } from '@mui/material';
 import {
-    IconServer,
     IconCpu,
     IconDatabase,
     IconDownload,

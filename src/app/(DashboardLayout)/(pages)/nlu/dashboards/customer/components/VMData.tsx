@@ -22,7 +22,10 @@ import {
     Grid,
     Stack
 } from '@mui/material';
-import { IconServer, IconInfoCircle, IconCpu, IconDatabase } from '@tabler/icons-react';
+import ComputerIcon from '@mui/icons-material/Computer';
+import InfoIcon from '@mui/icons-material/Info';
+import MemoryIcon from '@mui/icons-material/Memory';
+import StorageIcon from '@mui/icons-material/Storage';
 import ParentCard from '@/app/components/shared/ParentCard';
 
 interface VMData {
@@ -137,14 +140,14 @@ const VMData: React.FC<VMDataProps> = ({
                             <Typography variant="h6" sx={{ flex: 1 }}>Memory Usage</Typography>
                             <Tooltip title="Memory usage represents the total amount of RAM allocated to your virtual machines. This includes both active and reserved memory.">
                                 <IconButton size="small">
-                                    <IconInfoCircle size={20} />
+                                    <InfoIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
                         </Box>
                     }>
                         <Stack spacing={2}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <IconDatabase size={32} color="#8884d8" />
+                                <StorageIcon sx={{ fontSize: 32, color: "#8884d8" }} />
                                 <Typography variant="h4">
                                     {Number(billingData?.["Memory GB"] || '0').toLocaleString()} GB
                                 </Typography>
@@ -161,14 +164,14 @@ const VMData: React.FC<VMDataProps> = ({
                             <Typography variant="h6" sx={{ flex: 1 }}>CPU Usage</Typography>
                             <Tooltip title="CPU cores represent the total processing power allocated to your virtual machines. Each core can handle multiple tasks simultaneously.">
                                 <IconButton size="small">
-                                    <IconInfoCircle size={20} />
+                                    <InfoIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
                         </Box>
                     }>
                         <Stack spacing={2}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <IconCpu size={32} color="#82ca9d" />
+                                <MemoryIcon sx={{ fontSize: 32, color: "#82ca9d" }} />
                                 <Typography variant="h4">
                                     {Number(billingData?.["CPU Cores"] || '0').toLocaleString()} Cores
                                 </Typography>
@@ -185,14 +188,14 @@ const VMData: React.FC<VMDataProps> = ({
                             <Typography variant="h6" sx={{ flex: 1 }}>Storage Usage</Typography>
                             <Tooltip title="Storage usage represents the total disk space allocated to your virtual machines, including operating systems, applications, and data.">
                                 <IconButton size="small">
-                                    <IconInfoCircle size={20} />
+                                    <InfoIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
                         </Box>
                     }>
                         <Stack spacing={2}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <IconServer size={32} color="#ffc658" />
+                                <ComputerIcon sx={{ fontSize: 32, color: "#ffc658" }} />
                                 <Typography variant="h4">
                                     {Number(billingData?.["Disk Capacity TB"] || '0').toLocaleString()} TB
                                 </Typography>
@@ -209,14 +212,14 @@ const VMData: React.FC<VMDataProps> = ({
                             <Typography variant="h6" sx={{ flex: 1 }}>Total VMs</Typography>
                             <Tooltip title="Total VMs shows the number of virtual machines currently running in your environment. Each VM is an isolated computing environment.">
                                 <IconButton size="small">
-                                    <IconInfoCircle size={20} />
+                                    <InfoIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
                         </Box>
                     }>
                         <Stack spacing={2}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <IconServer size={32} color="#ff8042" />
+                                <ComputerIcon sx={{ fontSize: 32, color: "#ff8042" }} />
                                 <Typography variant="h4">
                                     {vmData.length.toLocaleString()}
                                 </Typography>
@@ -242,7 +245,7 @@ const VMData: React.FC<VMDataProps> = ({
                     }}>
                         <Typography variant="h5">Virtual Machines</Typography>
                         <Typography variant="subtitle1" color="primary" sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
-                            <IconServer size={20} />
+                            <ComputerIcon fontSize="small" />
                             Click on any VM row to view detailed information
                         </Typography>
                     </Box>
@@ -269,7 +272,7 @@ const VMData: React.FC<VMDataProps> = ({
                                     InputProps={{
                                         startAdornment: (
                                             <Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
-                                                <IconInfoCircle size={16} color="#8884d8" />
+                                                <InfoIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                             </Box>
                                         ),
                                     }}
@@ -411,7 +414,7 @@ const VMData: React.FC<VMDataProps> = ({
                                         sx={{ color: 'primary.main' }}
                                     >
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <IconServer size={16} color="#8884d8" />
+                                            <ComputerIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                             VM Name
                                         </Box>
                                     </TableSortLabel>
@@ -432,7 +435,7 @@ const VMData: React.FC<VMDataProps> = ({
                                         sx={{ color: 'primary.main' }}
                                     >
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <IconCpu size={16} color="#8884d8" />
+                                            <MemoryIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                             OS
                                         </Box>
                                     </TableSortLabel>
@@ -549,13 +552,13 @@ const VMData: React.FC<VMDataProps> = ({
                                 >
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <IconServer size={16} color="#8884d8" />
+                                            <ComputerIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                             {vm.identity_name}
                                         </Box>
                                     </TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <IconCpu size={16} color="#8884d8" />
+                                            <MemoryIcon fontSize="small" sx={{ color: "#8884d8" }} />
                                             {vm.os}
                                         </Box>
                                     </TableCell>

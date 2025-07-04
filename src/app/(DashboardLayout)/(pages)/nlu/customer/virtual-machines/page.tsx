@@ -18,7 +18,8 @@ import AddCreditCardDialog from './components/AddCreditCardDialog';
 import Link from 'next/link';
 import { InputVM, transformVMs } from '@/app/(DashboardLayout)/utilities/helpers/vm.helper';
 import { useCreditCardStore } from '@/store/useCreditCardStore';
-import { IconServer, IconX, IconInfoCircle } from '@tabler/icons-react';
+import ComputerIcon from '@mui/icons-material/Computer';
+import InfoIcon from '@mui/icons-material/Info';
 import { ISimpleProduct, IVMConfig, VMTemplate } from '@/types';
 
 // Define interfaces for the component
@@ -608,7 +609,7 @@ export default function VirtualMachinesPage() {
                 }}
                 size="small"
               >
-                <IconX size={18} />
+                <CloseIcon fontSize="small" />
               </IconButton>
             </Tooltip>
 
@@ -625,7 +626,7 @@ export default function VirtualMachinesPage() {
                   flexShrink: 0,
                 }}
               >
-                <IconServer size={32} />
+                <ComputerIcon sx={{ fontSize: 32 }} />
               </Box>
               <Box sx={{ flex: 1 }}>
                 <Typography 
@@ -650,7 +651,7 @@ export default function VirtualMachinesPage() {
                   customize specifications, and add additional services to build your perfect cloud infrastructure.
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
-                  <IconInfoCircle size={16} />
+                  <InfoIcon fontSize="small" />
                   <Typography variant="body2">
                     You can also add backup services, software licensing, and additional professional services to your deployment.
                   </Typography>

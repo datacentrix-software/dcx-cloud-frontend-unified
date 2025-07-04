@@ -26,17 +26,13 @@ import {
     MenuItem,
     Select
 } from '@mui/material';
-import {
-    IconServer,
-    IconCreditCard,
-    IconGift,
-    IconBrandUbuntu,
-    IconCpu,
-    IconDatabase,
-    IconDeviceDesktop,
-    IconDeviceLaptop,
-    IconX
-} from '@tabler/icons-react';
+import ComputerIcon from '@mui/icons-material/Computer';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import MemoryIcon from '@mui/icons-material/Memory';
+import StorageIcon from '@mui/icons-material/Storage';
+import LaptopIcon from '@mui/icons-material/Laptop';
+import CloseIcon from '@mui/icons-material/Close';
 import ParentCard from '@/app/components/shared/ParentCard';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store';
@@ -179,7 +175,7 @@ const Landing: React.FC<LandingProps> = ({
         {
             title: 'Spin up a New VM',
             description: 'Create and configure your own virtual machine with our easy-to-use interface.',
-            icon: <IconServer size={48} color={theme.palette.primary.main} />,
+            icon: <ComputerIcon sx={{ fontSize: 48, color: theme.palette.primary.main }} />,
             onClick: () => router.push('/nlu/customer/virtual-machines'),
             color: theme.palette.primary.main
         },
@@ -187,7 +183,7 @@ const Landing: React.FC<LandingProps> = ({
         ...(hasLinkedCreditCard ? [] : [{
             title: 'Add Payment Method',
             description: 'Set up your credit card details to enable seamless billing and service provisioning.',
-            icon: <IconCreditCard size={48} color={theme.palette.secondary.main} />,
+            icon: <CreditCardIcon sx={{ fontSize: 48, color: theme.palette.secondary.main }} />,
             onClick: () => router.push('/nlu/payments'),
             color: theme.palette.secondary.main
         }]),
@@ -195,7 +191,7 @@ const Landing: React.FC<LandingProps> = ({
         ...(hasLinkedCreditCard ? [{
             title: 'Try a Free VM',
             description: 'Experience our platform with a free trial virtual machine. No credit card required.',
-            icon: <IconGift size={48} color={theme.palette.success.main} />,
+            icon: <CardGiftcardIcon sx={{ fontSize: 48, color: theme.palette.success.main }} />,
             onClick: () => setOpenOSDialog(true),
             color: theme.palette.success.main
         }] : [])
@@ -367,15 +363,15 @@ const Landing: React.FC<LandingProps> = ({
                 }}>
                     <Typography variant="h5">Select Your Free VM</Typography>
                     <IconButton onClick={() => setOpenOSDialog(false)} size="small">
-                        <IconX size={20} />
+                        <CloseIcon fontSize="small" />
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                         Choose your preferred operating system. Both options are completely free to use.
                     </Typography>
-                    {renderOSOption('windows', 'Windows Server', <IconDeviceDesktop size={32} />)}
-                    {renderOSOption('linux', 'Ubuntu Linux', <IconBrandUbuntu size={32} />)}
+                    {renderOSOption('windows', 'Windows Server', <ComputerIcon sx={{ fontSize: 32 }} />)}
+                    {renderOSOption('linux', 'Ubuntu Linux', <ComputerIcon sx={{ fontSize: 32 }} />)}
                 </DialogContent>
             </Dialog>
 
@@ -400,7 +396,7 @@ const Landing: React.FC<LandingProps> = ({
                 }}>
                     <Typography variant="h5">Configure Your Free VM</Typography>
                     <IconButton onClick={() => setOpenFormDialog(false)} size="small">
-                        <IconX size={20} />
+                        <CloseIcon fontSize="small" />
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
@@ -447,22 +443,22 @@ const Landing: React.FC<LandingProps> = ({
                                 <Divider sx={{ mb: 2 }} />
 
                                 {renderSpecItem(
-                                    <IconDeviceDesktop size={24} />,
+                                    <ComputerIcon fontSize="medium" />,
                                     'Operating System',
                                     activeTemplate.osType
                                 )}
                                 {renderSpecItem(
-                                    <IconCpu size={24} />,
+                                    <MemoryIcon fontSize="medium" />,
                                     'vCPUs',
                                     `${activeTemplate.vcpus} cores @ ${activeTemplate.ghz}`
                                 )}
                                 {renderSpecItem(
-                                    <IconDeviceLaptop size={24} />,
+                                    <LaptopIcon fontSize="medium" />,
                                     'Memory',
                                     `${activeTemplate.memory} GB RAM`
                                 )}
                                 {renderSpecItem(
-                                    <IconDatabase size={24} />,
+                                    <StorageIcon fontSize="medium" />,
                                     'Storage',
                                     `${activeTemplate.storage} GB ${activeTemplate.type}`
                                 )}
@@ -481,7 +477,7 @@ const Landing: React.FC<LandingProps> = ({
                         onClick={handleFormSubmit}
                         variant="contained"
                         disabled={!vmName.trim()}
-                        startIcon={<IconServer size={20} />}
+                        startIcon={<ComputerIcon fontSize="small" />}
                     >
                         Create VM
                     </Button>
