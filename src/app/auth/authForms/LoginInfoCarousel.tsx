@@ -10,11 +10,15 @@ const CarouselContainer = styled(Box)(({ theme }) => ({
   flexDirection: 'column',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  paddingLeft: 'clamp(2rem, 5vw, 4rem)',
-  paddingRight: 'clamp(2rem, 5vw, 4rem)',
+  paddingLeft: { xs: theme.spacing(2), sm: 'clamp(2rem, 5vw, 4rem)' },
+  paddingRight: { xs: theme.spacing(2), sm: 'clamp(2rem, 5vw, 4rem)' },
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+  }
 }));
 
-const SlideContainer = styled(Box)({
+const SlideContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'auto',
   display: 'flex',
@@ -23,9 +27,12 @@ const SlideContainer = styled(Box)({
   alignItems: 'flex-start',
   textAlign: 'left',
   padding: '4px',
-  paddingLeft: 'clamp(1rem, 3vw, 2rem)',
+  paddingLeft: { xs: 0, sm: 'clamp(1rem, 3vw, 2rem)' },
   position: 'relative',
-});
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: 0,
+  }
+}));
 
 const LoginInfoCarousel = () => {
   return (
@@ -36,9 +43,9 @@ const LoginInfoCarousel = () => {
           fontWeight="bold"
           gutterBottom
           sx={{
-            fontSize: 'clamp(2.5rem, 3.5vw, 2.3rem)',
+            fontSize: { xs: '2rem', sm: '2.3rem', md: 'clamp(2.5rem, 3.5vw, 2.3rem)' },
             lineHeight: 1.2,
-            mb: 0.5,
+            mb: { xs: 1, sm: 0.5 },
             maxWidth: 'clamp(300px, 85%, 600px)',
             color: '#000000',
             textAlign: 'left'
@@ -49,13 +56,13 @@ const LoginInfoCarousel = () => {
         <Typography
           variant="body1"
           sx={{
-            fontSize: 'clamp(1.3rem, 1.8vw, 1.1rem)',
+            fontSize: { xs: '1rem', sm: '1.1rem', md: 'clamp(1.3rem, 1.8vw, 1.1rem)' },
             marginBottom: 0,
             marginBlockEnd: 0,
-            lineHeight: 1.8,
+            lineHeight: 1.6,
             opacity: 0.95,
             maxWidth: 'clamp(300px, 85%, 600px)',
-            mb: 'clamp(1rem, 3vw, 4rem)',
+            mb: { xs: 2, sm: 3, md: 'clamp(1rem, 3vw, 4rem)' },
             color: '#000000',
             whiteSpace: 'normal',
             wordWrap: 'break-word',

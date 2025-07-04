@@ -4,7 +4,8 @@ import MyApp from "./app";
 
 export const metadata = {
   title: "Datacentrix Cloud",
-  description: "Datacentrix Cloud",
+  description: "The cloud that keeps up with your business. Launch fast. Scale freely.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
 };
 
 export default function RootLayout({

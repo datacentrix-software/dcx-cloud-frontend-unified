@@ -15,7 +15,7 @@ export default [
       'security/detect-non-literal-regexp': 'error',
       'security/detect-non-literal-fs-filename': 'error',
       'security/detect-eval-with-expression': 'error',
-      'security/detect-pseudo-random-bytes': 'error',
+      // 'security/detect-pseudo-random-bytes': 'error', // Removed in v3.0.0
       'security/detect-possible-timing-attacks': 'error',
       'security/detect-unsafe-regex': 'error',
       'security/detect-buffer-noassert': 'error',

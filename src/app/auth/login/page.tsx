@@ -179,7 +179,10 @@ const AuthLogin = () => {
                             priority
                         />
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ 
+                        display: { xs: 'none', md: 'flex' }, 
+                        gap: 2 
+                    }}>
                         <Button
                             onClick={() => handleServiceClick('Cloud')}
                             startIcon={<CloudIcon sx={{ color: 'black' }} />}
@@ -243,36 +246,43 @@ const AuthLogin = () => {
                 height: 'calc(100vh - 64px)' // Subtract navbar height
             }}>
                 {/* Dashboard Screenshot Preview - Overlapping Image */}
-                <Image
-                    src="/images/assets/hero-image-old.png"
-                    alt="Hero Image"
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    style={{
-                        position: 'absolute',
-                        top: '13em',
-                        right: '28em',
-                        transform: 'translateX(40%)',
-                        width: '55vw',
-                        height: 'auto',
-                        zIndex: 2,
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-                        borderRadius: '12px',
-                        pointerEvents: 'none'
-                    }}
-                    quality={100}
-                    priority
-                />
+                <Box sx={{
+                    display: { xs: 'none', lg: 'block' },
+                    position: 'absolute',
+                    top: '13em',
+                    right: '28em',
+                    transform: 'translateX(40%)',
+                    width: '55vw',
+                    height: 'auto',
+                    zIndex: 2,
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    pointerEvents: 'none'
+                }}>
+                    <Image
+                        src="/images/assets/hero-image-old.png"
+                        alt="Hero Image"
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        style={{
+                            width: '100%',
+                            height: 'auto',
+                        }}
+                        quality={100}
+                        priority
+                    />
+                </Box>
                 {/* Left side - Login Form */}
                 <Grid item xs={12} md={6} sx={{
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'start',
-                    p: 4,
+                    p: { xs: 2, sm: 3, md: 4 },
                     transition: 'all 0.5s ease-in-out',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    minHeight: { xs: 'calc(100vh - 56px)', md: 'auto' }
                 }}>
 
                     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'start' }}>
@@ -281,7 +291,13 @@ const AuthLogin = () => {
                         </Box>
                     </Box>
 
-                    <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingRight: 4 }}>
+                    <Box sx={{ 
+                        width: '100%', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        paddingRight: { xs: 0, md: 4 } 
+                    }}>
                         {/* Add AuthDialogs component */}
                         <AuthDialogs
                             openSuccessDialog={openSuccessDialog}
@@ -301,12 +317,13 @@ const AuthLogin = () => {
                                 background: '#ffffff',
                                 borderRadius: '12px',
                                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                                padding: 2,
+                                padding: { xs: 2, sm: 3 },
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 position: 'relative',
-                                zIndex: 0
+                                zIndex: 0,
+                                mx: { xs: 1, sm: 0 }
                             }}
                         >
                             {/* Registration Link */}
