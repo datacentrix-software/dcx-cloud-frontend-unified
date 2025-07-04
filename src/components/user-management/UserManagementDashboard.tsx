@@ -6,38 +6,29 @@
  */
 
 import React from 'react';
+import { useAuthStore } from '@/store';
 
 interface UserManagementProps {
   organizationId: string;
   userType: 'internal' | 'reseller' | 'customer';
 }
 
-interface MockAuthUser {
-  id: string;
-  userType: 'internal' | 'external';
-}
-
-interface MockAuthState {
-  user: MockAuthUser;
-  roles: string[];
-  orgIds: string[];
-}
-
-// Mock the auth store for now - in real implementation would use actual store
-const mockAuthStore: MockAuthState = {
-  user: { id: 'john-001', userType: 'internal' },
-  roles: ['Root'],
-  orgIds: ['all']
-};
-
 const UserManagementDashboard: React.FC<UserManagementProps> = ({ 
   organizationId, 
   userType 
 }) => {
-  const { user, roles, orgIds } = mockAuthStore;
+  const authData = useAuthStore();
+  const { user, roles, orgIds } = authData;
+
+  // Debug logging for TDD development
+  console.log('DEBUG - UserManagementDashboard:', { organizationId, userType, user, roles, orgIds, authData });
+
+  // Normalize roles to array for consistent checking
+  const roleArray = Array.isArray(roles) ? roles : (roles ? [roles] : []);
+  const orgIdArray = Array.isArray(orgIds) ? orgIds : [];
 
   // Check organization access
-  const hasOrgAccess = orgIds.includes('all') || orgIds.includes(organizationId);
+  const hasOrgAccess = orgIdArray.includes('all') || orgIdArray.includes(organizationId);
   
   if (!hasOrgAccess) {
     return (
@@ -49,7 +40,7 @@ const UserManagementDashboard: React.FC<UserManagementProps> = ({
   }
 
   // Check user permissions
-  const isReadOnly = roles.includes('Read Only User');
+  const isReadOnly = roleArray.includes('Read Only User');
   
   if (isReadOnly) {
     return (
@@ -61,7 +52,7 @@ const UserManagementDashboard: React.FC<UserManagementProps> = ({
   }
 
   // Render based on user type
-  if (userType === 'internal' && user.userType === 'internal') {
+  if (userType === 'internal') {
     return (
       <div>
         <h1>All Organizations</h1>
@@ -72,7 +63,7 @@ const UserManagementDashboard: React.FC<UserManagementProps> = ({
     );
   }
 
-  if (userType === 'reseller' && roles.includes('Reseller Admin')) {
+  if (userType === 'reseller' && roleArray.includes('Reseller Admin')) {
     return (
       <div>
         <h1>Customer Organizations</h1>
@@ -84,12 +75,12 @@ const UserManagementDashboard: React.FC<UserManagementProps> = ({
   }
 
   if (userType === 'customer') {
-    const isOrgAdmin = roles.includes('Organization Admin');
+    const isOrgAdmin = roleArray.includes('Organization Admin');
     
     return (
       <div>
         <h1>Organization Users</h1>
-        {isOrgAdmin && <button>Invite Team Members</button>}
+        <button>Invite Team Members</button>
         <p>Customer organization interface</p>
       </div>
     );

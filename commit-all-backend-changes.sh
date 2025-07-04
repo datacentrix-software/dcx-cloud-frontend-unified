@@ -20,6 +20,9 @@ git add src/configs/passport.ts
 # Security vulnerability fixes
 git add src/utils/provision/vmWare.ts
 
+# Reseller system fixes (compilation errors fixed)
+git add src/controllers/organisation/reseller/onboardCustomer.ts
+
 # Environment and server configuration
 git add src/server.ts
 git add .env.local

@@ -1,5 +1,6 @@
 // Jest setup file for global test configuration
 require('@testing-library/jest-dom')
+require('jest-fetch-mock').enableMocks()
 
 // Mock Next.js router
 jest.mock('next/router', () => ({

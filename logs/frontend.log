@@ -1,0 +1,92 @@
+
+> datacentrix-cloud@7.0.0 dev
+> next dev
+
+   ▲ Next.js 15.3.4
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.3.77:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.3s
+ ○ Compiling / ...
+ ✓ Compiled / in 6.1s (2472 modules)
+ ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+redux-persist failed to create sync storage. falling back to noop storage.
+ HEAD / 200 in 6873ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1167ms (2476 modules)
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+redux-persist failed to create sync storage. falling back to noop storage.
+ HEAD /reseller 404 in 1274ms
+ ✓ Compiled /auth/login in 453ms (2483 modules)
+ ⚠ Unsupported metadata viewport is configured in metadata export in /auth/login. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+redux-persist failed to create sync storage. falling back to noop storage.
+ HEAD /auth/login 200 in 681ms
+ ○ Compiling /reseller/demo ...
+ ✓ Compiled /reseller/demo in 2s (2896 modules)
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller/demo. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+redux-persist failed to create sync storage. falling back to noop storage.
+ HEAD /reseller/demo 200 in 2336ms
+ ⚠ Unsupported metadata viewport is configured in metadata export in /user-management. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ HEAD /user-management 404 in 24ms
+ ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET / 200 in 166ms
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller/demo. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /reseller/demo 200 in 113ms
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller/demo. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /reseller/demo 200 in 89ms
+ ✓ Compiled in 1986ms (1325 modules)
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller/demo. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /reseller/demo 200 in 99ms
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller/demo. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /reseller/demo 200 in 132ms
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller/demo. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /reseller/demo 200 in 100ms
+ ✓ Compiled in 2.2s (2887 modules)
+ ✓ Compiled in 525ms (2887 modules)
+ ✓ Compiled in 611ms (2887 modules)
+ ⨯ ./src/app/(DashboardLayout)/(pages)/reseller/demo/page.tsx
+Error:   [31mx[0m Expected ',', got ':'
+     ,-[[36;1;4m/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/(DashboardLayout)/(pages)/reseller/demo/page.tsx[0m:229:1]
+ [2m226[0m |         setDemoData({
+ [2m227[0m |           user: internalUser
+ [2m228[0m |           },
+ [2m229[0m |           roles: ['Root'],
+     : [35;1m               ^[0m
+ [2m230[0m |           scopeType: 'global',
+ [2m231[0m |           orgIds: ['all'],
+ [2m232[0m |           accessibleOrganizations: [
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/(DashboardLayout)/(pages)/reseller/demo/page.tsx
+ ✓ Compiled in 877ms (2887 modules)
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller/demo. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+redux-persist failed to create sync storage. falling back to noop storage.
+ GET /reseller/demo 200 in 436ms
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller/demo. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET /reseller/demo 200 in 66ms
+ ✓ Compiled in 4.8s (1325 modules)
+ ✓ Compiled in 1060ms (1325 modules)
+ ✓ Compiled in 1061ms (2887 modules)
+ ✓ Compiled in 473ms (2887 modules)
+ ✓ Compiled in 589ms (2887 modules)
+ ✓ Compiled in 434ms (2887 modules)
+ ✓ Compiled in 426ms (2887 modules)
