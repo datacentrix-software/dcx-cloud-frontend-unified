@@ -16033,3 +16033,1480 @@ Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
 2025-07-04T03:38:22.247Z compression gzip compression
 2025-07-04T03:38:22.249Z compression gzip compression
 2025-07-04T03:38:22.255Z compression gzip compression
+2025-07-04T03:43:08.709Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:43:08.713Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:43:08.713Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:43:08.714Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:43:08.755Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.755Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.755Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.755Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.755Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.755Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.755Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.755Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.758Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.758Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.758Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.758Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.758Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.758Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.758Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.758Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.759Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.759Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.759Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.759Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.761Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.761Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.761Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.761Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.762Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.762Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.763Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.763Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.763Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.763Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.763Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:08.763Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:43:09.429Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Grid2
+2025-07-04T03:43:09.429Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components/container/PageContainer
+2025-07-04T03:43:09.437Z next:jsconfig-paths-plugin skipping request as it is inside node_modules ./Grid2.js
+2025-07-04T03:43:09.437Z next:jsconfig-paths-plugin skipping request as it is inside node_modules ./grid2Classes.js
+2025-07-04T03:43:09.464Z next:jsconfig-paths-plugin skipping request as it is inside node_modules @mui/utils/generateUtilityClasses
+2025-07-04T03:43:09.465Z next:jsconfig-paths-plugin skipping request as it is inside node_modules @mui/utils/generateUtilityClass
+2025-07-04T03:43:09.465Z next:jsconfig-paths-plugin skipping request as it is inside node_modules prop-types
+2025-07-04T03:43:09.465Z next:jsconfig-paths-plugin skipping request as it is inside node_modules @mui/system/Grid
+2025-07-04T03:43:09.465Z next:jsconfig-paths-plugin skipping request as it is inside node_modules ../utils/requirePropFactory.js
+2025-07-04T03:43:09.465Z next:jsconfig-paths-plugin skipping request as it is inside node_modules ../styles/index.js
+2025-07-04T03:43:09.465Z next:jsconfig-paths-plugin skipping request as it is inside node_modules ../DefaultPropsProvider/index.js
+2025-07-04T03:43:09.465Z next:jsconfig-paths-plugin skipping request as it is inside node_modules ../styles/useTheme.js
+ ✓ Compiled in 944ms (2674 modules)
+2025-07-04T03:43:09.598Z next:router-server:main requestHandler! /_next/static/webpack/1823a9dc5ad7395a.webpack.hot-update.json {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/1823a9dc5ad7395a.webpack.hot-update.json',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/1823a9dc5ad7395a.webpack.hot-update.json'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/1823a9dc5ad7395a.webpack.hot-update.json',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:43:09.598Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/1823a9dc5ad7395a.webpack.hot-update.json"
+2025-07-04T03:43:09.598Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/1823a9dc5ad7395a.webpack.hot-update.json"
+2025-07-04T03:43:09.598Z send accept ranges
+2025-07-04T03:43:09.598Z send modified Fri, 04 Jul 2025 03:43:09 GMT
+2025-07-04T03:43:09.598Z send etag W/"226-197d387eafd"
+2025-07-04T03:43:09.598Z send content-type application/json
+2025-07-04T03:43:09.599Z compression no compression: size below threshold
+2025-07-04T03:43:09.612Z next:router-server:main requestHandler! /_next/static/webpack/app/(DashboardLayout)/page.1823a9dc5ad7395a.hot-update.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/app/(DashboardLayout)/page.1823a9dc5ad7395a.hot-update.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/app/(DashboardLayout)/page.1823a9dc5ad7395a.hot-update.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/app/(DashboardLayout)/page.1823a9dc5ad7395a.hot-update.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:43:09.612Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/app/(DashboardLayout)/page.1823a9dc5ad7395a.hot-update.js"
+2025-07-04T03:43:09.612Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/app/(DashboardLayout)/page.1823a9dc5ad7395a.hot-update.js"
+2025-07-04T03:43:09.612Z send accept ranges
+2025-07-04T03:43:09.612Z send modified Fri, 04 Jul 2025 03:43:09 GMT
+2025-07-04T03:43:09.612Z send etag W/"13e067-197d387eafe"
+2025-07-04T03:43:09.612Z send content-type application/javascript
+2025-07-04T03:43:09.612Z compression gzip compression
+2025-07-04T03:43:09.616Z next:router-server:main requestHandler! /_next/static/webpack/webpack.1823a9dc5ad7395a.hot-update.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.1823a9dc5ad7395a.hot-update.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/webpack.1823a9dc5ad7395a.hot-update.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/webpack.1823a9dc5ad7395a.hot-update.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:43:09.616Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.1823a9dc5ad7395a.hot-update.js"
+2025-07-04T03:43:09.617Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.1823a9dc5ad7395a.hot-update.js"
+2025-07-04T03:43:09.617Z send accept ranges
+2025-07-04T03:43:09.617Z send modified Fri, 04 Jul 2025 03:43:09 GMT
+2025-07-04T03:43:09.617Z send etag W/"347-197d387eafd"
+2025-07-04T03:43:09.617Z send content-type application/javascript
+2025-07-04T03:43:09.617Z compression no compression: size below threshold
+2025-07-04T03:44:55.526Z next:router-server:main requestHandler! / {
+  matchedOutput: {
+    type: 'appFile',
+    fsPath: undefined,
+    locale: undefined,
+    itemsRoot: undefined,
+    itemPath: '/'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: { pathname: '/', query: [Object: null prototype] {} },
+  finished: true
+}
+2025-07-04T03:44:55.527Z next:router-server:main invokeRender / {
+  host: 'localhost:3000',
+  connection: 'keep-alive',
+  'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  dnt: '1',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'none',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en-US,en;q=0.9',
+  cookie: 'ajs_anonymous_id=17b0a441-ac8c-4318-8ecf-764c7d91ae21; connect.sid=s%3Ao_DZ85oCqy6MSGr7audL4zJuPmvsX5Qi.uBHL%2FV%2FmRhB6wISx2vXRJZQn0sy3sTuty02baADqxh4; __next_hmr_refresh_hash__=85c9ecdc37a51ff296cdd814a548a94c633457081244afec'
+}
+2025-07-04T03:44:55.792Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.792Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.794Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.794Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.795Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.796Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.796Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.796Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.797Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.797Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:44:55.846Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/page.tsx
+2025-07-04T03:44:55.851Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/page.tsx
+2025-07-04T03:44:55.912Z next:jsconfig-paths-plugin moduleName did not match any paths pattern react-server-dom-webpack/server.edge
+2025-07-04T03:44:55.912Z next:jsconfig-paths-plugin moduleName did not match any paths pattern react-server-dom-webpack/server.edge
+2025-07-04T03:44:55.912Z next:jsconfig-paths-plugin moduleName did not match any paths pattern react-server-dom-webpack/server.edge
+2025-07-04T03:44:55.912Z next:jsconfig-paths-plugin moduleName did not match any paths pattern react-server-dom-webpack/server.edge
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.917Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.918Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.918Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.918Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.918Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.918Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.919Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.920Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.920Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.920Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.921Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.921Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.922Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.924Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.925Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.925Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.925Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.925Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.927Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.927Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:44:55.935Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/page.tsx
+2025-07-04T03:44:55.964Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Box
+2025-07-04T03:44:55.964Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Button
+2025-07-04T03:44:55.964Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Stack
+2025-07-04T03:44:55.964Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Typography
+2025-07-04T03:44:55.964Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Grid
+2025-07-04T03:44:55.964Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/GitHub
+2025-07-04T03:44:55.964Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Link
+2025-07-04T03:44:55.964Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Cloud
+2025-07-04T03:44:55.964Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Backup
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Storage
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/AppBar
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Toolbar
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginForm
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/OtpVerification
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/PasswordReset
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginInfoCarousel
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/AuthDialogs
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next/navigation
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next/image
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/node_modules/next/navigation
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/node_modules/next/image
+2025-07-04T03:44:55.965Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/node_modules/@mui/icons-material/esm/index.js
+2025-07-04T03:44:55.970Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Box
+2025-07-04T03:44:55.971Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Button
+2025-07-04T03:44:55.971Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Button
+2025-07-04T03:44:55.971Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Button
+2025-07-04T03:44:55.971Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Stack
+2025-07-04T03:44:55.971Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Stack
+2025-07-04T03:44:55.971Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Stack
+2025-07-04T03:44:55.971Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Typography
+2025-07-04T03:44:55.971Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Typography
+2025-07-04T03:44:55.971Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Typography
+2025-07-04T03:44:55.972Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Grid
+2025-07-04T03:44:55.972Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Grid
+2025-07-04T03:44:55.972Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Grid
+2025-07-04T03:44:55.972Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Link
+2025-07-04T03:44:55.972Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Link
+2025-07-04T03:44:55.972Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Link
+2025-07-04T03:44:55.972Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/AppBar
+2025-07-04T03:44:55.972Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/AppBar
+2025-07-04T03:44:55.972Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/AppBar
+2025-07-04T03:44:55.973Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Toolbar
+2025-07-04T03:44:55.973Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Toolbar
+2025-07-04T03:44:55.973Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Toolbar
+2025-07-04T03:44:55.973Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/GitHub
+2025-07-04T03:44:55.973Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/GitHub
+2025-07-04T03:44:55.973Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/GitHub
+2025-07-04T03:44:55.973Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Cloud
+2025-07-04T03:44:55.974Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Cloud
+2025-07-04T03:44:55.974Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Cloud
+2025-07-04T03:44:55.974Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Backup
+2025-07-04T03:44:55.974Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Backup
+2025-07-04T03:44:55.974Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Backup
+2025-07-04T03:44:55.974Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Storage
+2025-07-04T03:44:55.974Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Storage
+2025-07-04T03:44:55.974Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Storage
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginForm
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/OtpVerification
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/PasswordReset
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginInfoCarousel
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/AuthDialogs
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginForm
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/OtpVerification
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/PasswordReset
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginInfoCarousel
+2025-07-04T03:44:55.976Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/AuthDialogs
+2025-07-04T03:44:55.977Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginForm
+2025-07-04T03:44:55.977Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/OtpVerification
+2025-07-04T03:44:55.977Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/PasswordReset
+2025-07-04T03:44:55.977Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginInfoCarousel
+2025-07-04T03:44:55.977Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/AuthDialogs
+2025-07-04T03:44:55.979Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/GitHub
+2025-07-04T03:44:55.979Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Cloud
+2025-07-04T03:44:55.979Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Backup
+2025-07-04T03:44:55.979Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Storage
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginForm
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/OtpVerification
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/PasswordReset
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginInfoCarousel
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/AuthDialogs
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginForm
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/OtpVerification
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/PasswordReset
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginInfoCarousel
+2025-07-04T03:44:55.980Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/AuthDialogs
+2025-07-04T03:44:55.981Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginForm
+2025-07-04T03:44:55.981Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/OtpVerification
+2025-07-04T03:44:55.981Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/PasswordReset
+2025-07-04T03:44:55.981Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginInfoCarousel
+2025-07-04T03:44:55.981Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/AuthDialogs
+2025-07-04T03:44:55.987Z next:jsconfig-paths-plugin skipping request as it is inside node_modules next/dist/api/navigation
+2025-07-04T03:44:55.987Z next:jsconfig-paths-plugin skipping request as it is inside node_modules /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/node_modules/next/dist/api/navigation
+2025-07-04T03:44:55.987Z next:jsconfig-paths-plugin skipping request as it is inside node_modules next/dist/api/image
+2025-07-04T03:44:55.987Z next:jsconfig-paths-plugin skipping request as it is inside node_modules /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/node_modules/next/dist/api/image
+2025-07-04T03:44:55.988Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:55.988Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:44:55.988Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:55.988Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:44:55.988Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:55.988Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:55.989Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:44:55.991Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Button
+2025-07-04T03:44:55.991Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Typography
+2025-07-04T03:44:55.991Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Stack
+2025-07-04T03:44:55.991Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Grid
+2025-07-04T03:44:55.991Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Link
+2025-07-04T03:44:55.991Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Toolbar
+2025-07-04T03:44:55.991Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/AppBar
+2025-07-04T03:44:55.991Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:44:55.992Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:44:55.992Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:44:55.994Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:55.994Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:55.995Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:55.995Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:55.996Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:55.996Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:55.996Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:55.997Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:55.997Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:44:55.997Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:44:55.997Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:44:55.997Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+ ○ Compiling / ...
+2025-07-04T03:44:56.254Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/page.tsx
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Button
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Stack
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Typography
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Grid
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next/navigation
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/GitHub
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Link
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next/image
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Cloud
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Backup
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/Storage
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/AppBar
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/material/Toolbar
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginForm
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/OtpVerification
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/PasswordReset
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/LoginInfoCarousel
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin skipping request as it is a relative path ./auth/authForms/AuthDialogs
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/node_modules/next/navigation
+2025-07-04T03:44:56.282Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/app/components
+2025-07-04T03:44:56.283Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:44:56.283Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:44:56.283Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/node_modules/next/image
+2025-07-04T03:44:56.285Z next:jsconfig-paths-plugin skipping request as it is inside node_modules next/dist/api/navigation
+2025-07-04T03:44:56.285Z next:jsconfig-paths-plugin skipping request as it is inside node_modules next/dist/api/image
+2025-07-04T03:44:56.285Z next:jsconfig-paths-plugin skipping request as it is inside node_modules /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/node_modules/next/dist/api/navigation
+2025-07-04T03:44:56.285Z next:jsconfig-paths-plugin skipping request as it is inside node_modules /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/node_modules/next/dist/api/image
+ ✓ Compiled / in 872ms (2681 modules)
+2025-07-04T03:44:56.455Z next:router-server:main requestHandler! /_next/static/webpack/75803bc039a0687b.webpack.hot-update.json {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/75803bc039a0687b.webpack.hot-update.json',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/75803bc039a0687b.webpack.hot-update.json'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/75803bc039a0687b.webpack.hot-update.json',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:56.455Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/75803bc039a0687b.webpack.hot-update.json"
+2025-07-04T03:44:56.455Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/75803bc039a0687b.webpack.hot-update.json"
+2025-07-04T03:44:56.455Z send accept ranges
+2025-07-04T03:44:56.455Z send modified Fri, 04 Jul 2025 03:44:56 GMT
+2025-07-04T03:44:56.455Z send etag W/"1f-197d3898c6c"
+2025-07-04T03:44:56.455Z send content-type application/json
+2025-07-04T03:44:56.455Z compression no compression: size below threshold
+ ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+redux-persist failed to create sync storage. falling back to noop storage.
+2025-07-04T03:44:56.744Z compression gzip compression
+2025-07-04T03:44:56.744Z next:router-server:main requestHandler! /_next/static/webpack/webpack.75803bc039a0687b.hot-update.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.75803bc039a0687b.hot-update.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/webpack.75803bc039a0687b.hot-update.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/webpack.75803bc039a0687b.hot-update.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:56.744Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.75803bc039a0687b.hot-update.js"
+2025-07-04T03:44:56.745Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.75803bc039a0687b.hot-update.js"
+2025-07-04T03:44:56.745Z send accept ranges
+2025-07-04T03:44:56.745Z send modified Fri, 04 Jul 2025 03:44:56 GMT
+2025-07-04T03:44:56.745Z send etag W/"347-197d3898c6b"
+2025-07-04T03:44:56.745Z send content-type application/javascript
+2025-07-04T03:44:56.745Z compression no compression: size below threshold
+ GET / 200 in 1216ms
+2025-07-04T03:44:56.779Z next:router-server:main requestHandler! /_next/static/css/app/layout.css?v=1751600696544 {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/layout.css',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/css/app/layout.css'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/css/app/layout.css',
+    query: [Object: null prototype] { v: '1751600696544' }
+  },
+  finished: true
+}
+2025-07-04T03:44:56.779Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/layout.css"
+2025-07-04T03:44:56.779Z next:router-server:main requestHandler! /_next/static/chunks/webpack.js?v=1751600696544 {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/webpack.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/webpack.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/webpack.js',
+    query: [Object: null prototype] { v: '1751600696544' }
+  },
+  finished: true
+}
+2025-07-04T03:44:56.779Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/webpack.js"
+2025-07-04T03:44:56.779Z next:router-server:main requestHandler! /_next/static/css/app/page.css?v=1751600696544 {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/page.css',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/css/app/page.css'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/css/app/page.css',
+    query: [Object: null prototype] { v: '1751600696544' }
+  },
+  finished: true
+}
+2025-07-04T03:44:56.779Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/page.css"
+2025-07-04T03:44:56.779Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/layout.css"
+2025-07-04T03:44:56.779Z send accept ranges
+2025-07-04T03:44:56.779Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:44:56.779Z send etag W/"2434-197d381bf7f"
+2025-07-04T03:44:56.779Z send content-type text/css
+2025-07-04T03:44:56.779Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/webpack.js"
+2025-07-04T03:44:56.779Z send accept ranges
+2025-07-04T03:44:56.779Z send modified Fri, 04 Jul 2025 03:44:56 GMT
+2025-07-04T03:44:56.779Z send etag W/"db9d-197d3898c69"
+2025-07-04T03:44:56.779Z send content-type application/javascript
+2025-07-04T03:44:56.779Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/page.css"
+2025-07-04T03:44:56.779Z send accept ranges
+2025-07-04T03:44:56.779Z send modified Fri, 04 Jul 2025 03:44:56 GMT
+2025-07-04T03:44:56.779Z send etag W/"fe0-197d3898c6a"
+2025-07-04T03:44:56.779Z send content-type text/css
+2025-07-04T03:44:56.779Z compression gzip compression
+2025-07-04T03:44:56.779Z compression gzip compression
+2025-07-04T03:44:56.780Z compression gzip compression
+2025-07-04T03:44:56.784Z next:router-server:main requestHandler! /_next/static/chunks/main-app.js?v=1751600696544 {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/main-app.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/main-app.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/main-app.js',
+    query: [Object: null prototype] { v: '1751600696544' }
+  },
+  finished: true
+}
+2025-07-04T03:44:56.784Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/main-app.js"
+2025-07-04T03:44:56.784Z next:router-server:main requestHandler! /_next/static/chunks/app-pages-internals.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app-pages-internals.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/app-pages-internals.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/app-pages-internals.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:56.784Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app-pages-internals.js"
+2025-07-04T03:44:56.784Z next:router-server:main requestHandler! /_next/static/chunks/app/layout.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/layout.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/app/layout.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/app/layout.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:56.784Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/layout.js"
+2025-07-04T03:44:56.784Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/main-app.js"
+2025-07-04T03:44:56.784Z send accept ranges
+2025-07-04T03:44:56.784Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:44:56.784Z send etag W/"657598-197d381bf1a"
+2025-07-04T03:44:56.784Z send content-type application/javascript
+2025-07-04T03:44:56.784Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app-pages-internals.js"
+2025-07-04T03:44:56.784Z send accept ranges
+2025-07-04T03:44:56.784Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:44:56.784Z send etag W/"377ba-197d381bf17"
+2025-07-04T03:44:56.784Z send content-type application/javascript
+2025-07-04T03:44:56.784Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/layout.js"
+2025-07-04T03:44:56.784Z send accept ranges
+2025-07-04T03:44:56.784Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:44:56.784Z send etag W/"3c1875-197d381bf18"
+2025-07-04T03:44:56.784Z send content-type application/javascript
+2025-07-04T03:44:56.784Z next:router-server:main requestHandler! /_next/static/chunks/app/page.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/page.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/app/page.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/app/page.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:56.784Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/page.js"
+2025-07-04T03:44:56.784Z next:router-server:main requestHandler! /_next/static/chunks/app/loading.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/loading.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/app/loading.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/app/loading.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:56.784Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/loading.js"
+2025-07-04T03:44:56.784Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/page.js"
+2025-07-04T03:44:56.784Z send accept ranges
+2025-07-04T03:44:56.784Z send modified Fri, 04 Jul 2025 03:44:56 GMT
+2025-07-04T03:44:56.784Z send etag W/"63c673-197d3898c6b"
+2025-07-04T03:44:56.784Z send content-type application/javascript
+2025-07-04T03:44:56.785Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/loading.js"
+2025-07-04T03:44:56.785Z send accept ranges
+2025-07-04T03:44:56.785Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:44:56.785Z send etag W/"130b85-197d381bf18"
+2025-07-04T03:44:56.785Z send content-type application/javascript
+2025-07-04T03:44:56.785Z compression gzip compression
+2025-07-04T03:44:56.785Z compression gzip compression
+2025-07-04T03:44:56.785Z compression gzip compression
+2025-07-04T03:44:56.785Z compression gzip compression
+2025-07-04T03:44:56.786Z compression gzip compression
+2025-07-04T03:44:57.145Z next:router-server:main requestHandler! /images/logos/DCX_Logo_White.svg {
+  matchedOutput: {
+    type: 'publicFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/DCX_Logo_White.svg',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public',
+    itemPath: '/images/logos/DCX_Logo_White.svg'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/images/logos/DCX_Logo_White.svg',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:57.145Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/DCX_Logo_White.svg"
+2025-07-04T03:44:57.145Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/DCX_Logo_White.svg"
+2025-07-04T03:44:57.145Z send accept ranges
+2025-07-04T03:44:57.145Z send cache-control public, max-age=0
+2025-07-04T03:44:57.145Z send modified Thu, 26 Jun 2025 04:54:10 GMT
+2025-07-04T03:44:57.145Z send etag W/"2a37-197aa961093"
+2025-07-04T03:44:57.145Z send content-type image/svg+xml
+2025-07-04T03:44:57.146Z send not modified
+2025-07-04T03:44:57.146Z compression undefined not compressible
+2025-07-04T03:44:57.146Z compression no compression: filtered
+2025-07-04T03:44:57.477Z next:router-server:main requestHandler! /images/logos/dark-logo.svg {
+  matchedOutput: {
+    type: 'publicFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/dark-logo.svg',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public',
+    itemPath: '/images/logos/dark-logo.svg'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/images/logos/dark-logo.svg',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:57.477Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/dark-logo.svg"
+2025-07-04T03:44:57.477Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/dark-logo.svg"
+2025-07-04T03:44:57.477Z send accept ranges
+2025-07-04T03:44:57.477Z send cache-control public, max-age=0
+2025-07-04T03:44:57.477Z send modified Thu, 26 Jun 2025 18:30:05 GMT
+2025-07-04T03:44:57.477Z send etag W/"2d6c-197ad810f94"
+2025-07-04T03:44:57.477Z send content-type image/svg+xml
+2025-07-04T03:44:57.478Z send not modified
+2025-07-04T03:44:57.478Z compression undefined not compressible
+2025-07-04T03:44:57.478Z compression no compression: filtered
+2025-07-04T03:44:57.488Z next:router-server:main requestHandler! /_next/image?url=%2Fimages%2Fassets%2Fhero-image-old.png&w=3840&q=100 {
+  matchedOutput: { itemPath: '/_next/image', type: 'nextImage' },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/image',
+    query: [Object: null prototype] {
+      url: '/images/assets/hero-image-old.png',
+      w: '3840',
+      q: '100'
+    }
+  },
+  finished: true
+}
+2025-07-04T03:44:57.489Z next:router-server:main invokeRender /_next/image?url=%2Fimages%2Fassets%2Fhero-image-old.png&w=3840&q=100 {
+  host: 'localhost:3000',
+  connection: 'keep-alive',
+  'sec-ch-ua-platform': '"macOS"',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+  'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+  dnt: '1',
+  'sec-ch-ua-mobile': '?0',
+  accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+  'sec-fetch-site': 'same-origin',
+  'sec-fetch-mode': 'no-cors',
+  'sec-fetch-dest': 'image',
+  referer: 'http://localhost:3000/',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en-US,en;q=0.9',
+  cookie: 'ajs_anonymous_id=17b0a441-ac8c-4318-8ecf-764c7d91ae21; connect.sid=s%3Ao_DZ85oCqy6MSGr7audL4zJuPmvsX5Qi.uBHL%2FV%2FmRhB6wISx2vXRJZQn0sy3sTuty02baADqxh4; __next_hmr_refresh_hash__=85c9ecdc37a51ff296cdd814a548a94c633457081244afec',
+  'if-none-match': '6ACOe6NZ-UDwLLcbyAh-QF4oS_nv-Oq86chiSqyO3nk'
+}
+2025-07-04T03:44:57.498Z compression undefined not compressible
+2025-07-04T03:44:57.498Z compression no compression: filtered
+2025-07-04T03:44:57.499Z next:router-server:main requestHandler! /images/assets/hero-image-old.png {
+  matchedOutput: {
+    type: 'publicFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/assets/hero-image-old.png',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public',
+    itemPath: '/images/assets/hero-image-old.png'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/images/assets/hero-image-old.png',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:57.499Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/assets/hero-image-old.png"
+2025-07-04T03:44:57.499Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/assets/hero-image-old.png"
+2025-07-04T03:44:57.499Z send accept ranges
+2025-07-04T03:44:57.499Z send cache-control public, max-age=0
+2025-07-04T03:44:57.499Z send modified Thu, 26 Jun 2025 18:30:05 GMT
+2025-07-04T03:44:57.499Z send etag W/"69bc7-197ad810f8f"
+2025-07-04T03:44:57.499Z send content-type image/png
+2025-07-04T03:44:57.511Z next:router-server:main requestHandler! /images/backgrounds/new-login-bg.jpeg {
+  matchedOutput: {
+    type: 'publicFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/backgrounds/new-login-bg.jpeg',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public',
+    itemPath: '/images/backgrounds/new-login-bg.jpeg'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/images/backgrounds/new-login-bg.jpeg',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:44:57.512Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/backgrounds/new-login-bg.jpeg"
+2025-07-04T03:44:57.512Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/backgrounds/new-login-bg.jpeg"
+2025-07-04T03:44:57.512Z send accept ranges
+2025-07-04T03:44:57.512Z send cache-control public, max-age=0
+2025-07-04T03:44:57.512Z send modified Thu, 26 Jun 2025 18:30:05 GMT
+2025-07-04T03:44:57.512Z send etag W/"3b78-197ad810f93"
+2025-07-04T03:44:57.512Z send content-type image/jpeg
+2025-07-04T03:44:57.512Z send not modified
+2025-07-04T03:44:57.512Z compression undefined not compressible
+2025-07-04T03:44:57.512Z compression no compression: filtered
+2025-07-04T03:46:06.849Z next:router-server:main requestHandler! / {
+  matchedOutput: {
+    type: 'appFile',
+    fsPath: undefined,
+    locale: undefined,
+    itemsRoot: undefined,
+    itemPath: '/'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: { pathname: '/', query: [Object: null prototype] {} },
+  finished: true
+}
+2025-07-04T03:46:06.850Z next:router-server:main invokeRender / {
+  host: 'localhost:3000',
+  connection: 'keep-alive',
+  'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  dnt: '1',
+  'upgrade-insecure-requests': '1',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+  'sec-fetch-site': 'same-origin',
+  'sec-fetch-mode': 'navigate',
+  'sec-fetch-user': '?1',
+  'sec-fetch-dest': 'document',
+  referer: 'http://localhost:3000/',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en-US,en;q=0.9',
+  cookie: 'ajs_anonymous_id=17b0a441-ac8c-4318-8ecf-764c7d91ae21; connect.sid=s%3Ao_DZ85oCqy6MSGr7audL4zJuPmvsX5Qi.uBHL%2FV%2FmRhB6wISx2vXRJZQn0sy3sTuty02baADqxh4; __next_hmr_refresh_hash__=85c9ecdc37a51ff296cdd814a548a94c633457081244afec; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAyNTU3N2QwLWNhZjYtNDNiNC1iZGUwLTM0OWI2Yjg5OGMxNCIsImVtYWlsIjoiZ3N1YnJhbW9uZXlAZGF0YWNlbnRyaXguY28uemEiLCJyb2xlIjpbeyJvcmdJZCI6IjkwMWYyNTNjLWM0MDQtNGEzOS04NTZlLWUyMDk1OGIxYjhlMiIsIm9yZ2FuaXNhdGlvbiI6eyJpZCI6IjkwMWYyNTNjLWM0MDQtNGEzOS04NTZlLWUyMDk1OGIxYjhlMiIsIm9yZ2FuaXNhdGlvbl9uYW1lIjoiRGF0YWNlbnRyaXggQ2xvdWQgKERhYVMpIiwib3JnYW5pc2F0aW9uX3R5cGUiOiJpbnRlcm5hbCIsIm9yZ2FuaXNhdGlvbl9zdGF0dXMiOiJhY3RpdmUifSwicm9sZSI6eyJuYW1lIjoiUm9vdCJ9fV0sImZpcnN0TmFtZSI6IkdhcnNlbiIsImxhc3ROYW1lIjoiU3VicmFtb25leSIsImlhdCI6MTc1MTYwMDc2NiwiZXhwIjoxNzUxNjA0MzY2fQ.-gPXacMXH9cKTzbrm9PGhLJnGXgDa2bPDfKF8b0aqWk; user={%22id%22:%22025577d0-caf6-43b4-bde0-349b6b898c14%22%2C%22firstName%22:%22Garsen%22%2C%22lastName%22:%22Subramoney%22%2C%22email%22:%22gsubramoney@datacentrix.co.za%22%2C%22mobile%22:%22015234890%22%2C%22userType%22:%22internal%22%2C%22isVerified%22:true%2C%22isFirstLogin%22:false%2C%22createdAt%22:%222025-06-26T07:13:36.682Z%22%2C%22updatedAt%22:%222025-06-26T07:16:06.169Z%22%2C%22address%22:%22Midrand%22%2C%22province%22:%22Gauteng%22%2C%22city%22:%22Pretoria%22%2C%22postalCode%22:%220003%22%2C%22roles%22:[{%22orgId%22:%22901f253c-c404-4a39-856e-e20958b1b8e2%22%2C%22organisation%22:{%22id%22:%22901f253c-c404-4a39-856e-e20958b1b8e2%22%2C%22organisation_name%22:%22Datacentrix%20Cloud%20(DaaS)%22%2C%22organisation_type%22:%22internal%22%2C%22organisation_status%22:%22active%22}%2C%22role%22:{%22name%22:%22Root%22}}]}; roles=Root'
+}
+ ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+2025-07-04T03:46:06.947Z compression gzip compression
+ GET / 200 in 113ms
+2025-07-04T03:46:06.975Z next:router-server:main requestHandler! /_next/static/css/app/layout.css?v=1751600766907 {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/layout.css',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/css/app/layout.css'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/css/app/layout.css',
+    query: [Object: null prototype] { v: '1751600766907' }
+  },
+  finished: true
+}
+2025-07-04T03:46:06.976Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/layout.css"
+2025-07-04T03:46:06.977Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/layout.css"
+2025-07-04T03:46:06.977Z send accept ranges
+2025-07-04T03:46:06.977Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:46:06.978Z send etag W/"2434-197d381bf7f"
+2025-07-04T03:46:06.978Z send content-type text/css
+2025-07-04T03:46:06.980Z next:router-server:main requestHandler! /_next/static/chunks/webpack.js?v=1751600766907 {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/webpack.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/webpack.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/webpack.js',
+    query: [Object: null prototype] { v: '1751600766907' }
+  },
+  finished: true
+}
+2025-07-04T03:46:06.980Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/webpack.js"
+2025-07-04T03:46:06.980Z compression gzip compression
+2025-07-04T03:46:06.981Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/webpack.js"
+2025-07-04T03:46:06.981Z send accept ranges
+2025-07-04T03:46:06.981Z send modified Fri, 04 Jul 2025 03:44:56 GMT
+2025-07-04T03:46:06.981Z send etag W/"db9d-197d3898c69"
+2025-07-04T03:46:06.981Z send content-type application/javascript
+2025-07-04T03:46:06.981Z next:router-server:main requestHandler! /_next/static/css/app/page.css?v=1751600766907 {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/page.css',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/css/app/page.css'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/css/app/page.css',
+    query: [Object: null prototype] { v: '1751600766907' }
+  },
+  finished: true
+}
+2025-07-04T03:46:06.981Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/page.css"
+2025-07-04T03:46:06.981Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/css/app/page.css"
+2025-07-04T03:46:06.981Z send accept ranges
+2025-07-04T03:46:06.981Z send modified Fri, 04 Jul 2025 03:44:56 GMT
+2025-07-04T03:46:06.981Z send etag W/"fe0-197d3898c6a"
+2025-07-04T03:46:06.981Z send content-type text/css
+2025-07-04T03:46:06.982Z compression gzip compression
+2025-07-04T03:46:06.982Z compression gzip compression
+2025-07-04T03:46:06.985Z next:router-server:main requestHandler! /_next/static/chunks/main-app.js?v=1751600766907 {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/main-app.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/main-app.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/main-app.js',
+    query: [Object: null prototype] { v: '1751600766907' }
+  },
+  finished: true
+}
+2025-07-04T03:46:06.985Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/main-app.js"
+2025-07-04T03:46:06.986Z next:router-server:main requestHandler! /_next/static/chunks/app-pages-internals.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app-pages-internals.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/app-pages-internals.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/app-pages-internals.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:46:06.986Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app-pages-internals.js"
+2025-07-04T03:46:06.986Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/main-app.js"
+2025-07-04T03:46:06.986Z send accept ranges
+2025-07-04T03:46:06.986Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:46:06.986Z send etag W/"657598-197d381bf1a"
+2025-07-04T03:46:06.986Z send content-type application/javascript
+2025-07-04T03:46:06.987Z next:router-server:main requestHandler! /_next/static/chunks/app/layout.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/layout.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/app/layout.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/app/layout.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:46:06.987Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/layout.js"
+2025-07-04T03:46:06.987Z next:router-server:main requestHandler! /_next/static/chunks/app/page.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/page.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/app/page.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/app/page.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:46:06.987Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/page.js"
+2025-07-04T03:46:06.987Z next:router-server:main requestHandler! /_next/static/chunks/app/loading.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/loading.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/chunks/app/loading.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/chunks/app/loading.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:46:06.987Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/loading.js"
+2025-07-04T03:46:06.987Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app-pages-internals.js"
+2025-07-04T03:46:06.988Z send accept ranges
+2025-07-04T03:46:06.988Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:46:06.988Z send etag W/"377ba-197d381bf17"
+2025-07-04T03:46:06.988Z send content-type application/javascript
+2025-07-04T03:46:06.988Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/layout.js"
+2025-07-04T03:46:06.988Z send accept ranges
+2025-07-04T03:46:06.988Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:46:06.988Z send etag W/"3c1875-197d381bf18"
+2025-07-04T03:46:06.988Z send content-type application/javascript
+2025-07-04T03:46:06.988Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/page.js"
+2025-07-04T03:46:06.988Z send accept ranges
+2025-07-04T03:46:06.988Z send modified Fri, 04 Jul 2025 03:44:56 GMT
+2025-07-04T03:46:06.988Z send etag W/"63c673-197d3898c6b"
+2025-07-04T03:46:06.988Z send content-type application/javascript
+2025-07-04T03:46:06.988Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/chunks/app/loading.js"
+2025-07-04T03:46:06.988Z send accept ranges
+2025-07-04T03:46:06.988Z send modified Fri, 04 Jul 2025 03:36:25 GMT
+2025-07-04T03:46:06.988Z send etag W/"130b85-197d381bf18"
+2025-07-04T03:46:06.988Z send content-type application/javascript
+2025-07-04T03:46:06.988Z compression gzip compression
+2025-07-04T03:46:06.988Z compression gzip compression
+2025-07-04T03:46:06.988Z compression gzip compression
+2025-07-04T03:46:06.989Z compression gzip compression
+2025-07-04T03:46:06.989Z compression gzip compression
+2025-07-04T03:46:07.243Z next:router-server:main requestHandler! /images/logos/DCX_Logo_White.svg {
+  matchedOutput: {
+    type: 'publicFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/DCX_Logo_White.svg',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public',
+    itemPath: '/images/logos/DCX_Logo_White.svg'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/images/logos/DCX_Logo_White.svg',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:46:07.244Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/DCX_Logo_White.svg"
+2025-07-04T03:46:07.244Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/DCX_Logo_White.svg"
+2025-07-04T03:46:07.244Z send accept ranges
+2025-07-04T03:46:07.244Z send cache-control public, max-age=0
+2025-07-04T03:46:07.244Z send modified Thu, 26 Jun 2025 04:54:10 GMT
+2025-07-04T03:46:07.244Z send etag W/"2a37-197aa961093"
+2025-07-04T03:46:07.244Z send content-type image/svg+xml
+2025-07-04T03:46:07.244Z send not modified
+2025-07-04T03:46:07.245Z compression undefined not compressible
+2025-07-04T03:46:07.245Z compression no compression: filtered
+2025-07-04T03:46:07.559Z next:router-server:main requestHandler! /images/logos/dark-logo.svg {
+  matchedOutput: {
+    type: 'publicFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/dark-logo.svg',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public',
+    itemPath: '/images/logos/dark-logo.svg'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/images/logos/dark-logo.svg',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:46:07.560Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/dark-logo.svg"
+2025-07-04T03:46:07.560Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/logos/dark-logo.svg"
+2025-07-04T03:46:07.560Z send accept ranges
+2025-07-04T03:46:07.560Z send cache-control public, max-age=0
+2025-07-04T03:46:07.560Z send modified Thu, 26 Jun 2025 18:30:05 GMT
+2025-07-04T03:46:07.560Z send etag W/"2d6c-197ad810f94"
+2025-07-04T03:46:07.560Z send content-type image/svg+xml
+2025-07-04T03:46:07.560Z send not modified
+2025-07-04T03:46:07.560Z compression undefined not compressible
+2025-07-04T03:46:07.560Z compression no compression: filtered
+2025-07-04T03:46:07.564Z next:router-server:main requestHandler! /_next/image?url=%2Fimages%2Fassets%2Fhero-image-old.png&w=3840&q=100 {
+  matchedOutput: { itemPath: '/_next/image', type: 'nextImage' },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/image',
+    query: [Object: null prototype] {
+      url: '/images/assets/hero-image-old.png',
+      w: '3840',
+      q: '100'
+    }
+  },
+  finished: true
+}
+2025-07-04T03:46:07.565Z next:router-server:main invokeRender /_next/image?url=%2Fimages%2Fassets%2Fhero-image-old.png&w=3840&q=100 {
+  host: 'localhost:3000',
+  connection: 'keep-alive',
+  'sec-ch-ua-platform': '"macOS"',
+  'if-none-match': '6ACOe6NZ-UDwLLcbyAh-QF4oS_nv-Oq86chiSqyO3nk',
+  'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+  'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+  dnt: '1',
+  'sec-ch-ua-mobile': '?0',
+  accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+  'sec-fetch-site': 'same-origin',
+  'sec-fetch-mode': 'no-cors',
+  'sec-fetch-dest': 'image',
+  referer: 'http://localhost:3000/',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  'accept-language': 'en-US,en;q=0.9',
+  cookie: 'ajs_anonymous_id=17b0a441-ac8c-4318-8ecf-764c7d91ae21; connect.sid=s%3Ao_DZ85oCqy6MSGr7audL4zJuPmvsX5Qi.uBHL%2FV%2FmRhB6wISx2vXRJZQn0sy3sTuty02baADqxh4; __next_hmr_refresh_hash__=85c9ecdc37a51ff296cdd814a548a94c633457081244afec; token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAyNTU3N2QwLWNhZjYtNDNiNC1iZGUwLTM0OWI2Yjg5OGMxNCIsImVtYWlsIjoiZ3N1YnJhbW9uZXlAZGF0YWNlbnRyaXguY28uemEiLCJyb2xlIjpbeyJvcmdJZCI6IjkwMWYyNTNjLWM0MDQtNGEzOS04NTZlLWUyMDk1OGIxYjhlMiIsIm9yZ2FuaXNhdGlvbiI6eyJpZCI6IjkwMWYyNTNjLWM0MDQtNGEzOS04NTZlLWUyMDk1OGIxYjhlMiIsIm9yZ2FuaXNhdGlvbl9uYW1lIjoiRGF0YWNlbnRyaXggQ2xvdWQgKERhYVMpIiwib3JnYW5pc2F0aW9uX3R5cGUiOiJpbnRlcm5hbCIsIm9yZ2FuaXNhdGlvbl9zdGF0dXMiOiJhY3RpdmUifSwicm9sZSI6eyJuYW1lIjoiUm9vdCJ9fV0sImZpcnN0TmFtZSI6IkdhcnNlbiIsImxhc3ROYW1lIjoiU3VicmFtb25leSIsImlhdCI6MTc1MTYwMDc2NiwiZXhwIjoxNzUxNjA0MzY2fQ.-gPXacMXH9cKTzbrm9PGhLJnGXgDa2bPDfKF8b0aqWk; user={%22id%22:%22025577d0-caf6-43b4-bde0-349b6b898c14%22%2C%22firstName%22:%22Garsen%22%2C%22lastName%22:%22Subramoney%22%2C%22email%22:%22gsubramoney@datacentrix.co.za%22%2C%22mobile%22:%22015234890%22%2C%22userType%22:%22internal%22%2C%22isVerified%22:true%2C%22isFirstLogin%22:false%2C%22createdAt%22:%222025-06-26T07:13:36.682Z%22%2C%22updatedAt%22:%222025-06-26T07:16:06.169Z%22%2C%22address%22:%22Midrand%22%2C%22province%22:%22Gauteng%22%2C%22city%22:%22Pretoria%22%2C%22postalCode%22:%220003%22%2C%22roles%22:[{%22orgId%22:%22901f253c-c404-4a39-856e-e20958b1b8e2%22%2C%22organisation%22:{%22id%22:%22901f253c-c404-4a39-856e-e20958b1b8e2%22%2C%22organisation_name%22:%22Datacentrix%20Cloud%20(DaaS)%22%2C%22organisation_type%22:%22internal%22%2C%22organisation_status%22:%22active%22}%2C%22role%22:{%22name%22:%22Root%22}}]}; roles=Root'
+}
+2025-07-04T03:46:07.578Z compression undefined not compressible
+2025-07-04T03:46:07.578Z compression no compression: filtered
+2025-07-04T03:46:07.579Z next:router-server:main requestHandler! /images/assets/hero-image-old.png {
+  matchedOutput: {
+    type: 'publicFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/assets/hero-image-old.png',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public',
+    itemPath: '/images/assets/hero-image-old.png'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/images/assets/hero-image-old.png',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:46:07.579Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/assets/hero-image-old.png"
+2025-07-04T03:46:07.580Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/assets/hero-image-old.png"
+2025-07-04T03:46:07.580Z send accept ranges
+2025-07-04T03:46:07.580Z send cache-control public, max-age=0
+2025-07-04T03:46:07.580Z send modified Thu, 26 Jun 2025 18:30:05 GMT
+2025-07-04T03:46:07.580Z send etag W/"69bc7-197ad810f8f"
+2025-07-04T03:46:07.580Z send content-type image/png
+2025-07-04T03:46:07.592Z next:router-server:main requestHandler! /images/backgrounds/new-login-bg.jpeg {
+  matchedOutput: {
+    type: 'publicFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/backgrounds/new-login-bg.jpeg',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public',
+    itemPath: '/images/backgrounds/new-login-bg.jpeg'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/images/backgrounds/new-login-bg.jpeg',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:46:07.592Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/backgrounds/new-login-bg.jpeg"
+2025-07-04T03:46:07.592Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/public/images/backgrounds/new-login-bg.jpeg"
+2025-07-04T03:46:07.592Z send accept ranges
+2025-07-04T03:46:07.592Z send cache-control public, max-age=0
+2025-07-04T03:46:07.592Z send modified Thu, 26 Jun 2025 18:30:05 GMT
+2025-07-04T03:46:07.593Z send etag W/"3b78-197ad810f93"
+2025-07-04T03:46:07.593Z send content-type image/jpeg
+2025-07-04T03:46:07.593Z send not modified
+2025-07-04T03:46:07.593Z compression undefined not compressible
+2025-07-04T03:46:07.593Z compression no compression: filtered
+2025-07-04T03:48:02.166Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:02.166Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:02.166Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:02.166Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:02.166Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:02.166Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:02.167Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:02.167Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.178Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.180Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.181Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.181Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.182Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.182Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.182Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.182Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.182Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.183Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.185Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:02.189Z next:router-server:main requestHandler! /_next/static/webpack/0da9a4b5061d4ba4.webpack.hot-update.json {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/0da9a4b5061d4ba4.webpack.hot-update.json',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/0da9a4b5061d4ba4.webpack.hot-update.json'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/0da9a4b5061d4ba4.webpack.hot-update.json',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:48:02.189Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/0da9a4b5061d4ba4.webpack.hot-update.json"
+2025-07-04T03:48:02.190Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/0da9a4b5061d4ba4.webpack.hot-update.json"
+2025-07-04T03:48:02.190Z send accept ranges
+2025-07-04T03:48:02.190Z send modified Fri, 04 Jul 2025 03:48:02 GMT
+2025-07-04T03:48:02.190Z send etag W/"40-197d38c61c1"
+2025-07-04T03:48:02.190Z send content-type application/json
+2025-07-04T03:48:02.200Z compression no compression: size below threshold
+2025-07-04T03:48:02.211Z next:router-server:main requestHandler! /_next/static/webpack/app/page.0da9a4b5061d4ba4.hot-update.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/app/page.0da9a4b5061d4ba4.hot-update.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/app/page.0da9a4b5061d4ba4.hot-update.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/app/page.0da9a4b5061d4ba4.hot-update.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:48:02.211Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/app/page.0da9a4b5061d4ba4.hot-update.js"
+2025-07-04T03:48:02.212Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/ArrowBack
+2025-07-04T03:48:02.212Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:48:02.212Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:48:02.212Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:48:02.212Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/app/page.0da9a4b5061d4ba4.hot-update.js"
+2025-07-04T03:48:02.212Z send accept ranges
+2025-07-04T03:48:02.212Z send modified Fri, 04 Jul 2025 03:48:02 GMT
+2025-07-04T03:48:02.212Z send etag W/"6beb-197d38c61c1"
+2025-07-04T03:48:02.212Z send content-type application/javascript
+2025-07-04T03:48:02.212Z next:router-server:main requestHandler! /_next/static/webpack/webpack.0da9a4b5061d4ba4.hot-update.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.0da9a4b5061d4ba4.hot-update.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/webpack.0da9a4b5061d4ba4.hot-update.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/webpack.0da9a4b5061d4ba4.hot-update.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:48:02.212Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.0da9a4b5061d4ba4.hot-update.js"
+2025-07-04T03:48:02.215Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.0da9a4b5061d4ba4.hot-update.js"
+2025-07-04T03:48:02.215Z send accept ranges
+2025-07-04T03:48:02.215Z send modified Fri, 04 Jul 2025 03:48:02 GMT
+2025-07-04T03:48:02.215Z send etag W/"347-197d38c61c1"
+2025-07-04T03:48:02.215Z send content-type application/javascript
+2025-07-04T03:48:02.215Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:48:02.215Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:48:02.216Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/ArrowBack
+2025-07-04T03:48:02.216Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:48:02.216Z compression gzip compression
+2025-07-04T03:48:02.217Z compression no compression: size below threshold
+2025-07-04T03:48:02.218Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:48:02.218Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:48:02.219Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:48:02.219Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:48:02.220Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:48:02.222Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+ ✓ Compiled in 977ms (2681 modules)
+2025-07-04T03:48:49.524Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:49.524Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:49.526Z next:router-server:main requestHandler! /_next/static/webpack/d3cae6c357994907.webpack.hot-update.json {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/d3cae6c357994907.webpack.hot-update.json',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/d3cae6c357994907.webpack.hot-update.json'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/d3cae6c357994907.webpack.hot-update.json',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:48:49.526Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/d3cae6c357994907.webpack.hot-update.json"
+2025-07-04T03:48:49.527Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:49.527Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:49.527Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:49.527Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:49.527Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:49.527Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-app-loader
+2025-07-04T03:48:49.528Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/d3cae6c357994907.webpack.hot-update.json"
+2025-07-04T03:48:49.528Z send accept ranges
+2025-07-04T03:48:49.528Z send modified Fri, 04 Jul 2025 03:48:49 GMT
+2025-07-04T03:48:49.528Z send etag W/"40-197d38d1acb"
+2025-07-04T03:48:49.529Z send content-type application/json
+2025-07-04T03:48:49.535Z compression no compression: size below threshold
+2025-07-04T03:48:49.540Z next:router-server:main requestHandler! /_next/static/webpack/app/page.d3cae6c357994907.hot-update.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/app/page.d3cae6c357994907.hot-update.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/app/page.d3cae6c357994907.hot-update.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/app/page.d3cae6c357994907.hot-update.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:48:49.540Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/app/page.d3cae6c357994907.hot-update.js"
+2025-07-04T03:48:49.541Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/app/page.d3cae6c357994907.hot-update.js"
+2025-07-04T03:48:49.541Z send accept ranges
+2025-07-04T03:48:49.541Z send modified Fri, 04 Jul 2025 03:48:49 GMT
+2025-07-04T03:48:49.541Z send etag W/"6bd5-197d38d1acb"
+2025-07-04T03:48:49.542Z send content-type application/javascript
+2025-07-04T03:48:49.542Z next:router-server:main requestHandler! /_next/static/webpack/webpack.d3cae6c357994907.hot-update.js {
+  matchedOutput: {
+    type: 'nextStaticFolder',
+    fsPath: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.d3cae6c357994907.hot-update.js',
+    locale: undefined,
+    itemsRoot: '/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static',
+    itemPath: '/webpack/webpack.d3cae6c357994907.hot-update.js'
+  },
+  statusCode: undefined,
+  resHeaders: {},
+  bodyStream: false,
+  parsedUrl: {
+    pathname: '/_next/static/webpack/webpack.d3cae6c357994907.hot-update.js',
+    query: [Object: null prototype] {}
+  },
+  finished: true
+}
+2025-07-04T03:48:49.542Z send stat "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.d3cae6c357994907.hot-update.js"
+2025-07-04T03:48:49.542Z send pipe "/Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/.next/static/webpack/webpack.d3cae6c357994907.hot-update.js"
+2025-07-04T03:48:49.542Z send accept ranges
+2025-07-04T03:48:49.542Z send modified Fri, 04 Jul 2025 03:48:49 GMT
+2025-07-04T03:48:49.542Z send etag W/"347-197d38d1acb"
+2025-07-04T03:48:49.542Z send content-type application/javascript
+2025-07-04T03:48:49.543Z compression gzip compression
+2025-07-04T03:48:49.544Z compression no compression: size below threshold
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.557Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.559Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.561Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.563Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.563Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.563Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.563Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.563Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.563Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.563Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.563Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.563Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.564Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.564Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.564Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.564Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.564Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.564Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.564Z next:jsconfig-paths-plugin moduleName did not match any paths pattern next-flight-client-entry-loader
+2025-07-04T03:48:49.600Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/ArrowBack
+2025-07-04T03:48:49.600Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:48:49.600Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:48:49.600Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:48:49.603Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:48:49.603Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:48:49.604Z next:jsconfig-paths-plugin moduleName did not match any paths pattern @mui/icons-material/ArrowBack
+2025-07-04T03:48:49.604Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:48:49.605Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:48:49.605Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils
+2025-07-04T03:48:49.605Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:48:49.605Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/utils/axios
+2025-07-04T03:48:49.606Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+2025-07-04T03:48:49.606Z next:jsconfig-paths-plugin skipping request as it is an absolute path /Users/garsensubramoney/gs_projects/dcx/dcx-cloud-frontend/src/store
+ ✓ Compiled in 566ms (2681 modules)

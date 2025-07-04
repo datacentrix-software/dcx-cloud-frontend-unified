@@ -48,7 +48,7 @@ const OtpVerification = ({ email, onError, onSuccess }: OtpVerificationProps) =>
         if (usersResponse.data) {
           setUser(usersResponse.data);
           onSuccess(usersResponse.data.firstName);
-          window.location.href = "/";
+          window.location.href = "/nlu/dashboards/customer";
         }
       } else {
         onError(loginResponse.data.message);
@@ -74,7 +74,7 @@ const OtpVerification = ({ email, onError, onSuccess }: OtpVerificationProps) =>
       <Box mb={2}>
         <Button
           startIcon={<ArrowBack />}
-          onClick={() => router.push('/auth/login')}
+          onClick={() => router.push('/')}
           color="primary"
         >
           Back to Login
