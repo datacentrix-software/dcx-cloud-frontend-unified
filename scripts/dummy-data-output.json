@@ -1,0 +1,125 @@
+{
+  "organizations": [
+    {
+      "id": "datacentrix-internal-001",
+      "name": "Datacentrix Cloud (Internal)",
+      "type": "internal",
+      "isReseller": false,
+      "parentId": null
+    },
+    {
+      "id": "cloudtech-reseller-001",
+      "name": "CloudTech Resellers",
+      "type": "reseller",
+      "isReseller": true,
+      "parentId": null
+    },
+    {
+      "id": "netsolutions-reseller-001",
+      "name": "NetSolutions Partners",
+      "type": "reseller",
+      "isReseller": true,
+      "parentId": null
+    },
+    {
+      "id": "startupcorp-customer-001",
+      "name": "StartupCorp",
+      "type": "customer",
+      "isReseller": false,
+      "parentId": "cloudtech-reseller-001"
+    },
+    {
+      "id": "retailchain-customer-001",
+      "name": "RetailChain SA",
+      "type": "customer",
+      "isReseller": false,
+      "parentId": "cloudtech-reseller-001"
+    },
+    {
+      "id": "manufacturing-customer-001",
+      "name": "ManufacturingCo",
+      "type": "customer",
+      "isReseller": false,
+      "parentId": "netsolutions-reseller-001"
+    }
+  ],
+  "users": [
+    {
+      "id": "e1b38aa5-2cc6-4277-a995-75841432c24d",
+      "firstName": "John",
+      "lastName": "Admin",
+      "email": "john.admin@datacentrix.co.za",
+      "password": "$2b$10$Xr3y9P8UnSdX4f/5g/3DSO/NdLTIKcxsuvjBWsbwQMSN3lBiuHHuC",
+      "userType": "internal",
+      "orgId": "datacentrix-internal-001",
+      "role": "Root",
+      "scope": "global"
+    },
+    {
+      "id": "0da3174f-e780-4330-bd65-d4cb00fbbaa7",
+      "firstName": "Sarah",
+      "lastName": "Engineer",
+      "email": "sarah.engineer@datacentrix.co.za",
+      "password": "$2b$10$Xr3y9P8UnSdX4f/5g/3DSO/NdLTIKcxsuvjBWsbwQMSN3lBiuHHuC",
+      "userType": "internal",
+      "orgId": "datacentrix-internal-001",
+      "role": "Engineer",
+      "scope": "global"
+    },
+    {
+      "id": "89ad677c-8666-4688-8933-e30c20cc1558",
+      "firstName": "Alex",
+      "lastName": "Reseller",
+      "email": "alex@cloudtech.co.za",
+      "password": "$2b$10$Xr3y9P8UnSdX4f/5g/3DSO/NdLTIKcxsuvjBWsbwQMSN3lBiuHHuC",
+      "userType": "external",
+      "orgId": "cloudtech-reseller-001",
+      "role": "Reseller Admin",
+      "scope": "reseller_estate"
+    },
+    {
+      "id": "5aeba1ec-ad89-4e24-9287-8717f0ad134f",
+      "firstName": "David",
+      "lastName": "Partner",
+      "email": "david@netsolutions.co.za",
+      "password": "$2b$10$Xr3y9P8UnSdX4f/5g/3DSO/NdLTIKcxsuvjBWsbwQMSN3lBiuHHuC",
+      "userType": "external",
+      "orgId": "netsolutions-reseller-001",
+      "role": "Reseller Admin",
+      "scope": "reseller_estate"
+    },
+    {
+      "id": "966b7ef0-a55e-4b4e-b078-1926253adb40",
+      "firstName": "Tom",
+      "lastName": "Startup",
+      "email": "tom@startupcorp.com",
+      "password": "$2b$10$Xr3y9P8UnSdX4f/5g/3DSO/NdLTIKcxsuvjBWsbwQMSN3lBiuHHuC",
+      "userType": "external",
+      "orgId": "startupcorp-customer-001",
+      "role": "Organization Admin",
+      "scope": "organisation"
+    },
+    {
+      "id": "c0b46f18-2fb1-480c-88ce-210fb630646a",
+      "firstName": "Jane",
+      "lastName": "Developer",
+      "email": "jane@startupcorp.com",
+      "password": "$2b$10$Xr3y9P8UnSdX4f/5g/3DSO/NdLTIKcxsuvjBWsbwQMSN3lBiuHHuC",
+      "userType": "external",
+      "orgId": "startupcorp-customer-001",
+      "role": "Engineer",
+      "scope": "organisation"
+    },
+    {
+      "id": "086c0932-ab1d-42dd-9d92-27ff7b4301ea",
+      "firstName": "Mary",
+      "lastName": "Manager",
+      "email": "mary@retailchain.co.za",
+      "password": "$2b$10$Xr3y9P8UnSdX4f/5g/3DSO/NdLTIKcxsuvjBWsbwQMSN3lBiuHHuC",
+      "userType": "external",
+      "orgId": "retailchain-customer-001",
+      "role": "Organization Admin",
+      "scope": "organisation"
+    }
+  ]
+}

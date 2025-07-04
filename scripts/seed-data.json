@@ -1,0 +1,100 @@
+{
+  "instructions": "Copy this data to the backend and run via Prisma",
+  "password_hash": "$2b$10$7/dPmrzQ3lZOUJbhrzsGpu0jLwSVzg1IlrgHybYlYl4lBI5TsfuV6",
+  "common_password": "TestPass123!",
+  
+  "organizations": [
+    {
+      "id": "datacentrix-internal-001",
+      "organisation_name": "Datacentrix Cloud (Internal)",
+      "organisation_type": "internal",
+      "organisation_status": "active",
+      "isReseller": false,
+      "country": "South Africa"
+    },
+    {
+      "id": "cloudtech-reseller-001",
+      "organisation_name": "CloudTech Resellers",
+      "organisation_type": "reseller", 
+      "organisation_status": "active",
+      "isReseller": true,
+      "country": "South Africa"
+    },
+    {
+      "id": "startupcorp-customer-001",
+      "organisation_name": "StartupCorp",
+      "organisation_type": "customer",
+      "organisation_status": "active", 
+      "isReseller": false,
+      "parent_id": "cloudtech-reseller-001",
+      "country": "South Africa"
+    }
+  ],
+  
+  "users": [
+    {
+      "id": "john-admin-internal-001",
+      "firstName": "John",
+      "lastName": "Admin",
+      "email": "john.admin@datacentrix.co.za",
+      "userType": "internal",
+      "isVerified": true,
+      "isFirstLogin": false
+    },
+    {
+      "id": "alex-reseller-cloudtech-001", 
+      "firstName": "Alex",
+      "lastName": "Reseller",
+      "email": "alex@cloudtech.co.za",
+      "userType": "external",
+      "isVerified": true,
+      "isFirstLogin": false
+    },
+    {
+      "id": "tom-startup-admin-001",
+      "firstName": "Tom", 
+      "lastName": "Startup",
+      "email": "tom@startupcorp.com",
+      "userType": "external",
+      "isVerified": true,
+      "isFirstLogin": false
+    }
+  ],
+  
+  "roles": [
+    {
+      "id": "org-admin-role-001",
+      "name": "Organization Admin",
+      "description": "Can manage users and settings within their organization"
+    },
+    {
+      "id": "reseller-admin-role-001", 
+      "name": "Reseller Admin",
+      "description": "Can manage all customer organizations under their reseller account"
+    }
+  ],
+  
+  "user_roles": [
+    {
+      "id": "userrole-john-root-global-001",
+      "userId": "john-admin-internal-001",
+      "roleId": "existing-root-role-id",
+      "orgId": "datacentrix-internal-001",
+      "scopeType": "global"
+    },
+    {
+      "id": "userrole-alex-reseller-estate-001",
+      "userId": "alex-reseller-cloudtech-001", 
+      "roleId": "reseller-admin-role-001",
+      "orgId": "cloudtech-reseller-001",
+      "scopeType": "reseller_estate"
+    },
+    {
+      "id": "userrole-tom-org-admin-001",
+      "userId": "tom-startup-admin-001",
+      "roleId": "org-admin-role-001", 
+      "orgId": "startupcorp-customer-001",
+      "scopeType": "organisation"
+    }
+  ]
+}

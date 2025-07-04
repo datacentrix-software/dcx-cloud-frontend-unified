@@ -42,6 +42,7 @@
     "apexcharts": "3.43.0",
     "axios": "^1.9.0",
     "axios-mock-adapter": "^1.22.0",
+    "bcrypt": "^6.0.0",
     "chance": "^1.1.11",
     "core-js": "^3.43.0",
     "date-fns": "^2.30.0",
@@ -83,11 +84,13 @@
     "swr": "^2.3.3",
     "tiptap": "^1.32.2",
     "typescript": "^5.2.2",
+    "uuid": "^11.1.0",
     "yup": "^0.32.11",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
