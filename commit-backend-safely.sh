@@ -33,9 +33,6 @@ Files updated:
 - src/prisma/application/schema.prisma  
 - src/prisma/enet/schema.prisma
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 

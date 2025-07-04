@@ -69,7 +69,7 @@ feat: Complete local development environment setup and security fixes
 - All development-only features are clearly marked and documented
 - SECURITY_DEPLOYMENT_CHECKLIST.md created for production deployment
 - Development features MUST be removed before staging/production
-- See CLAUDE.md for complete security compliance requirements
+- See project documentation for complete security compliance requirements
 
 ## 🗃️ Database Integration
 - Local database clones configured and working
@@ -84,9 +84,6 @@ feat: Complete local development environment setup and security fixes
 - Database: All Prisma generated clients updated
 - Infrastructure: VMware controllers, wallet services
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 

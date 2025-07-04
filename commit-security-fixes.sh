@@ -21,9 +21,6 @@ EMERGENCY SECURITY PATCH:
 Security Status: 0 vulnerabilities remaining (verified by npm audit)
 Backend Functionality: ✅ Tested and confirmed working
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 
