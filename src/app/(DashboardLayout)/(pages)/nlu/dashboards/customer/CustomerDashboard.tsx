@@ -30,12 +30,12 @@ import {
     LinearProgress
 } from '@mui/material';
 import {
-    IconCpu,
-    IconDatabase,
-    IconDownload,
+    // IconCpu,
+    // IconDatabase,
+    // IconDownload,
     IconPlus,
-    IconInfoCircle,
-    IconPower
+    // IconInfoCircle,
+    // IconPower
 } from '@tabler/icons-react';
 import ParentCard from '@/app/components/shared/ParentCard';
 import WelcomeCard from './customer-welcome-card';

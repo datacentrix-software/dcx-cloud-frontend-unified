@@ -1,0 +1,100 @@
+
+> datacentrix-cloud@7.0.0 build
+> next build
+
+   ▲ Next.js 15.3.4
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 8.0s
+   Linting and checking validity of types ...
+
+./src/app/(DashboardLayout)/(pages)/nlu/customer/virtual-machines/components/AdditionalProductsDialog.tsx
+90:86  Warning: Generic Object Injection Sink  security/detect-object-injection
+
+./src/app/(DashboardLayout)/(pages)/nlu/customer/virtual-machines/components/CreateVirtualMachine.tsx
+515:24  Warning: Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+./src/app/(DashboardLayout)/(pages)/nlu/customer/virtual-machines/page.tsx
+237:77  Warning: Expected '!==' and instead saw '!='.  eqeqeq
+245:81  Warning: Expected '!==' and instead saw '!='.  eqeqeq
+
+./src/app/(DashboardLayout)/(pages)/nlu/dashboards/customer/CustomerDashboard.tsx
+646:39  Warning: Function Call Object Injection Sink  security/detect-object-injection
+647:39  Warning: Function Call Object Injection Sink  security/detect-object-injection
+659:35  Warning: Generic Object Injection Sink  security/detect-object-injection
+660:35  Warning: Generic Object Injection Sink  security/detect-object-injection
+
+./src/app/(DashboardLayout)/(pages)/nlu/dashboards/customer/components/Landing.tsx
+259:96  Warning: Expected '===' and instead saw '=='.  eqeqeq
+
+./src/app/(DashboardLayout)/layout/vertical/header/Header.tsx
+181:5  Warning: Unexpected console statement.  no-console
+182:5  Warning: Unexpected console statement.  no-console
+
+./src/app/(DashboardLayout)/layout/vertical/header/NotificationPopover.tsx
+38:3  Warning: Unexpected console statement.  no-console
+39:3  Warning: Unexpected console statement.  no-console
+70:9  Warning: Unexpected console statement.  no-console
+
+./src/app/auth/authForms/LoginForm.tsx
+51:13  Warning: Unexpected console statement.  no-console
+52:13  Warning: Unexpected console statement.  no-console
+
+./src/app/components/dashboard/nlu/cardpayments/Transaction.tsx
+247:63  Warning: Unsafe Regular Expression  security/detect-unsafe-regex
+
+./src/components/ui/alert.tsx
+27:39  Warning: Generic Object Injection Sink  security/detect-object-injection
+
+./src/components/ui/button.tsx
+30:36  Warning: Generic Object Injection Sink  security/detect-object-injection
+
+./src/components/user-management/OrganizationSelector.tsx
+39:28  Warning: Generic Object Injection Sink  security/detect-object-injection
+
+./src/components/user-management/UserInviteForm.tsx
+66:9  Warning: Generic Object Injection Sink  security/detect-object-injection
+
+./src/components/user-management/UserManagementDashboard.tsx
+24:3  Warning: Unexpected console statement.  no-console
+
+./src/components/user-management/UserRoleAssignment.tsx
+32:5  Warning: Generic Object Injection Sink  security/detect-object-injection
+
+./src/services/permissionService.ts
+161:10  Warning: Generic Object Injection Sink  security/detect-object-injection
+171:21  Warning: Variable Assigned to Object Injection Sink  security/detect-object-injection
+180:22  Warning: Generic Object Injection Sink  security/detect-object-injection
+
+./src/store/useQuoteStore.ts
+84:32  Warning: Generic Object Injection Sink  security/detect-object-injection
+101:37  Warning: Generic Object Injection Sink  security/detect-object-injection
+126:7  Warning: Generic Object Injection Sink  security/detect-object-injection
+126:35  Warning: Generic Object Injection Sink  security/detect-object-injection
+126:59  Warning: Generic Object Injection Sink  security/detect-object-injection
+138:24  Warning: Generic Object Injection Sink  security/detect-object-injection
+311:9  Warning: Generic Object Injection Sink  security/detect-object-injection
+
+./src/utils/axios.js
+11:14  Warning: Unexpected console statement.  no-console
+
+./src/utils/theme/EmotionCache.tsx
+52:5  Warning: Unused eslint-disable directive (no problems were reported from 'no-restricted-syntax').
+54:17  Warning: Generic Object Injection Sink  security/detect-object-injection
+60:9  Warning: Unused eslint-disable directive (no problems were reported from 'react/no-danger').
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+Failed to compile.
+
+./src/app/(DashboardLayout)/(pages)/nlu/dashboards/customer/CustomerDashboard.tsx:33:5
+Type error: '"@tabler/icons-react"' has no exported member named 'IconServer'. Did you mean 'IconUser'?
+
+[0m [90m 31 |[39m } [36mfrom[39m [32m'@mui/material'[39m[33m;[39m[0m
+[0m [90m 32 |[39m [36mimport[39m {[0m
+[0m[31m[1m>[22m[39m[90m 33 |[39m     [33mIconServer[39m[33m,[39m[0m
+[0m [90m    |[39m     [31m[1m^[22m[39m[0m
+[0m [90m 34 |[39m     [33mIconCpu[39m[33m,[39m[0m
+[0m [90m 35 |[39m     [33mIconDatabase[39m[33m,[39m[0m
+[0m [90m 36 |[39m     [33mIconDownload[39m[33m,[39m[0m
+Next.js build worker exited with code: 1 and signal: null

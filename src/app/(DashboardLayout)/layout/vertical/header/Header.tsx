@@ -8,7 +8,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from '@/store/hooks';
 import { toggleSidebar, toggleMobileSidebar, setDarkMode } from '@/store/customizer/CustomizerSlice';
-import { IconMoon, IconSun, IconMessageReport, IconClipboardList, IconCreditCard, IconX } from '@tabler/icons-react';
+import { DarkMode, LightMode, Feedback, Assignment, CreditCard, Close } from '@mui/icons-material';
 import { BsLayoutTextWindowReverse } from "react-icons/bs"; // Import the new icon
 import Notifications from './Notification';
 import Profile from './Profile';
@@ -267,14 +267,14 @@ const Header = () => {
           >
             {/* {customizer.activeMode === 'dark' ? (
               <>
-                <IconSun size={24} />
+                <LightMode sx={{ fontSize: 24 }} />
                 <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
                   Dark Mode
                 </Typography>
               </>
             ) : (
               <>
-                <IconMoon size={24} />
+                <DarkMode sx={{ fontSize: 24 }} />
                 <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
                   Light Mode
                 </Typography>
@@ -289,7 +289,7 @@ const Header = () => {
               onClick={() => setFeedbackOpen(true)}
               sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
             >
-              <IconMessageReport size={24} />
+              <Feedback sx={{ fontSize: 24 }} />
               <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
                 Feedback
               </Typography>
@@ -303,7 +303,7 @@ const Header = () => {
                 onClick={fetchLogs}
                 sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
               >
-                <IconClipboardList size={24} />
+                <Assignment sx={{ fontSize: 24 }} />
                 <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
                   Logs
                 </Typography>
@@ -374,7 +374,7 @@ const Header = () => {
                     justifyContent: 'center'
                   }}
                 >
-                  <IconCreditCard size={20} color="white" />
+                  <CreditCard sx={{ fontSize: 20 }} color="inherit" />
                 </Box>
                 <Box sx={{ flex: 1 }}>
                   <Typography
@@ -442,7 +442,7 @@ const Header = () => {
                       }
                     }}
                   >
-                    <IconX size={16} />
+                    <Close sx={{ fontSize: 16 }} />
                   </IconButton>
                 </Tooltip>
               </Stack>

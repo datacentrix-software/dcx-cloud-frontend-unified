@@ -1,7 +1,7 @@
 import ListSubheader from '@mui/material/ListSubheader';
 import { Theme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
-import { IconDots } from '@tabler/icons-react';
+import { MoreHoriz } from '@mui/icons-material';
 import React from 'react';
 
 type NavGroup = {
@@ -29,7 +29,7 @@ const NavGroup = ({ item, hideMenu }: ItemType) => {
   }));
 
   return (
-    <ListSubheaderStyle>{hideMenu ? <IconDots size="14" /> : item?.subheader}</ListSubheaderStyle>
+    <ListSubheaderStyle>{hideMenu ? <MoreHoriz sx={{ fontSize: 14 }} /> : item?.subheader}</ListSubheaderStyle>
   );
 };
 

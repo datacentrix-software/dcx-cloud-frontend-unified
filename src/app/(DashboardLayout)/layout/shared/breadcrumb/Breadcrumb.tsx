@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import NextLink from "next/link";
 
 import breadcrumbImg from "/public/images/breadcrumb/ChatBc.png";
-import { IconCircle } from "@tabler/icons-react";
+import { RadioButtonUnchecked } from "@mui/icons-material";
 import Image from "next/image";
 
 interface BreadCrumbType {
@@ -43,12 +43,9 @@ const Breadcrumb = ({ subtitle, items, title, children }: BreadCrumbType) => (
       </Typography>
       <Breadcrumbs
         separator={
-          <IconCircle
-            size="5"
-            fill="textSecondary"
-            fillOpacity={"0.6"}
-            style={{ margin: "0 5px" }}
-          />
+           <RadioButtonUnchecked
+             sx={{ fontSize: 5, color: "text.secondary", opacity: 0.6, margin: "0 4px" }}
+           />
         }
         sx={{ alignItems: "center", mt: items ? "10px" : "" }}
         aria-label="breadcrumb"

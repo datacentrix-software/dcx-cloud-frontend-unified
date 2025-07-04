@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { IconSearch, IconX } from '@tabler/icons-react';
+import { Search as SearchIcon, Close } from '@mui/icons-material';
 import Menuitems from '../sidebar/MenuItems';
 import Link from 'next/link';
 
@@ -51,7 +51,7 @@ const Search = () => {
         onClick={() => setShowDrawer2(true)}
         size="large"
       >
-        <IconSearch size="16" />
+        <SearchIcon sx={{ fontSize: 16 }} />
       </IconButton>
       <Dialog
         open={showDrawer2}
@@ -72,7 +72,7 @@ const Search = () => {
               inputProps={{ 'aria-label': 'Search here' }}
             />
             <IconButton size="small" onClick={handleDrawerClose2}>
-              <IconX size="18" />
+              <Close sx={{ fontSize: 18 }} />
             </IconButton>
           </Stack>
         </DialogContent>

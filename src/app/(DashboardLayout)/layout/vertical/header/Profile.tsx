@@ -9,7 +9,7 @@ import Menu from '@mui/material/Menu';
 import Typography from '@mui/material/Typography';
 import * as dropdownData from './data';
 
-import { IconMail, IconBriefcase, IconBuilding } from '@tabler/icons-react';
+import { Email, BusinessCenter, Business } from '@mui/icons-material';
 import { Stack } from '@mui/system';
 import { useAuthStore } from '@/store';
 import { getOrganisationDisplay, getUserInitials, getUserRoleDisplay } from '@/app/(DashboardLayout)/utilities/helpers/user.helper';
@@ -97,11 +97,11 @@ const Profile = () => {
             {user?.firstName} {user?.lastName}
           </Typography>
           <Typography variant="subtitle2" color="textSecondary" display="flex" alignItems="center" gap={1}>
-            <IconBriefcase width={15} height={15} />
+            <BusinessCenter width={15} height={15} />
             {getUserRoleDisplay(user as IUser)}
           </Typography>
           <Typography variant="subtitle2" color="textSecondary" display="flex" alignItems="center" gap={1}>
-            <IconBuilding width={15} height={15} />
+            <Business width={15} height={15} />
             {getOrganisationDisplay(user as IUser)}
           </Typography>
           <Typography
@@ -111,7 +111,7 @@ const Profile = () => {
             alignItems="center"
             gap={1}
           >
-            <IconMail width={15} height={15} />
+            <Email width={15} height={15} />
             {user?.email}
           </Typography>
         </Stack>

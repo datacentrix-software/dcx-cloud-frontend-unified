@@ -11,16 +11,16 @@ import {
   Chip,
 } from '@mui/material';
 import { 
-  IconBell, 
-  IconX, 
-  IconSettings, 
-  IconAlertTriangle, 
-  IconInfoCircle, 
-  IconCircleCheck, 
-  IconShield, 
-  IconClock,
-  IconChevronDown
-} from '@tabler/icons-react';
+  Notifications, 
+  Close, 
+  Settings, 
+  Warning, 
+  Info, 
+  CheckCircle, 
+  Security, 
+  AccessTime,
+  ExpandMore
+} from '@mui/icons-material';
 import { useNotificationStore, Notification } from '@/store/useNotificationStore';
 
 const NotificationPopover = () => {
@@ -74,22 +74,22 @@ const NotificationPopover = () => {
   };
 
   const getNotificationIcon = (type: Notification['type']) => {
-    const iconProps = { size: 16 };
+    const iconProps = { sx: { fontSize: 16 } };
     switch (type) {
       case 'maintenance':
-        return <IconSettings {...iconProps} />;
+        return <Settings {...iconProps} />;
       case 'warning':
-        return <IconAlertTriangle {...iconProps} />;
+        return <Warning {...iconProps} />;
       case 'news':
-        return <IconBell {...iconProps} />;
+        return <Notifications {...iconProps} />;
       case 'info':
-        return <IconInfoCircle {...iconProps} />;
+        return <Info {...iconProps} />;
       case 'success':
-        return <IconCircleCheck {...iconProps} />;
+        return <CheckCircle {...iconProps} />;
       case 'update':
-        return <IconShield {...iconProps} />;
+        return <Security {...iconProps} />;
       default:
-        return <IconInfoCircle {...iconProps} />;
+        return <Info {...iconProps} />;
     }
   };
 
@@ -164,7 +164,7 @@ const NotificationPopover = () => {
             }
           }}
         >
-          <IconBell size={20} stroke={1.5} />
+          <Notifications sx={{ fontSize: 20 }} />
         </Badge>
         <Typography variant="caption" sx={{ fontSize: '0.7rem', lineHeight: 1 }}>
           Notifications
@@ -191,7 +191,7 @@ const NotificationPopover = () => {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <IconBell size={20} color={theme.palette.primary.main} />
+          <Notifications sx={{ fontSize: 20 }} color="primary" />
           <Typography variant="h6" sx={{ fontWeight: 600, flex: 1 }}>
             Notifications
           </Typography>
@@ -311,7 +311,7 @@ const NotificationPopover = () => {
                             mb: 1
                           }}
                         >
-                          <IconClock size={12} />
+                          <AccessTime sx={{ fontSize: 12 }} />
                           {formatTimestamp(notification.timestamp)}
                         </Typography>
                       </>
@@ -382,7 +382,7 @@ const NotificationPopover = () => {
                           }
                         }}
                       >
-                        <IconCircleCheck size={14} />
+                        <CheckCircle sx={{ fontSize: 14 }} />
                       </IconButton>
                     )}
                     <IconButton
@@ -400,7 +400,7 @@ const NotificationPopover = () => {
                         }
                       }}
                     >
-                      <IconX size={14} />
+                      <Close sx={{ fontSize: 14 }} />
                     </IconButton>
                   </Stack>
                 </Box>
@@ -464,7 +464,7 @@ const NotificationPopover = () => {
                   transition: 'transform 0.2s ease'
                 }}
               >
-                <IconChevronDown size={16} />
+                <ExpandMore sx={{ fontSize: 16 }} />
               </Box>
             </IconButton>
           </Box>

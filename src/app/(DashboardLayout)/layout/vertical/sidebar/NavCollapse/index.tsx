@@ -17,7 +17,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import NavItem from '../NavItem';
 
 // plugins
-import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
+import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { AppState } from '@/store/store';
 import { isNull } from "lodash";
@@ -57,7 +57,7 @@ export default  function NavCollapse ({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const menuIcon =
-    level > 1 ? <Icon stroke={1.5} size="1rem" /> : <Icon stroke={1.5} size="1.3rem" />;
+    level > 1 ? <Icon stroke={1.5} sx={{ fontSize: "1rem" }} /> : <Icon stroke={1.5} size="1.3rem" />;
 
   const handleClick = () => {
     setOpen(!open);
@@ -181,7 +181,7 @@ export default  function NavCollapse ({
           {menuIcon}
         </ListItemIcon>
         <ListItemText color="inherit">{hideMenu ? '' : <>{t(`${menu.title}`)}</>}</ListItemText>
-        {!open ? <IconChevronDown size="1rem" /> : <IconChevronUp size="1rem" />}
+        {!open ? <ExpandMore sx={{ fontSize: "1rem" }} /> : <ExpandLess sx={{ fontSize: "1rem" }} />}
       </ListItemStyled>
       <Collapse in={open} timeout="auto">
         {submenus}

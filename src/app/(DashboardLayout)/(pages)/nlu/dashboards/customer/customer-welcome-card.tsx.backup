@@ -1,4 +1,16 @@
 "use client";
+import WarningIcon from "@mui/icons-material/Warning";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import InfoIcon from "@mui/icons-material/Info";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import SettingsIcon from "@mui/icons-material/Settings";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ComputerIcon from "@mui/icons-material/Computer";
+import CloudIcon from "@mui/icons-material/Cloud";
+import SecurityIcon from "@mui/icons-material/Security";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CloseIcon from "@mui/icons-material/Close";
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -16,21 +28,16 @@ import {
   Badge,
 } from "@mui/material";
 import { 
-  TrendingUp, 
-  Person, 
-  Close, 
-  ChevronLeft, 
-  ChevronRight,
-  Settings,
-  Warning,
-  Notifications,
-  Info,
-  CheckCircle,
-  AccessTime,
-  Computer,
-  Cloud,
-  Security,
-  ExpandMore
+  // IconArrowUpRight, 
+  // IconUser, 
+  // IconX, 
+  // IconChevronLeft, 
+  ChevronRightIcon,
+  SettingsIcon,
+  WarningIcon,
+  NotificationsIcon,
+  InfoIcon,
+  CheckCircleIcon,
 } from "@mui/icons-material";
 import Image from "next/image";
 import axios from "axios";
@@ -110,22 +117,22 @@ const WelcomeCard = () => {
   };
 
   const getNotificationIcon = (type: Notification['type']) => {
-    const iconProps = { sx: { fontSize: 16 } };
+    const iconProps = { size: 16 };
     switch (type) {
       case 'maintenance':
-        return <Settings {...iconProps} />;
+        return <SettingsIcon {...iconProps} />;
       case 'warning':
-        return <Warning {...iconProps} />;
+        return <WarningIcon {...iconProps} />;
       case 'news':
-        return <Notifications {...iconProps} />;
+        return <NotificationsIcon {...iconProps} />;
       case 'info':
-        return <Info {...iconProps} />;
+        return <InfoIcon {...iconProps} />;
       case 'success':
-        return <CheckCircle {...iconProps} />;
+        return <CheckCircleIcon {...iconProps} />;
       case 'update':
-        return <Security {...iconProps} />;
+        return <SecurityIcon {...iconProps} />;
       default:
-        return <Info {...iconProps} />;
+        return <InfoIcon {...iconProps} />;
     }
   };
 
@@ -202,7 +209,7 @@ const WelcomeCard = () => {
       >
         <CardContent sx={{ p: 3, position: 'relative' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-            <Notifications sx={{ fontSize: 20 }} color="primary" />
+            <NotificationsIcon size={20} color={theme.palette.primary.main} />
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               Notifications
             </Typography>
@@ -305,7 +312,7 @@ const WelcomeCard = () => {
                         mb: 1
                       }}
                     >
-                      <AccessTime sx={{ fontSize: 12 }} />
+                      <AccessTimeIcon sx={{ fontSize: 12 }} />
                       {formatTimestamp(notification.timestamp)}
                     </Typography>
                   </Box>
@@ -324,7 +331,7 @@ const WelcomeCard = () => {
                       }
                     }}
                   >
-                    <Close sx={{ fontSize: 14 }} />
+                    <CloseIcon size={14} />
                   </IconButton>
                 </Box>
                 {!notification.read && (
@@ -386,7 +393,7 @@ const WelcomeCard = () => {
                     transition: 'transform 0.2s ease'
                   }}
                 >
-                  <ExpandMore sx={{ fontSize: 16 }} />
+                  <ExpandMoreIcon sx={{ fontSize: 16 }} />
                 </Box>
               </IconButton>
             </Box>
@@ -448,7 +455,7 @@ const WelcomeCard = () => {
                 }}
                 size="small"
               >
-                <Close sx={{ fontSize: 18 }} />
+                <CloseIcon size={18} />
               </IconButton>
             </Tooltip>
 
@@ -483,7 +490,7 @@ const WelcomeCard = () => {
                 <Divider sx={{ mb: 3 }} />
                 <Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <Notifications sx={{ fontSize: 20 }} color="primary" />
+                    <NotificationsIcon size={20} color={theme.palette.primary.main} />
                     <Typography variant="h6" sx={{ fontWeight: 600 }}>
                       Notifications
                     </Typography>
@@ -586,7 +593,7 @@ const WelcomeCard = () => {
                                 mb: 1
                               }}
                             >
-                              <AccessTime sx={{ fontSize: 12 }} />
+                              <AccessTimeIcon sx={{ fontSize: 12 }} />
                               {formatTimestamp(notification.timestamp)}
                             </Typography>
                           </Box>
@@ -605,7 +612,7 @@ const WelcomeCard = () => {
                               }
                             }}
                           >
-                            <Close sx={{ fontSize: 14 }} />
+                            <CloseIcon size={14} />
                           </IconButton>
                         </Box>
                         {!notification.read && (
@@ -667,7 +674,7 @@ const WelcomeCard = () => {
                             transition: 'transform 0.2s ease'
                           }}
                         >
-                          <ExpandMore sx={{ fontSize: 16 }} />
+                          <ExpandMoreIcon sx={{ fontSize: 16 }} />
                         </Box>
                       </IconButton>
                     </Box>
