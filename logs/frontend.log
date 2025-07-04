@@ -90,3 +90,10 @@ Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
  ✓ Compiled in 589ms (2887 modules)
  ✓ Compiled in 434ms (2887 modules)
  ✓ Compiled in 426ms (2887 modules)
+ ⚠ Unsupported metadata viewport is configured in metadata export in /reseller/demo. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+redux-persist failed to create sync storage. falling back to noop storage.
+ GET /reseller/demo 200 in 807ms
+ ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET / 200 in 610ms

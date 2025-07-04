@@ -714,3 +714,56 @@ Datacentrix Cloud (Root) → Revenue: R2,500,000 → 6 Resellers → 14 Total Cu
 **Session Duration**: 2 days intensive TDD development → Production-ready platform  
 **Team Impact**: **MASSIVE** - Complete reseller platform with 6 resellers tested and ready  
 **Next Steps**: Production deployment with full confidence - all business scenarios tested
+
+---
+
+## 🔄 **CRITICAL BUSINESS MODEL PIVOT - JULY 4, 2025 LATE EVENING**
+
+### **Major Discovery: Reseller Model is WHOLESALE/RETAIL, Not Commission-Based**
+
+#### **What We Built (Incorrect Understanding):**
+- Commission tracking system for resellers
+- Revenue attribution from customers to resellers  
+- Percentage-based commission calculations
+- Payment disbursement to resellers
+
+#### **What It Actually Is (From Jaap's Document):**
+- **Resellers are CUSTOMERS who buy at volume discounts (7.5-12.5%)**
+- **They resell at their own prices (wholesale/retail model)**
+- **Direct customers get different discount structures (term + volume)**
+- **No commission tracking needed - just discount calculations**
+
+### **New Billing Model Understanding:**
+
+#### **Reseller Discounts (Volume-Based):**
+```
+Tier 1: Up to R100,000 = 7.5% discount
+Tier 2: R100,001 to R250,000 = 10% discount  
+Tier 3: Above R250,000 = 12.5% discount
+```
+
+#### **Direct Customer Discounts (Two Types):**
+1. **Term Discounts:**
+   - PAYG: 0% (no other discounts allowed)
+   - 12 months: 2%
+   - 24 months: 4%
+   - 36 months: 6%
+
+2. **Minimum Commit/Volume Discounts:** (requires 12+ month term)
+   - Tier A: R100k/month = 2% additional
+   - Tier B: R250k/month = 5% additional
+   - Tier C: R500k/month = 7.5% additional
+   - Applied AFTER term discount (compound)
+
+### **Implementation Changes Required:**
+- ❌ Remove all commission tracking code/tests
+- ✅ Implement reseller volume discount calculation
+- ✅ Implement direct customer compound discounts
+- ✅ Add minimum commit enforcement (take-or-pay)
+- ✅ Support contract markup (negative discounts)
+
+### **Server Deployment Preparation:**
+- Local development environment fully functional
+- Need to migrate to cloud engineer's server
+- All code ready for team testing
+- Billing model clarification email sent to Jaap
