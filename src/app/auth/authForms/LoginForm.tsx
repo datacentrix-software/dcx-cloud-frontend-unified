@@ -35,7 +35,7 @@ const LoginForm = ({ onOtpSent, onError, onBackToOptions }: LoginFormProps) => {
 
     try {
       const { data } = await axiosServices.post(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/users/login`,
+        `/api/users/login`,
         { email, password }
       );
 

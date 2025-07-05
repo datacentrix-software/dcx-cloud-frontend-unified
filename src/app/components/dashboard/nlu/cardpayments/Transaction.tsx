@@ -19,7 +19,7 @@ import {
   CircularProgress,
   Grid
 } from '@mui/material';
-import { IconFilter as FilterIcon } from '@tabler/icons-react';
+import FilterListIcon as FilterIcon from '@mui/icons-material/FilterList';
 
 // import VMComponent from './pdfbutton';
 import { useAuthStore } from '@/store';
