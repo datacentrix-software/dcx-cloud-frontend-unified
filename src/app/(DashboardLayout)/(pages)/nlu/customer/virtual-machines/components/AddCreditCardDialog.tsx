@@ -122,7 +122,7 @@ const AddCreditCardDialog: React.FC<AddCreditCardDialogProps> = ({ open, onClose
       };
 
       const saveCardResponse = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/payment/savecard`,
+        `/api/payment/savecard`,
         payload,
         {
           headers: {

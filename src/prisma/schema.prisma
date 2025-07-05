@@ -1,0 +1,91 @@
+// Wallet System Schema for DCX Cloud Frontend
+// This is the corrected schema from Garsen's wallet-testing branch
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../generated/client"
+  binaryTargets = ["native", "darwin-arm64", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  credit
+  debit
+  topup
+  refund
+  adjustment
+}
+
+// Note: This assumes Organisation model exists in main schema
+// In production, this would reference the main application schema
+
+model OrganisationWallet {
+  id             String   @id @default(uuid())
+  organisationId String   @unique
+  balance        Int      @default(0)        // Balance in cents (ZAR * 100)
+  currency       String   @default("ZAR")
+  threshold      Int?                        // Auto top-up threshold in cents
+  topupAmount    Int?                        // Auto top-up amount in cents  
+  enabled        Boolean  @default(true)     // Auto top-up enabled
+  updatedAt      DateTime @updatedAt
+  createdAt      DateTime @default(now())
+
+  // One-to-many relationship: One wallet has many transactions
+  wallet_transactions WalletTransactions[]
+  
+  // Table name matches database reality: OrganisationWallet (no mapping needed)
+}
+
+model WalletTransactions {
+  id          String          @id @default(uuid())
+  walletId    String          // NOT unique - allows multiple transactions per wallet
+  amount      Float           // Transaction amount (positive for credits, negative for debits)
+  type        TransactionType // Transaction type enum
+  description String?         // Transaction description
+  createdAt   DateTime        @default(now()) @db.Timestamptz(3)
+
+  // Many-to-one relationship: Many transactions belong to one wallet
+  organisationwallet OrganisationWallet @relation(fields: [walletId], references: [id])
+
+  @@map("wallet_transactions")
+}
+
+// VM Billing Records (for hourly billing tracking)
+model VMBillingRecord {
+  id                    String   @id @default(uuid())
+  organisationId        String
+  vmInstanceId          String   // vCenter instance UUID
+  vmSpecification       Json     // VM spec stored as JSON
+  hourlyRate           Float    // Current hourly rate
+  reservedMonthlyAmount Float    // Reserved amount for the month
+  actualUsageThisMonth  Float    // Actual usage charges
+  hoursUsedThisMonth   Int      @default(0)
+  status               String   @default("active") // active, terminated, suspended
+  createdAt            DateTime @default(now())
+  lastBilledAt         DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("vm_billing_records")
+}
+
+// Monthly billing cycles tracking
+model BillingCycle {
+  id               String   @id @default(uuid())
+  organisationId   String
+  cycleMonth       String   // YYYY-MM format
+  vmsBilled        Int      @default(0)
+  totalCharges     Float    @default(0)
+  successfulCharges Int     @default(0)
+  failedCharges    Int     @default(0)
+  reconciled       Boolean  @default(false)
+  reconciledAt     DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([organisationId, cycleMonth])
+  @@map("billing_cycles")
+}

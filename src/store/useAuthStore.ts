@@ -39,15 +39,17 @@ const extractOrgIds = (user: IUser | null): string[] => {
   return user.roles.map(r => r.orgId);
 };
 
-const useAuthStore = create<AuthState>()((set) => {
+const useAuthStore = create<AuthState>()((set, get) => {
   let initialToken: string | null = null;
   let initialUser: IUser | null = null;
   let initialRoles: string | null = null;
   let initialOrgIds: string[] = [];
   let initialPrimaryOrgId: string | null = null;
+  let initialRefreshToken: string | null = null;
 
   if (typeof window !== 'undefined') {
     initialToken = Cookies.get('token') || null;
+    initialRefreshToken = Cookies.get('refresh_token') || null;
     initialUser = getUserFromCookie();
     initialRoles = getUserRoleDisplay(initialUser);
     initialOrgIds = extractOrgIds(initialUser);
@@ -61,11 +63,15 @@ const useAuthStore = create<AuthState>()((set) => {
     roles: initialRoles,
     orgIds: initialOrgIds,
     primaryOrgId: initialPrimaryOrgId,
-    refresh_token: null,
+    refresh_token: initialRefreshToken,
 
     setToken: (token, refresh_token = null) => {
       const decodedToken = decoder(token);
       Cookies.set('token', token, COOKIE_OPTIONS);
+      
+      if (refresh_token) {
+        Cookies.set('refresh_token', refresh_token, COOKIE_OPTIONS);
+      }
 
       set({
         token,
@@ -101,11 +107,13 @@ const useAuthStore = create<AuthState>()((set) => {
 
     logout: () => {
       Cookies.remove('token');
+      Cookies.remove('refresh_token');
       Cookies.remove('user');
       Cookies.remove('roles');
 
       set({
         token: null,
+        refresh_token: null,
         user: null,
         isAuthenticated: false,
         roles: null,
@@ -118,6 +126,7 @@ const useAuthStore = create<AuthState>()((set) => {
       if (typeof window === 'undefined') return;
 
       const token = Cookies.get('token') || null;
+      const refresh_token = Cookies.get('refresh_token') || null;
       const user = getUserFromCookie();
       const roles = getUserRoleDisplay(user);
       const orgIds = extractOrgIds(user);
@@ -125,6 +134,7 @@ const useAuthStore = create<AuthState>()((set) => {
 
       set({
         token,
+        refresh_token,
         user,
         isAuthenticated: !!token,
         roles,

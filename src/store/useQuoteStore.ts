@@ -230,7 +230,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
   handleFetchProducts: async () => {
     try {
       const response = await axiosServices.get(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/products/getproducts`
+        `/api/products/getproducts`
       );
       const products = response.data;
       set({ services: products });
@@ -243,7 +243,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
   handleFetchBusinessUnits: async () => {
     try {
       const response = await axiosServices.get(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/categories/getall`
+        `/api/categories/getall`
       );
       set({ businessUnitsList: response.data });
       // return response.data;
@@ -252,7 +252,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
   handleFetchDataSubcategories: async () => {
     try {
       const response = await axiosServices.get(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/subcategories/getall`
+        `/api/subcategories/getall`
       );
       set({ subCategories: response.data });
     } catch (error) { }
@@ -302,7 +302,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
       const responses = await Promise.all(
         endpoints.map((endpoint) =>
           axiosServices
-            .get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/connectivity/${endpoint}/getall`)
+            .get(`/api/connectivity/${endpoint}/getall`)
             .then((res) => ({ key: endpoint, data: res.data }))
         )
       );
@@ -345,7 +345,7 @@ export const useQuoteStore = create<QuoteStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const res = await axiosServices.get(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/terraform/getterraformconfig`
+        `/api/terraform/getterraformconfig`
       );
       set({ vmOptionConfig: res.data, loading: false });
     } catch (err: any) {

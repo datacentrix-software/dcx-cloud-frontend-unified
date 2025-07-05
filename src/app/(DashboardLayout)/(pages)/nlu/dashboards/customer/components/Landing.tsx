@@ -107,7 +107,7 @@ const Landing: React.FC<LandingProps> = ({
                 }
 
                 const response = await axiosServices.post(
-                    `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/quotes/createcustomerquote`,
+                    `/api/quotes/createcustomerquote`,
                     payload
                 );
                 const quoteId = response.data.quote.id;
@@ -115,7 +115,7 @@ const Landing: React.FC<LandingProps> = ({
                 if (response.data.status === 'success') {
                     const ipAddress = ip || 'Unknown';
                     const vmResponse = await axiosServices.post(
-                        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/vmwareintegration/deployresources?quoteId=${Number(
+                        `/api/vmwareintegration/deployresources?quoteId=${Number(
                             quoteId
                         )}&userId=${Number(authUser?.id)}&ipAddress=${ipAddress}`
                     );
@@ -246,7 +246,7 @@ const Landing: React.FC<LandingProps> = ({
                 if (!token) throw new Error('Authentication token not found');
 
                 // Fetch terraform config
-                const terraformResponse = await axiosServices.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/terraform/getterraformconfig`, {
+                const terraformResponse = await axiosServices.get(`/api/terraform/getterraformconfig`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

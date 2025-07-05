@@ -141,7 +141,7 @@ const Header = () => {
     try {
       const orgId = primaryOrgId;
       const creditCardResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/payment/getcustomercards/${orgId}`,
+        `/api/payment/getcustomercards/${orgId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -189,7 +189,7 @@ const Header = () => {
   const fetchAlerts = useCallback(async () => {
     try {
       const orgId = primaryOrgId;
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/in-app-alerts/${orgId}`, {
+      const res = await axios.get(`/api/in-app-alerts/${orgId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -204,7 +204,7 @@ const Header = () => {
   const handleDismissAlert = async (id: number) => {
     try {
       // TODO if required
-      // await axios.patch(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/alerts/${id}/dismiss`, {}, {
+      // await axios.patch(`/api/alerts/${id}/dismiss`, {}, {
       //   headers: { Authorization: `Bearer ${token}` }
       // });
       setAlerts((prev: any) => prev.map((alert: any) => alert.id === id ? { ...alert, dismissed: true } : alert));
@@ -216,7 +216,7 @@ const Header = () => {
   const fetchWallet = useCallback(async () => {
     try {
       const orgId = primaryOrgId;
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/wallet/${orgId}`, {
+      const res = await fetch(`/api/wallet/${orgId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

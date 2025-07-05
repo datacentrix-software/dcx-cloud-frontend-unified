@@ -7,6 +7,7 @@ import { ThemeSettings } from "@/utils/theme/Theme";
 import { useSelector } from 'react-redux';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { AppState } from "@/store/store";
+import AuthProvider from "@/components/AuthProvider";
 import "@/utils/i18n";
 import "@/app/api/index";
 
@@ -21,7 +22,9 @@ const MyApp = ({ children }: { children: React.ReactNode }) => {
                 <ThemeProvider theme={theme}>
                     <RTL direction={customizer.activeDir}>
                         <CssBaseline />
-                        {children}
+                        <AuthProvider>
+                            {children}
+                        </AuthProvider>
                     </RTL>
                 </ThemeProvider>
             </AppRouterCacheProvider>

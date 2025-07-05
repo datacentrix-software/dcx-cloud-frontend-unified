@@ -40,7 +40,7 @@ import {
 import ParentCard from '@/app/components/shared/ParentCard';
 import WelcomeCard from './customer-welcome-card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, LineChart, Line, Area } from 'recharts';
-import axiosServices from '@/utils/axios';
+import axios from 'axios';
 import { useAuthStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import VMDataComponent from './components/VMData';
@@ -345,7 +345,6 @@ const CustomerDashboard = () => {
     const [isVMPoweredOn, setIsVMPoweredOn] = useState(false);
 
     const { token, user, primaryOrgId } = useAuthStore();
-    console.log("Debug: primaryOrgId=", primaryOrgId, "token=", token);
     const isNewCustomer = !vcenterOrgId;
 
     // Initialize loading progress
@@ -365,7 +364,7 @@ const CustomerDashboard = () => {
             setLoadingProgress(15);
 
             try {
-                const response = await axiosServices.get(`/api/organisations/getorg`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/organisations/getorg`, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { id: primaryOrgId }
                 });
@@ -374,19 +373,8 @@ const CustomerDashboard = () => {
                     setCustomerName(response.data.organisation_name);
                     setVcenterOrgId(response.data.vcenterOrg_id);
                 }
-            } catch (error: any) {
-                console.error('Failed to fetch organization data:', error);
+            } catch (error) {
                 
-                // Handle authentication errors
-                if (error.response?.status === 401) {
-                    console.log('Token expired, redirecting to login...');
-                    // Clear auth store and redirect to login
-                    // router.push('/auth/login');
-                    return;
-                }
-                
-                // Handle other errors gracefully
-                setCustomerName('Unknown Organization');
             }
         };
 
@@ -402,7 +390,7 @@ const CustomerDashboard = () => {
                 // Step 2: Loading products
                 setLoadingStep(loadingSteps[2]);
                 setLoadingProgress(30);
-                const productsResponse = await axiosServices.get(`/api/products/getproducts`, {
+                const productsResponse = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/products/getproducts`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -414,7 +402,7 @@ const CustomerDashboard = () => {
                     // Step 3: Retrieving metrics
                     setLoadingStep(loadingSteps[3]);
                     setLoadingProgress(45);
-                    const metricsResponse = await axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/metricAggregation`, {
+                    const metricsResponse = await axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/metricAggregation`, {
                         headers: { Authorization: `Bearer ${token}` },
                         params: { customer: customerName }
                     });
@@ -425,7 +413,7 @@ const CustomerDashboard = () => {
                     // Step 4: Loading VM data
                     setLoadingStep(loadingSteps[4]);
                     setLoadingProgress(60);
-                    const billingResponse = await axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/currentBill`, {
+                    const billingResponse = await axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/currentBill`, {
                         headers: { Authorization: `Bearer ${token}` },
                         params: { customer: customerName }
                     });
@@ -436,27 +424,15 @@ const CustomerDashboard = () => {
                     // Step 5: Fetching billing history
                     setLoadingStep(loadingSteps[5]);
                     setLoadingProgress(75);
-                    const pastBillsResponse = await axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/afgriPastBills`, {
+                    const pastBillsResponse = await axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/afgriPastBills`, {
                         headers: { Authorization: `Bearer ${token}` },
                         params: { customer: customerName }
                     });
                     if (Array.isArray(pastBillsResponse.data)) {
                         setPastBills(pastBillsResponse.data);
                     }
-                } catch (error: any) {
-                    console.error('Failed to fetch billing data:', error);
+                } catch (error) {
                     
-                    // Handle authentication errors
-                    if (error.response?.status === 401) {
-                        console.log('Token expired during billing fetch, stopping load...');
-                        setLoading(false);
-                        // router.push('/auth/login');
-                        return;
-                    }
-                    
-                    // Set empty arrays on error to allow UI to continue
-                    setVmData([]);
-                    setPastBills([]);
                 }
 
                 // Step 6: Finalizing
@@ -468,19 +444,9 @@ const CustomerDashboard = () => {
                     setLoading(false);
                 }, 500);
 
-            } catch (error: any) {
-                console.error('Critical error during data fetch:', error);
+            } catch (error) {
                 setLoading(false);
                 
-                // Handle authentication errors
-                if (error.response?.status === 401) {
-                    console.log('Token expired, user needs to login again');
-                    // router.push('/auth/login');
-                    return;
-                }
-                
-                // Log other errors for debugging
-                console.error('Unexpected error in fetchData:', error);
             }
         };
 
@@ -539,27 +505,27 @@ const CustomerDashboard = () => {
 
         try {
             const [telemetryResponse, networkResponse, cpuRamResponse, diskResponse, alertWindowResponse, healthWindowResponse] = await Promise.all([
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmTelemetry`, {
+                axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmTelemetry`, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { uuid: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmNetworkWindow`, {
+                axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmNetworkWindow`, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { uuid: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmCpuRamWindow`, {
+                axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmCpuRamWindow`, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { uuid: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmDiskWindow`, {
+                axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmDiskWindow`, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { uuid: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmAlertWindow`, {
+                axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmAlertWindow`, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { uuid: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmHealthWindow`, {
+                axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmHealthWindow`, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { uuid: vm.identity_instance_uuid }
                 })
@@ -588,23 +554,8 @@ const CustomerDashboard = () => {
             if (Array.isArray(healthWindowResponse.data)) {
                 setVmHealthWindow(healthWindowResponse.data);
             }
-        } catch (error: any) {
-            console.error('Failed to fetch VM telemetry data:', error);
+        } catch (error) {
             
-            // Handle authentication errors
-            if (error.response?.status === 401) {
-                console.log('Token expired during telemetry fetch');
-                // router.push('/auth/login');
-                return;
-            }
-            
-            // Set empty arrays on error
-            setVmTelemetryData([]);
-            setVmNetworkData([]);
-            setVmCpuRamData([]);
-            setVmDiskData([]);
-            setVmAlertWindow([]);
-            setVmHealthWindow([]);
         } finally {
             setLoadingTelemetry(false);
         }
@@ -614,25 +565,15 @@ const CustomerDashboard = () => {
         setSelectedMonth(month);
         setLoadingLineItems(true);
         try {
-            const response = await axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/afgriLineItems`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/afgriLineItems`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { month: month }
             });
             if (Array.isArray(response.data)) {
                 setLineItems(response.data);
             }
-        } catch (error: any) {
-            console.error('Failed to fetch line items:', error);
+        } catch (error) {
             
-            // Handle authentication errors
-            if (error.response?.status === 401) {
-                console.log('Token expired during line items fetch');
-                // router.push('/auth/login');
-                return;
-            }
-            
-            // Set empty array on error
-            setLineItems([]);
         } finally {
             setLoadingLineItems(false);
         }
@@ -665,25 +606,15 @@ const CustomerDashboard = () => {
         setIsPowerActionLoading(true);
         try {
             const newPowerState = !isVMPoweredOn;
-            await axiosServices.post(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmPower`, {
+            await axios.post(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmPower`, {
                 uuid: selectedVM.identity_instance_uuid,
                 powerState: newPowerState ? 'on' : 'off'
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setIsVMPoweredOn(newPowerState);
-        } catch (error: any) {
-            console.error('Failed to toggle VM power:', error);
+        } catch (error) {
             
-            // Handle authentication errors
-            if (error.response?.status === 401) {
-                console.log('Token expired during VM power toggle');
-                // router.push('/auth/login');
-                return;
-            }
-            
-            // Log error and inform user
-            console.error('VM power toggle failed:', error.response?.data?.message || error.message);
         } finally {
             setIsPowerActionLoading(false);
         }

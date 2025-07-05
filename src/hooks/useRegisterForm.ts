@@ -139,7 +139,7 @@ export const useRegisterForm = () => {
 
     setIsRegistering(true);
     try {
-      const res = await axiosServices.post(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/users/registercustomer`, {
+      const res = await axiosServices.post(`/api/users/registercustomer`, {
         ...formData,
         organisation: {
           ...formData.organisation,

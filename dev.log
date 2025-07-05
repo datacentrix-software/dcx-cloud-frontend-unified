@@ -31,3 +31,6 @@ Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
  GET / 200 in 41ms
  ✓ Compiled in 752ms (2472 modules)
  ✓ Compiled in 751ms (1120 modules)
+ ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET / 200 in 216ms

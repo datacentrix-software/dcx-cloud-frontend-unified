@@ -1,0 +1,1 @@
+      baseURL: config.baseURL || process.env.NEXT_PUBLIC_BACK_END_BASEURL || 'https://dev.backend.test.daas.datacentrix.cloud',

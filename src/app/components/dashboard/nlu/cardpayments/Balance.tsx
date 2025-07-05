@@ -27,7 +27,7 @@ const BalanceCard: React.FC = () => {
     try {
 
       const walletResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/wallet/${primaryOrgId}`,
+        `/api/wallet/${primaryOrgId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

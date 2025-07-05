@@ -80,7 +80,7 @@ const WelcomeCard = () => {
       if (!primaryOrgId || !token) return;
       
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/organisations/getorg`, {
+        const response = await axios.get(`/api/organisations/getorg`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { id: primaryOrgId }
         });

@@ -47,7 +47,7 @@ const AuthLogin = () => {
     useEffect(() => {
         const fetchSingleUser = async (userId: number) => {
             return await axiosServices.get(
-                `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/users/getuser?userId=${userId}`,
+                `/api/users/getuser?userId=${userId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
         }
