@@ -10,18 +10,14 @@ import {
     Stack,
     Tooltip,
     Popover,
-    IconButton
+    IconButton,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    TextField
 } from '@mui/material';
-import ComputerIcon from '@mui/icons-material/Computer';
-import MemoryIcon from '@mui/icons-material/Memory';
-import StorageIcon from '@mui/icons-material/Storage';
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
-import InfoIcon from '@mui/icons-material/Info';
-import CloseIcon from '@mui/icons-material/Close';
-import ShowChartIcon from '@mui/icons-material/ShowChart';
-import LightbulbIcon from '@mui/icons-material/Lightbulb';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import DownloadIcon from '@mui/icons-material/Download';
+import { IconServer, IconCpu, IconDatabase, IconPower, IconInfoCircle, IconX, IconChartLine, IconBulb, IconArrowUp, IconDownload, IconCalendar, IconClock } from '@tabler/icons-react';
 import ParentCard from '@/app/components/shared/ParentCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, Area, BarChart, Bar } from 'recharts';
 
@@ -149,6 +145,32 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
     const [isCpuInfoVisible, setIsCpuInfoVisible] = useState(true);
     const [isMemoryInfoVisible, setIsMemoryInfoVisible] = useState(true);
     const [isDiskInfoVisible, setIsDiskInfoVisible] = useState(true);
+
+    // Historic data viewing state - separate for each graph
+    const [networkTimeRange, setNetworkTimeRange] = useState('24h');
+    const [networkCustomStartDate, setNetworkCustomStartDate] = useState('');
+    const [networkCustomEndDate, setNetworkCustomEndDate] = useState('');
+    const [showNetworkCustomDateRange, setShowNetworkCustomDateRange] = useState(false);
+
+    const [cpuTimeRange, setCpuTimeRange] = useState('24h');
+    const [cpuCustomStartDate, setCpuCustomStartDate] = useState('');
+    const [cpuCustomEndDate, setCpuCustomEndDate] = useState('');
+    const [showCpuCustomDateRange, setShowCpuCustomDateRange] = useState(false);
+
+    const [memoryTimeRange, setMemoryTimeRange] = useState('24h');
+    const [memoryCustomStartDate, setMemoryCustomStartDate] = useState('');
+    const [memoryCustomEndDate, setMemoryCustomEndDate] = useState('');
+    const [showMemoryCustomDateRange, setShowMemoryCustomDateRange] = useState(false);
+
+    const [diskTimeRange, setDiskTimeRange] = useState('24h');
+    const [diskCustomStartDate, setDiskCustomStartDate] = useState('');
+    const [diskCustomEndDate, setDiskCustomEndDate] = useState('');
+    const [showDiskCustomDateRange, setShowDiskCustomDateRange] = useState(false);
+
+    const [alertTimeRange, setAlertTimeRange] = useState('24h');
+    const [alertCustomStartDate, setAlertCustomStartDate] = useState('');
+    const [alertCustomEndDate, setAlertCustomEndDate] = useState('');
+    const [showAlertCustomDateRange, setShowAlertCustomDateRange] = useState(false);
 
     // Network graph line visibility states
     const [showTotalUsage, setShowTotalUsage] = useState(true);
@@ -468,6 +490,202 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
         document.body.removeChild(link);
     };
 
+    // Helper to filter data based on time range
+    const filterDataByTimeRange = (data: any[], dateField: string, timeRange: string, customStartDate: string, customEndDate: string) => {
+        if (!data || data.length === 0) return data;
+        
+        const now = new Date();
+        let startDate: Date;
+        
+        switch (timeRange) {
+            case '24h':
+                startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                break;
+            case '7d':
+                startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                break;
+            case '30d':
+                startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                break;
+            case 'custom':
+                if (customStartDate && customEndDate) {
+                    const start = new Date(customStartDate);
+                    const end = new Date(customEndDate);
+                    return data.filter(item => {
+                        const itemDate = new Date(item[dateField]);
+                        return itemDate >= start && itemDate <= end;
+                    });
+                }
+                return data;
+            default:
+                return data;
+        }
+        
+        return data.filter(item => {
+            const itemDate = new Date(item[dateField]);
+            return itemDate >= startDate;
+        });
+    };
+
+    // Reusable Time Range Selector Component
+    const TimeRangeSelector = ({ 
+        timeRange, 
+        setTimeRange, 
+        customStartDate, 
+        setCustomStartDate, 
+        customEndDate, 
+        setCustomEndDate, 
+        showCustomDateRange, 
+        setShowCustomDateRange 
+    }: {
+        timeRange: string;
+        setTimeRange: (value: string) => void;
+        customStartDate: string;
+        setCustomStartDate: (value: string) => void;
+        customEndDate: string;
+        setCustomEndDate: (value: string) => void;
+        showCustomDateRange: boolean;
+        setShowCustomDateRange: (value: boolean) => void;
+    }) => (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+                <Select
+                    value={timeRange}
+                    onChange={(e) => {
+                        setTimeRange(e.target.value);
+                        if (e.target.value !== 'custom') {
+                            setShowCustomDateRange(false);
+                        } else {
+                            setShowCustomDateRange(true);
+                        }
+                    }}
+                    displayEmpty
+                    sx={{ 
+                        fontSize: '0.875rem',
+                        '& .MuiSelect-select': {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            py: 1,
+                            px: 1.5
+                        }
+                    }}
+                    startAdornment={<IconClock size={20} style={{ marginRight: 8 }} />}
+                >
+                    <MenuItem value="24h" sx={{ fontSize: '0.875rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <IconClock size={18} />
+                            24h
+                        </Box>
+                    </MenuItem>
+                    <MenuItem value="7d" sx={{ fontSize: '0.875rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <IconCalendar size={18} />
+                            7d
+                        </Box>
+                    </MenuItem>
+                    <MenuItem value="30d" sx={{ fontSize: '0.875rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <IconCalendar size={18} />
+                            30d
+                        </Box>
+                    </MenuItem>
+                    <MenuItem value="custom" sx={{ fontSize: '0.875rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <IconCalendar size={18} />
+                            Custom
+                        </Box>
+                    </MenuItem>
+                </Select>
+            </FormControl>
+            
+            {showCustomDateRange && (
+                <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1.5,
+                    p: 1,
+                    borderRadius: 2,
+                    backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+                    border: '1px solid',
+                    borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                }}>
+                    <TextField
+                        label="From"
+                        type="datetime-local"
+                        value={customStartDate}
+                        onChange={(e) => setCustomStartDate(e.target.value)}
+                        size="small"
+                        InputLabelProps={{ 
+                            shrink: true,
+                            sx: { fontSize: '0.875rem' }
+                        }}
+                        sx={{ 
+                            width: 160,
+                            '& .MuiInputBase-input': {
+                                fontSize: '0.875rem',
+                                py: 1
+                            }
+                        }}
+                    />
+                    <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>to</Typography>
+                    <TextField
+                        label="To"
+                        type="datetime-local"
+                        value={customEndDate}
+                        onChange={(e) => setCustomEndDate(e.target.value)}
+                        size="small"
+                        InputLabelProps={{ 
+                            shrink: true,
+                            sx: { fontSize: '0.875rem' }
+                        }}
+                        sx={{ 
+                            width: 160,
+                            '& .MuiInputBase-input': {
+                                fontSize: '0.875rem',
+                                py: 1
+                            }
+                        }}
+                    />
+                </Box>
+            )}
+        </Box>
+    );
+
+    // Helper to aggregate and average alert data by unique time bucket
+    const getAveragedAlertWindowData = (alertWindowArr: VMAlertWindow[]): { time: string; critical: number; immediate: number; warning: number }[] => {
+        if (!alertWindowArr || alertWindowArr.length === 0) return [];
+        
+        // Filter data based on time range
+        const filteredData = filterDataByTimeRange(alertWindowArr, 'bucket', alertTimeRange, alertCustomStartDate, alertCustomEndDate);
+        
+        const bucketMap: Record<string, { count: number; sum_critical: number; sum_immediate: number; sum_warning: number; identity_instance_uuid: string }> = {};
+        filteredData.forEach((data: VMAlertWindow) => {
+            const bucket = data.bucket;
+            if (!bucketMap[bucket]) {
+                bucketMap[bucket] = {
+                    count: 0,
+                    sum_critical: 0,
+                    sum_immediate: 0,
+                    sum_warning: 0,
+                    identity_instance_uuid: data.identity_instance_uuid
+                };
+            }
+            bucketMap[bucket].count += 1;
+            bucketMap[bucket].sum_critical += parseFloat(data.avg_critical);
+            bucketMap[bucket].sum_immediate += parseFloat(data.avg_immediate);
+            bucketMap[bucket].sum_warning += parseFloat(data.avg_warning);
+        });
+        return Object.entries(bucketMap).map(([bucket, vals]) => {
+            return {
+                time: new Date(bucket).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                critical: vals.sum_critical / vals.count,
+                immediate: vals.sum_immediate / vals.count,
+                warning: vals.sum_warning / vals.count
+            };
+        });
+    };
+
     return (
         <>
         <ParentCard title={
@@ -483,20 +701,28 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                     variant="outlined"
                     size="small"
                     onClick={exportAllGraphDataToCSV}
-                    startIcon={<DownloadIcon fontSize="small" />}
+                    startIcon={<IconDownload size={20} />}
                     sx={{
                         borderRadius: 2,
                         textTransform: 'none',
-                        fontWeight: 500,
-                        px: 2,
-                        py: 0.5,
+                        fontWeight: 600,
+                        px: 3,
+                        py: 1,
+                        fontSize: '0.875rem',
                         borderColor: (theme) => theme.palette.success.main,
                         color: (theme) => theme.palette.success.main,
+                        backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(76, 175, 80, 0.05)' : 'rgba(76, 175, 80, 0.02)',
+                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                         ml: 2,
                         '&:hover': {
                             backgroundColor: (theme) => theme.palette.success.main,
                             color: 'white',
                             borderColor: (theme) => theme.palette.success.main,
+                            transform: 'translateY(-1px)',
+                            boxShadow: (theme) => `0 4px 12px ${theme.palette.success.main}40`,
+                        },
+                        '&:active': {
+                            transform: 'translateY(0)',
                         }
                     }}
                 >
@@ -507,7 +733,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                         {/* <Button
                             variant="contained"
                             color={isVMPoweredOn ? "error" : "success"}
-                            startIcon={<PowerSettingsNewIcon size={20} />}
+                            startIcon={<IconPower size={20} />}
                             onClick={onVMPowerToggle}
                             disabled={isPowerActionLoading}
                             sx={{
@@ -592,7 +818,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     fontWeight: 500
                                                 }}
                                             >
-                                                <ShowChartIcon fontSize="small" />
+                                                <IconChartLine size={14} />
                                                 View Graph
                                             </Box>
                                         </Box>
@@ -607,14 +833,17 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         >
                                             <Box sx={{ position: 'relative' }}>
                                 <Stack direction="row" alignItems="center" spacing={2}>
-                                    <MemoryIcon sx={{ fontSize: 32, color: "#82ca9d" }} />
+                                    <IconCpu size={32} color="#82ca9d" />
                                     <Box>
                                         <Typography variant="h4">
-                                            {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent
-                                                ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_cpu_usage_percent).toFixed(2)}%`
-                                                : vmTelemetry?.cpu_usage_avg 
-                                                    ? `${Number(vmTelemetry.cpu_usage_avg).toFixed(2)}%`
-                                                    : '0%'}
+                                            {(() => {
+                                                const filteredData = filterDataByTimeRange(vmCpuRamData, 'interval_start', cpuTimeRange, cpuCustomStartDate, cpuCustomEndDate);
+                                                return filteredData.length > 0 && filteredData[filteredData.length - 1].avg_cpu_usage_percent
+                                                    ? `${Number(filteredData[filteredData.length - 1].avg_cpu_usage_percent).toFixed(2)}%`
+                                                    : vmTelemetry?.cpu_usage_avg 
+                                                        ? `${Number(vmTelemetry.cpu_usage_avg).toFixed(2)}%`
+                                                        : '0%';
+                                            })()}
                                         </Typography>
                                         <Typography variant="subtitle2" color="textSecondary">
                                             {vmTelemetry?.cpu_count || 0} Cores ({vmTelemetry?.cpu_cores_per_socket || 0} per socket)
@@ -667,7 +896,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 fontWeight: 500
                                             }}
                                         >
-                                            <ShowChartIcon fontSize="small" />
+                                            <IconChartLine size={14} />
                                             View Graph
                                         </Box>
                                     </Box>
@@ -682,14 +911,17 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                     >
                                         <Box sx={{ position: 'relative' }}>
                                 <Stack direction="row" alignItems="center" spacing={2}>
-                                    <StorageIcon sx={{ fontSize: 32 , color: "#8884d8" }} />
+                                    <IconDatabase size={32} color="#8884d8" />
                                     <Box>
                                         <Typography variant="h4">
-                                            {vmCpuRamData.length > 0 && vmCpuRamData[vmCpuRamData.length - 1].avg_memory_usage_percent
-                                                ? `${Number(vmCpuRamData[vmCpuRamData.length - 1].avg_memory_usage_percent).toFixed(2)}%`
-                                                : vmTelemetry?.memory_usage_avg 
-                                                    ? `${Number(vmTelemetry.memory_usage_avg).toFixed(2)}%`
-                                                    : '0%'}
+                                            {(() => {
+                                                const filteredData = filterDataByTimeRange(vmCpuRamData, 'interval_start', memoryTimeRange, memoryCustomStartDate, memoryCustomEndDate);
+                                                return filteredData.length > 0 && filteredData[filteredData.length - 1].avg_memory_usage_percent
+                                                    ? `${Number(filteredData[filteredData.length - 1].avg_memory_usage_percent).toFixed(2)}%`
+                                                    : vmTelemetry?.memory_usage_avg 
+                                                        ? `${Number(vmTelemetry.memory_usage_avg).toFixed(2)}%`
+                                                        : '0%';
+                                            })()}
                                         </Typography>
                                         <Typography variant="subtitle2" color="textSecondary">
                                             {Math.round((vmTelemetry?.memory_size_mib || 0) / 1024)} GB Total
@@ -741,7 +973,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 fontWeight: 500
                                             }}
                                         >
-                                            <ShowChartIcon fontSize="small" />
+                                            <IconChartLine size={14} />
                                             View Graph
                                         </Box>
                                     </Box>
@@ -756,17 +988,23 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                     >
                                         <Box sx={{ position: 'relative' }}>
                                 <Stack direction="row" alignItems="center" spacing={2}>
-                                    <ComputerIcon sx={{ fontSize: 32 , color: "#ffc658" }} />
+                                    <IconServer size={32} color="#ffc658" />
                                     <Box>
                                         <Typography variant="h4">
-                                            {vmDiskData.length > 0 && vmDiskData[vmDiskData.length - 1].avg_disk_usage_percent
-                                                ? `${Number(vmDiskData[vmDiskData.length - 1].avg_disk_usage_percent).toFixed(2)}%`
-                                                : '0%'}
+                                            {(() => {
+                                                const filteredData = filterDataByTimeRange(vmDiskData, 'interval_start', diskTimeRange, diskCustomStartDate, diskCustomEndDate);
+                                                return filteredData.length > 0 && filteredData[filteredData.length - 1].avg_disk_usage_percent
+                                                    ? `${Number(filteredData[filteredData.length - 1].avg_disk_usage_percent).toFixed(2)}%`
+                                                    : '0%';
+                                            })()}
                                         </Typography>
                                         <Typography variant="subtitle2" color="textSecondary">
-                                            {vmDiskData.length > 0 
-                                                ? `${Number(vmDiskData[vmDiskData.length - 1].avg_diskspace_used).toFixed(2)} GB Used / ${Number(vmDiskData[vmDiskData.length - 1].avg_diskspace_provisioned).toFixed(2)} GB Total`
-                                                : 'No disk data available'}
+                                            {(() => {
+                                                const filteredData = filterDataByTimeRange(vmDiskData, 'interval_start', diskTimeRange, diskCustomStartDate, diskCustomEndDate);
+                                                return filteredData.length > 0 
+                                                    ? `${Number(filteredData[filteredData.length - 1].avg_diskspace_used).toFixed(2)} GB Used / ${Number(filteredData[filteredData.length - 1].avg_diskspace_provisioned).toFixed(2)} GB Total`
+                                                    : 'No disk data available';
+                                            })()}
                                         </Typography>
                                     </Box>
                                 </Stack>
@@ -875,7 +1113,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <CloseIcon fontSize="small" />
+                                                        <IconX size={18} />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -925,7 +1163,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsHealthInfoVisible(true)}
-                                                    startIcon={<InfoIcon fontSize="small" />}
+                                                    startIcon={<IconInfoCircle size={16} />}
                                                     variant="text"
                                                 >
                                                     Show Health Score Explanation
@@ -941,36 +1179,57 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                             </ParentCard>
                         </Grid>
 
+
+
                         {/* Network Usage */}
                         <Grid item xs={12}>
                             <ParentCard title={
                                 <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                     <Typography variant="h5" sx={{ flex: 1 }}>Network Usage</Typography>
-                                    {vmNetworkData.length > 0 && (
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={exportNetworkDataToCSV}
-                                            startIcon={<DownloadIcon fontSize="small" />}
-                                            sx={{
-                                                borderRadius: 2,
-                                                textTransform: 'none',
-                                                fontWeight: 500,
-                                                px: 2,
-                                                py: 0.5,
-                                                borderColor: (theme) => theme.palette.success.main,
-                                                color: (theme) => theme.palette.success.main,
-                                                ml: 2,
-                                                '&:hover': {
-                                                    backgroundColor: (theme) => theme.palette.success.main,
-                                                    color: 'white',
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <TimeRangeSelector
+                                            timeRange={networkTimeRange}
+                                            setTimeRange={setNetworkTimeRange}
+                                            customStartDate={networkCustomStartDate}
+                                            setCustomStartDate={setNetworkCustomStartDate}
+                                            customEndDate={networkCustomEndDate}
+                                            setCustomEndDate={setNetworkCustomEndDate}
+                                            showCustomDateRange={showNetworkCustomDateRange}
+                                            setShowCustomDateRange={setShowNetworkCustomDateRange}
+                                        />
+                                        {vmNetworkData.length > 0 && (
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={exportNetworkDataToCSV}
+                                                startIcon={<IconDownload size={20} />}
+                                                sx={{
+                                                    borderRadius: 2,
+                                                    textTransform: 'none',
+                                                    fontWeight: 600,
+                                                    px: 3,
+                                                    py: 1,
+                                                    fontSize: '0.875rem',
                                                     borderColor: (theme) => theme.palette.success.main,
-                                                }
-                                            }}
-                                        >
-                                            Export CSV
-                                        </Button>
-                                    )}
+                                                    color: (theme) => theme.palette.success.main,
+                                                    backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(76, 175, 80, 0.05)' : 'rgba(76, 175, 80, 0.02)',
+                                                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    '&:hover': {
+                                                        backgroundColor: (theme) => theme.palette.success.main,
+                                                        color: 'white',
+                                                        borderColor: (theme) => theme.palette.success.main,
+                                                        transform: 'translateY(-1px)',
+                                                        boxShadow: (theme) => `0 4px 12px ${theme.palette.success.main}40`,
+                                                    },
+                                                    '&:active': {
+                                                        transform: 'translateY(0)',
+                                                    }
+                                                }}
+                                            >
+                                                Export CSV
+                                            </Button>
+                                        )}
+                                    </Box>
                                 </Box>
                             }>
                                 {vmNetworkData.length > 0 ? (
@@ -980,7 +1239,12 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 Current Network Usage
                                             </Typography>
                                             <Typography variant="h4">
-                                                {parseFloat(vmNetworkData[vmNetworkData.length - 1].avg_net_usage_kbps).toFixed(2)} kbps
+                                                {(() => {
+                                                    const filteredData = filterDataByTimeRange(vmNetworkData, 'interval_start', networkTimeRange, networkCustomStartDate, networkCustomEndDate);
+                                                    return filteredData.length > 0 
+                                                        ? parseFloat(filteredData[filteredData.length - 1].avg_net_usage_kbps).toFixed(2)
+                                                        : '0.00';
+                                                })()} kbps
                                             </Typography>
                                         </Box>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -988,7 +1252,12 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 Network Received
                                             </Typography>
                                             <Typography variant="h4">
-                                                {parseFloat(vmNetworkData[vmNetworkData.length - 1].avg_net_received_kbps).toFixed(2)} kbps
+                                                {(() => {
+                                                    const filteredData = filterDataByTimeRange(vmNetworkData, 'interval_start', networkTimeRange, networkCustomStartDate, networkCustomEndDate);
+                                                    return filteredData.length > 0 
+                                                        ? parseFloat(filteredData[filteredData.length - 1].avg_net_received_kbps).toFixed(2)
+                                                        : '0.00';
+                                                })()} kbps
                                             </Typography>
                                         </Box>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -996,16 +1265,19 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 Network Transmitted
                                             </Typography>
                                             <Typography variant="h4">
-                                                {vmNetworkData.length > 0 && vmNetworkData[vmNetworkData.length - 1].avg_net_transmit_kbps
-                                                    ? parseFloat(vmNetworkData[vmNetworkData.length - 1].avg_net_transmit_kbps).toFixed(2)
-                                                    : '0.00'} kbps
+                                                {(() => {
+                                                    const filteredData = filterDataByTimeRange(vmNetworkData, 'interval_start', networkTimeRange, networkCustomStartDate, networkCustomEndDate);
+                                                    return filteredData.length > 0 && filteredData[filteredData.length - 1].avg_net_transmit_kbps
+                                                        ? parseFloat(filteredData[filteredData.length - 1].avg_net_transmit_kbps).toFixed(2)
+                                                        : '0.00';
+                                                })()} kbps
                                             </Typography>
                                         </Box>
                                             
                                             {/* Graph Line Toggle Controls */}
                                             <Box sx={{ mb: 2 }}>
                                                 <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ mb: 1 }}>
-                                                    <ShowChartIcon fontSize="small" style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                                                    <IconChartLine size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
                                                     Toggle Graph Lines (Click to show/hide):
                                                 </Typography>
                                                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -1015,13 +1287,22 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         onClick={() => setShowTotalUsage(!showTotalUsage)}
                                                         sx={{
                                                             minWidth: 'auto',
-                                                            px: 2,
-                                                            py: 0.5,
-                                                            backgroundColor: showTotalUsage ? '#8884d8' : 'transparent',
-                                                            color: showTotalUsage ? 'white' : '#8884d8',
-                                                            borderColor: '#8884d8',
+                                                            px: 2.5,
+                                                            py: 0.75,
+                                                            backgroundColor: showTotalUsage ? '#f44336' : 'transparent',
+                                                            color: showTotalUsage ? 'white' : '#f44336',
+                                                            borderColor: '#f44336',
+                                                            borderRadius: 2,
+                                                            fontWeight: 600,
+                                                            textTransform: 'none',
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             '&:hover': {
-                                                                backgroundColor: showTotalUsage ? '#7a73c7' : 'rgba(136, 132, 216, 0.1)',
+                                                                backgroundColor: showTotalUsage ? '#d32f2f' : 'rgba(244, 67, 54, 0.1)',
+                                                                transform: 'translateY(-1px)',
+                                                                boxShadow: showTotalUsage ? '0 4px 12px rgba(244, 67, 54, 0.4)' : 'none',
+                                                            },
+                                                            '&:active': {
+                                                                transform: 'translateY(0)',
                                                             }
                                                         }}
                                                     >
@@ -1033,13 +1314,22 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         onClick={() => setShowReceived(!showReceived)}
                                                         sx={{
                                                             minWidth: 'auto',
-                                                            px: 2,
-                                                            py: 0.5,
-                                                            backgroundColor: showReceived ? '#82ca9d' : 'transparent',
-                                                            color: showReceived ? 'white' : '#82ca9d',
-                                                            borderColor: '#82ca9d',
+                                                            px: 2.5,
+                                                            py: 0.75,
+                                                            backgroundColor: showReceived ? '#ff9800' : 'transparent',
+                                                            color: showReceived ? 'white' : '#ff9800',
+                                                            borderColor: '#ff9800',
+                                                            borderRadius: 2,
+                                                            fontWeight: 600,
+                                                            textTransform: 'none',
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             '&:hover': {
-                                                                backgroundColor: showReceived ? '#6bb88c' : 'rgba(130, 202, 157, 0.1)',
+                                                                backgroundColor: showReceived ? '#f57c00' : 'rgba(255, 152, 0, 0.1)',
+                                                                transform: 'translateY(-1px)',
+                                                                boxShadow: showReceived ? '0 4px 12px rgba(255, 152, 0, 0.4)' : 'none',
+                                                            },
+                                                            '&:active': {
+                                                                transform: 'translateY(0)',
                                                             }
                                                         }}
                                                     >
@@ -1051,13 +1341,22 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         onClick={() => setShowTransmitted(!showTransmitted)}
                                                         sx={{
                                                             minWidth: 'auto',
-                                                            px: 2,
-                                                            py: 0.5,
-                                                            backgroundColor: showTransmitted ? '#ffc658' : 'transparent',
-                                                            color: showTransmitted ? 'white' : '#ffc658',
-                                                            borderColor: '#ffc658',
+                                                            px: 2.5,
+                                                            py: 0.75,
+                                                            backgroundColor: showTransmitted ? '#4caf50' : 'transparent',
+                                                            color: showTransmitted ? 'white' : '#4caf50',
+                                                            borderColor: '#4caf50',
+                                                            borderRadius: 2,
+                                                            fontWeight: 600,
+                                                            textTransform: 'none',
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             '&:hover': {
-                                                                backgroundColor: showTransmitted ? '#e6b24f' : 'rgba(255, 198, 88, 0.1)',
+                                                                backgroundColor: showTransmitted ? '#388e3c' : 'rgba(76, 175, 80, 0.1)',
+                                                                transform: 'translateY(-1px)',
+                                                                boxShadow: showTransmitted ? '0 4px 12px rgba(76, 175, 80, 0.4)' : 'none',
+                                                            },
+                                                            '&:active': {
+                                                                transform: 'translateY(0)',
                                                             }
                                                         }}
                                                     >
@@ -1069,7 +1368,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         <Box sx={{ height: 300, mt: 2 }}>
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart
-                                                    data={vmNetworkData.map(data => ({
+                                                    data={filterDataByTimeRange(vmNetworkData, 'interval_start', networkTimeRange, networkCustomStartDate, networkCustomEndDate).map(data => ({
                                                         time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                                                         usage: parseFloat(data.avg_net_usage_kbps),
                                                         received: parseFloat(data.avg_net_received_kbps),
@@ -1112,7 +1411,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         type="monotone" 
                                                         dataKey="usage" 
                                                         name="Total Usage" 
-                                                        stroke="#8884d8" 
+                                                        stroke="#f44336" 
                                                         strokeWidth={2}
                                                     />
                                                         )}
@@ -1121,7 +1420,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         type="monotone" 
                                                         dataKey="received" 
                                                         name="Received" 
-                                                        stroke="#82ca9d" 
+                                                        stroke="#ff9800" 
                                                         strokeWidth={2}
                                                     />
                                                         )}
@@ -1130,7 +1429,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         type="monotone" 
                                                         dataKey="transmitted" 
                                                         name="Transmitted" 
-                                                        stroke="#ffc658" 
+                                                        stroke="#4caf50" 
                                                         strokeWidth={2}
                                                     />
                                                         )}
@@ -1165,7 +1464,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <CloseIcon fontSize="small" />
+                                                        <IconX size={18} />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -1181,22 +1480,22 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     <Typography variant="body2" fontWeight={600}>Line Colors:</Typography>
                                                     <Stack spacing={0.5} sx={{mt: 0.5}}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#8884d8' }} />
-                                                            <Typography variant="caption">Purple: Total Usage</Typography>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#f44336' }} />
+                                                            <Typography variant="caption">Red: Total Usage</Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#82ca9d' }} />
-                                                            <Typography variant="caption">Green: Data Received</Typography>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
+                                                            <Typography variant="caption">Amber: Data Received</Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ffc658' }} />
-                                                            <Typography variant="caption">Orange: Data Sent</Typography>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#4caf50' }} />
+                                                            <Typography variant="caption">Green: Data Sent</Typography>
                                                         </Box>
                                                     </Stack>
                                                 </Box>
                                                     <Box sx={{ mt: 2, p: 1.5, backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.1)' : 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid', borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.3)' : 'rgba(25, 118, 210, 0.2)' }}>
                                                         <Typography variant="body2" sx={{ color: (theme) => theme.palette.primary.main, fontWeight: 500 }}>
-                                                            <LightbulbIcon fontSize="small" style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                                            <IconBulb size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                                                             <b>Tip:</b> Use the toggle buttons above the graph to show/hide specific network metrics for better analysis!
                                                         </Typography>
                                                     </Box>
@@ -1206,7 +1505,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsNetworkInfoVisible(true)}
-                                                    startIcon={<InfoIcon fontSize="small" />}
+                                                    startIcon={<IconInfoCircle size={16} />}
                                                     variant="text"
                                                 >
                                                     Show Network Graph Explanation
@@ -1229,56 +1528,82 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         title={
                                             <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                                 <Typography variant="h5" sx={{ flex: 1 }}>CPU Usage Over Time</Typography>
-                                                {vmCpuRamData.length > 0 && (
-                                                    <Button
-                                                        variant="outlined"
-                                                        size="small"
-                                                        onClick={exportCpuDataToCSV}
-                                                        startIcon={<DownloadIcon fontSize="small" />}
-                                                        sx={{
-                                                            borderRadius: 2,
-                                                            textTransform: 'none',
-                                                            fontWeight: 500,
-                                                            px: 2,
-                                                            py: 0.5,
-                                                            borderColor: (theme) => theme.palette.success.main,
-                                                            color: (theme) => theme.palette.success.main,
-                                                            ml: 2,
-                                                            '&:hover': {
-                                                                backgroundColor: (theme) => theme.palette.success.main,
-                                                                color: 'white',
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                    <TimeRangeSelector
+                                                        timeRange={cpuTimeRange}
+                                                        setTimeRange={setCpuTimeRange}
+                                                        customStartDate={cpuCustomStartDate}
+                                                        setCustomStartDate={setCpuCustomStartDate}
+                                                        customEndDate={cpuCustomEndDate}
+                                                        setCustomEndDate={setCpuCustomEndDate}
+                                                        showCustomDateRange={showCpuCustomDateRange}
+                                                        setShowCustomDateRange={setShowCpuCustomDateRange}
+                                                    />
+                                                    {vmCpuRamData.length > 0 && (
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            onClick={exportCpuDataToCSV}
+                                                            startIcon={<IconDownload size={20} />}
+                                                            sx={{
+                                                                borderRadius: 2,
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                px: 3,
+                                                                py: 1,
+                                                                fontSize: '0.875rem',
                                                                 borderColor: (theme) => theme.palette.success.main,
-                                                            }
-                                                        }}
-                                                    >
-                                                        Export CSV
-                                                    </Button>
-                                                )}
-                                                {activeGraph === 'cpu' && (
-                                                    <Button
-                                                        variant="outlined"
-                                                        size="small"
-                                                        onClick={scrollToOverview}
-                                                        startIcon={<ArrowUpwardIcon fontSize="small" />}
-                                                        sx={{
-                                                            borderRadius: 2,
-                                                            textTransform: 'none',
-                                                            fontWeight: 500,
-                                                            px: 2,
-                                                            py: 0.5,
-                                                            borderColor: (theme) => theme.palette.primary.main,
-                                                            color: (theme) => theme.palette.primary.main,
-                                                            ml: 2,
-                                                            '&:hover': {
-                                                                backgroundColor: (theme) => theme.palette.primary.main,
-                                                                color: 'white',
+                                                                color: (theme) => theme.palette.success.main,
+                                                                backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(76, 175, 80, 0.05)' : 'rgba(76, 175, 80, 0.02)',
+                                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                                '&:hover': {
+                                                                    backgroundColor: (theme) => theme.palette.success.main,
+                                                                    color: 'white',
+                                                                    borderColor: (theme) => theme.palette.success.main,
+                                                                    transform: 'translateY(-1px)',
+                                                                    boxShadow: (theme) => `0 4px 12px ${theme.palette.success.main}40`,
+                                                                },
+                                                                '&:active': {
+                                                                    transform: 'translateY(0)',
+                                                                }
+                                                            }}
+                                                        >
+                                                            Export CSV
+                                                        </Button>
+                                                    )}
+                                                    {activeGraph === 'cpu' && (
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            onClick={scrollToOverview}
+                                                            startIcon={<IconArrowUp size={20} />}
+                                                            sx={{
+                                                                borderRadius: 2,
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                px: 3,
+                                                                py: 1,
+                                                                fontSize: '0.875rem',
                                                                 borderColor: (theme) => theme.palette.primary.main,
-                                                            }
-                                                        }}
-                                                    >
-                                                        Back to Overview
-                                                    </Button>
-                                                )}
+                                                                color: (theme) => theme.palette.primary.main,
+                                                                backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.05)' : 'rgba(25, 118, 210, 0.02)',
+                                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                                '&:hover': {
+                                                                    backgroundColor: (theme) => theme.palette.primary.main,
+                                                                    color: 'white',
+                                                                    borderColor: (theme) => theme.palette.primary.main,
+                                                                    transform: 'translateY(-1px)',
+                                                                    boxShadow: (theme) => `0 4px 12px ${theme.palette.primary.main}40`,
+                                                                },
+                                                                '&:active': {
+                                                                    transform: 'translateY(0)',
+                                                                }
+                                                            }}
+                                                        >
+                                                            Back to Overview
+                                                        </Button>
+                                                    )}
+                                                </Box>
                                             </Box>
                                         }
                                     >
@@ -1287,7 +1612,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         <Box sx={{ height: 300, mt: 2 }}>
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart
-                                                    data={vmCpuRamData.map(data => ({
+                                                    data={filterDataByTimeRange(vmCpuRamData, 'interval_start', cpuTimeRange, cpuCustomStartDate, cpuCustomEndDate).map(data => ({
                                                         time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                                                         cpu: parseFloat(data.avg_cpu_usage_percent)
                                                     }))}
@@ -1326,7 +1651,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         type="monotone" 
                                                         dataKey="cpu" 
                                                         name="CPU Usage" 
-                                                        stroke="#82ca9d" 
+                                                        stroke="#ff9800" 
                                                         strokeWidth={2}
                                                     />
                                                 </LineChart>
@@ -1359,7 +1684,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <CloseIcon fontSize="small" />
+                                                        <IconX size={18} />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -1375,8 +1700,8 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     <Typography variant="body2" fontWeight={600}>Line Color:</Typography>
                                                     <Stack spacing={0.5} sx={{mt: 0.5}}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#82ca9d' }} />
-                                                            <Typography variant="caption">Green: CPU Usage</Typography>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
+                                                            <Typography variant="caption">Amber: CPU Usage</Typography>
                                                         </Box>
                                                     </Stack>
                                                 </Box>
@@ -1386,7 +1711,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsCpuInfoVisible(true)}
-                                                    startIcon={<InfoIcon fontSize="small" />}
+                                                    startIcon={<IconInfoCircle size={16} />}
                                                     variant="text"
                                                 >
                                                     Show CPU Graph Explanation
@@ -1410,56 +1735,82 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         title={
                                             <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                                 <Typography variant="h5" sx={{ flex: 1 }}>Memory Usage Over Time</Typography>
-                                                {vmCpuRamData.length > 0 && (
-                                                    <Button
-                                                        variant="outlined"
-                                                        size="small"
-                                                        onClick={exportMemoryDataToCSV}
-                                                        startIcon={<DownloadIcon fontSize="small" />}
-                                                        sx={{
-                                                            borderRadius: 2,
-                                                            textTransform: 'none',
-                                                            fontWeight: 500,
-                                                            px: 2,
-                                                            py: 0.5,
-                                                            borderColor: (theme) => theme.palette.success.main,
-                                                            color: (theme) => theme.palette.success.main,
-                                                            ml: 2,
-                                                            '&:hover': {
-                                                                backgroundColor: (theme) => theme.palette.success.main,
-                                                                color: 'white',
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                    <TimeRangeSelector
+                                                        timeRange={memoryTimeRange}
+                                                        setTimeRange={setMemoryTimeRange}
+                                                        customStartDate={memoryCustomStartDate}
+                                                        setCustomStartDate={setMemoryCustomStartDate}
+                                                        customEndDate={memoryCustomEndDate}
+                                                        setCustomEndDate={setMemoryCustomEndDate}
+                                                        showCustomDateRange={showMemoryCustomDateRange}
+                                                        setShowCustomDateRange={setShowMemoryCustomDateRange}
+                                                    />
+                                                    {vmCpuRamData.length > 0 && (
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            onClick={exportMemoryDataToCSV}
+                                                            startIcon={<IconDownload size={20} />}
+                                                            sx={{
+                                                                borderRadius: 2,
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                px: 3,
+                                                                py: 1,
+                                                                fontSize: '0.875rem',
                                                                 borderColor: (theme) => theme.palette.success.main,
-                                                            }
-                                                        }}
-                                                    >
-                                                        Export CSV
-                                                    </Button>
-                                                )}
-                                                {activeGraph === 'memory' && (
-                                                    <Button
-                                                        variant="outlined"
-                                                        size="small"
-                                                        onClick={scrollToOverview}
-                                                        startIcon={<ArrowUpwardIcon fontSize="small" />}
-                                                        sx={{
-                                                            borderRadius: 2,
-                                                            textTransform: 'none',
-                                                            fontWeight: 500,
-                                                            px: 2,
-                                                            py: 0.5,
-                                                            borderColor: (theme) => theme.palette.primary.main,
-                                                            color: (theme) => theme.palette.primary.main,
-                                                            ml: 2,
-                                                            '&:hover': {
-                                                                backgroundColor: (theme) => theme.palette.primary.main,
-                                                                color: 'white',
+                                                                color: (theme) => theme.palette.success.main,
+                                                                backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(76, 175, 80, 0.05)' : 'rgba(76, 175, 80, 0.02)',
+                                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                                '&:hover': {
+                                                                    backgroundColor: (theme) => theme.palette.success.main,
+                                                                    color: 'white',
+                                                                    borderColor: (theme) => theme.palette.success.main,
+                                                                    transform: 'translateY(-1px)',
+                                                                    boxShadow: (theme) => `0 4px 12px ${theme.palette.success.main}40`,
+                                                                },
+                                                                '&:active': {
+                                                                    transform: 'translateY(0)',
+                                                                }
+                                                            }}
+                                                        >
+                                                            Export CSV
+                                                        </Button>
+                                                    )}
+                                                    {activeGraph === 'memory' && (
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            onClick={scrollToOverview}
+                                                            startIcon={<IconArrowUp size={20} />}
+                                                            sx={{
+                                                                borderRadius: 2,
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                px: 3,
+                                                                py: 1,
+                                                                fontSize: '0.875rem',
                                                                 borderColor: (theme) => theme.palette.primary.main,
-                                                            }
-                                                        }}
-                                                    >
-                                                        Back to Overview
-                                                    </Button>
-                                                )}
+                                                                color: (theme) => theme.palette.primary.main,
+                                                                backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.05)' : 'rgba(25, 118, 210, 0.02)',
+                                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                                '&:hover': {
+                                                                    backgroundColor: (theme) => theme.palette.primary.main,
+                                                                    color: 'white',
+                                                                    borderColor: (theme) => theme.palette.primary.main,
+                                                                    transform: 'translateY(-1px)',
+                                                                    boxShadow: (theme) => `0 4px 12px ${theme.palette.primary.main}40`,
+                                                                },
+                                                                '&:active': {
+                                                                    transform: 'translateY(0)',
+                                                                }
+                                                            }}
+                                                        >
+                                                            Back to Overview
+                                                        </Button>
+                                                    )}
+                                                </Box>
                                             </Box>
                                         }
                                     >
@@ -1468,7 +1819,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         <Box sx={{ height: 300, mt: 2 }}>
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart
-                                                    data={vmCpuRamData.map(data => ({
+                                                    data={filterDataByTimeRange(vmCpuRamData, 'interval_start', memoryTimeRange, memoryCustomStartDate, memoryCustomEndDate).map(data => ({
                                                         time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                                                         memory: parseFloat(data.avg_memory_usage_percent)
                                                     }))}
@@ -1507,7 +1858,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         type="monotone" 
                                                         dataKey="memory" 
                                                         name="Memory Usage" 
-                                                        stroke="#8884d8" 
+                                                        stroke="#4caf50" 
                                                         strokeWidth={2}
                                                     />
                                                 </LineChart>
@@ -1540,7 +1891,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <CloseIcon fontSize="small" />
+                                                        <IconX size={18} />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -1556,8 +1907,8 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     <Typography variant="body2" fontWeight={600}>Line Color:</Typography>
                                                     <Stack spacing={0.5} sx={{mt: 0.5}}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#8884d8' }} />
-                                                            <Typography variant="caption">Purple: Memory Usage</Typography>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#4caf50' }} />
+                                                            <Typography variant="caption">Green: Memory Usage</Typography>
                                                         </Box>
                                                     </Stack>
                                                 </Box>
@@ -1567,7 +1918,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsMemoryInfoVisible(true)}
-                                                    startIcon={<InfoIcon fontSize="small" />}
+                                                    startIcon={<IconInfoCircle size={16} />}
                                                     variant="text"
                                                 >
                                                     Show Memory Graph Explanation
@@ -1591,56 +1942,82 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         title={
                                             <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                                 <Typography variant="h5" sx={{ flex: 1 }}>Disk Usage Over Time</Typography>
-                                                {vmDiskData.length > 0 && (
-                                                    <Button
-                                                        variant="outlined"
-                                                        size="small"
-                                                        onClick={exportDiskDataToCSV}
-                                                        startIcon={<DownloadIcon fontSize="small" />}
-                                                        sx={{
-                                                            borderRadius: 2,
-                                                            textTransform: 'none',
-                                                            fontWeight: 500,
-                                                            px: 2,
-                                                            py: 0.5,
-                                                            borderColor: (theme) => theme.palette.success.main,
-                                                            color: (theme) => theme.palette.success.main,
-                                                            ml: 2,
-                                                            '&:hover': {
-                                                                backgroundColor: (theme) => theme.palette.success.main,
-                                                                color: 'white',
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                                    <TimeRangeSelector
+                                                        timeRange={diskTimeRange}
+                                                        setTimeRange={setDiskTimeRange}
+                                                        customStartDate={diskCustomStartDate}
+                                                        setCustomStartDate={setDiskCustomStartDate}
+                                                        customEndDate={diskCustomEndDate}
+                                                        setCustomEndDate={setDiskCustomEndDate}
+                                                        showCustomDateRange={showDiskCustomDateRange}
+                                                        setShowCustomDateRange={setShowDiskCustomDateRange}
+                                                    />
+                                                    {vmDiskData.length > 0 && (
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            onClick={exportDiskDataToCSV}
+                                                            startIcon={<IconDownload size={20} />}
+                                                            sx={{
+                                                                borderRadius: 2,
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                px: 3,
+                                                                py: 1,
+                                                                fontSize: '0.875rem',
                                                                 borderColor: (theme) => theme.palette.success.main,
-                                                            }
-                                                        }}
-                                                    >
-                                                        Export CSV
-                                                    </Button>
-                                                )}
-                                                {activeGraph === 'disk' && (
-                                                    <Button
-                                                        variant="outlined"
-                                                        size="small"
-                                                        onClick={scrollToOverview}
-                                                        startIcon={<ArrowUpwardIcon fontSize="small" />}
-                                                        sx={{
-                                                            borderRadius: 2,
-                                                            textTransform: 'none',
-                                                            fontWeight: 500,
-                                                            px: 2,
-                                                            py: 0.5,
-                                                            borderColor: (theme) => theme.palette.primary.main,
-                                                            color: (theme) => theme.palette.primary.main,
-                                                            ml: 2,
-                                                            '&:hover': {
-                                                                backgroundColor: (theme) => theme.palette.primary.main,
-                                                                color: 'white',
+                                                                color: (theme) => theme.palette.success.main,
+                                                                backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(76, 175, 80, 0.05)' : 'rgba(76, 175, 80, 0.02)',
+                                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                                '&:hover': {
+                                                                    backgroundColor: (theme) => theme.palette.success.main,
+                                                                    color: 'white',
+                                                                    borderColor: (theme) => theme.palette.success.main,
+                                                                    transform: 'translateY(-1px)',
+                                                                    boxShadow: (theme) => `0 4px 12px ${theme.palette.success.main}40`,
+                                                                },
+                                                                '&:active': {
+                                                                    transform: 'translateY(0)',
+                                                                }
+                                                            }}
+                                                        >
+                                                            Export CSV
+                                                        </Button>
+                                                    )}
+                                                    {activeGraph === 'disk' && (
+                                                        <Button
+                                                            variant="outlined"
+                                                            size="small"
+                                                            onClick={scrollToOverview}
+                                                            startIcon={<IconArrowUp size={20} />}
+                                                            sx={{
+                                                                borderRadius: 2,
+                                                                textTransform: 'none',
+                                                                fontWeight: 600,
+                                                                px: 3,
+                                                                py: 1,
+                                                                fontSize: '0.875rem',
                                                                 borderColor: (theme) => theme.palette.primary.main,
-                                                            }
-                                                        }}
-                                                    >
-                                                        Back to Overview
-                                                    </Button>
-                                                )}
+                                                                color: (theme) => theme.palette.primary.main,
+                                                                backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.05)' : 'rgba(25, 118, 210, 0.02)',
+                                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                                '&:hover': {
+                                                                    backgroundColor: (theme) => theme.palette.primary.main,
+                                                                    color: 'white',
+                                                                    borderColor: (theme) => theme.palette.primary.main,
+                                                                    transform: 'translateY(-1px)',
+                                                                    boxShadow: (theme) => `0 4px 12px ${theme.palette.primary.main}40`,
+                                                                },
+                                                                '&:active': {
+                                                                    transform: 'translateY(0)',
+                                                                }
+                                                            }}
+                                                        >
+                                                            Back to Overview
+                                                        </Button>
+                                                    )}
+                                                </Box>
                                             </Box>
                                         }
                                     >
@@ -1649,7 +2026,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         <Box sx={{ height: 300, mt: 2 }}>
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart
-                                                    data={vmDiskData.map(data => ({
+                                                    data={filterDataByTimeRange(vmDiskData, 'interval_start', diskTimeRange, diskCustomStartDate, diskCustomEndDate).map(data => ({
                                                         time: new Date(data.interval_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                                                         used: parseFloat(data.avg_diskspace_used),
                                                         provisioned: parseFloat(data.avg_diskspace_provisioned),
@@ -1691,14 +2068,14 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         type="monotone" 
                                                         dataKey="used" 
                                                         name="Used Space" 
-                                                        stroke="#ffc658" 
+                                                        stroke="#4caf50" 
                                                         strokeWidth={2}
                                                     />
                                                     <Line 
                                                         type="monotone" 
                                                         dataKey="provisioned" 
                                                         name="Total Provisioned" 
-                                                        stroke="#ff8042" 
+                                                        stroke="#ff9800" 
                                                         strokeWidth={2}
                                                     />
                                                 </LineChart>
@@ -1732,7 +2109,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <CloseIcon fontSize="small" />
+                                                        <IconX size={18} />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -1748,11 +2125,11 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                     <Typography variant="body2" fontWeight={600}>Line Colors:</Typography>
                                                     <Stack spacing={0.5} sx={{mt: 0.5}}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ffc658' }} />
-                                                            <Typography variant="caption">Yellow: Used Space</Typography>
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#4caf50' }} />
+                                                            <Typography variant="caption">Green: Used Space</Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff8042' }} />
+                                                            <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#ff9800' }} />
                                                             <Typography variant="caption">Orange: Total Provisioned</Typography>
                                                         </Box>
                                                     </Stack>
@@ -1763,7 +2140,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsDiskInfoVisible(true)}
-                                                    startIcon={<InfoIcon fontSize="small" />}
+                                                    startIcon={<IconInfoCircle size={16} />}
                                                     variant="text"
                                                 >
                                                     Show Disk Graph Explanation
@@ -1785,31 +2162,50 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                             <ParentCard title={
                                 <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                     <Typography variant="h5" sx={{ flex: 1 }}>System Alerts</Typography>
-                                    {vmAlertWindow.length > 0 && (
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={exportAlertsDataToCSV}
-                                            startIcon={<DownloadIcon fontSize="small" />}
-                                            sx={{
-                                                borderRadius: 2,
-                                                textTransform: 'none',
-                                                fontWeight: 500,
-                                                px: 2,
-                                                py: 0.5,
-                                                borderColor: (theme) => theme.palette.success.main,
-                                                color: (theme) => theme.palette.success.main,
-                                                ml: 2,
-                                                '&:hover': {
-                                                    backgroundColor: (theme) => theme.palette.success.main,
-                                                    color: 'white',
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <TimeRangeSelector
+                                            timeRange={alertTimeRange}
+                                            setTimeRange={setAlertTimeRange}
+                                            customStartDate={alertCustomStartDate}
+                                            setCustomStartDate={setAlertCustomStartDate}
+                                            customEndDate={alertCustomEndDate}
+                                            setCustomEndDate={setAlertCustomEndDate}
+                                            showCustomDateRange={showAlertCustomDateRange}
+                                            setShowCustomDateRange={setShowAlertCustomDateRange}
+                                        />
+                                        {vmAlertWindow.length > 0 && (
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                onClick={exportAlertsDataToCSV}
+                                                startIcon={<IconDownload size={20} />}
+                                                sx={{
+                                                    borderRadius: 2,
+                                                    textTransform: 'none',
+                                                    fontWeight: 600,
+                                                    px: 3,
+                                                    py: 1,
+                                                    fontSize: '0.875rem',
                                                     borderColor: (theme) => theme.palette.success.main,
-                                                }
-                                            }}
-                                        >
-                                            Export CSV
-                                        </Button>
-                                    )}
+                                                    color: (theme) => theme.palette.success.main,
+                                                    backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(76, 175, 80, 0.05)' : 'rgba(76, 175, 80, 0.02)',
+                                                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    '&:hover': {
+                                                        backgroundColor: (theme) => theme.palette.success.main,
+                                                        color: 'white',
+                                                        borderColor: (theme) => theme.palette.success.main,
+                                                        transform: 'translateY(-1px)',
+                                                        boxShadow: (theme) => `0 4px 12px ${theme.palette.success.main}40`,
+                                                    },
+                                                    '&:active': {
+                                                        transform: 'translateY(0)',
+                                                    }
+                                                }}
+                                            >
+                                                Export CSV
+                                            </Button>
+                                        )}
+                                    </Box>
                                 </Box>
                             }>
                                 {vmAlertWindow.length > 0 && (
@@ -1821,7 +2217,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                             {/* Alert Graph Line Toggle Controls */}
                                             <Box sx={{ mb: 2 }}>
                                                 <Typography variant="subtitle2" fontWeight={600} gutterBottom sx={{ mb: 1 }}>
-                                                    <ShowChartIcon fontSize="small" style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                                                    <IconChartLine size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
                                                     Toggle Alert Lines (Click to show/hide):
                                                 </Typography>
                                                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -1831,13 +2227,22 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         onClick={() => setShowCriticalAlerts(!showCriticalAlerts)}
                                                         sx={{
                                                             minWidth: 'auto',
-                                                            px: 2,
-                                                            py: 0.5,
+                                                            px: 2.5,
+                                                            py: 0.75,
                                                             backgroundColor: showCriticalAlerts ? '#f44336' : 'transparent',
                                                             color: showCriticalAlerts ? 'white' : '#f44336',
                                                             borderColor: '#f44336',
+                                                            borderRadius: 2,
+                                                            fontWeight: 600,
+                                                            textTransform: 'none',
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             '&:hover': {
                                                                 backgroundColor: showCriticalAlerts ? '#d32f2f' : 'rgba(244, 67, 54, 0.1)',
+                                                                transform: 'translateY(-1px)',
+                                                                boxShadow: showCriticalAlerts ? '0 4px 12px rgba(244, 67, 54, 0.4)' : 'none',
+                                                            },
+                                                            '&:active': {
+                                                                transform: 'translateY(0)',
                                                             }
                                                         }}
                                                     >
@@ -1849,13 +2254,22 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         onClick={() => setShowImmediateAlerts(!showImmediateAlerts)}
                                                         sx={{
                                                             minWidth: 'auto',
-                                                            px: 2,
-                                                            py: 0.5,
+                                                            px: 2.5,
+                                                            py: 0.75,
                                                             backgroundColor: showImmediateAlerts ? '#ff9800' : 'transparent',
                                                             color: showImmediateAlerts ? 'white' : '#ff9800',
                                                             borderColor: '#ff9800',
+                                                            borderRadius: 2,
+                                                            fontWeight: 600,
+                                                            textTransform: 'none',
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             '&:hover': {
                                                                 backgroundColor: showImmediateAlerts ? '#f57c00' : 'rgba(255, 152, 0, 0.1)',
+                                                                transform: 'translateY(-1px)',
+                                                                boxShadow: showImmediateAlerts ? '0 4px 12px rgba(255, 152, 0, 0.4)' : 'none',
+                                                            },
+                                                            '&:active': {
+                                                                transform: 'translateY(0)',
                                                             }
                                                         }}
                                                     >
@@ -1867,13 +2281,22 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                         onClick={() => setShowWarningAlerts(!showWarningAlerts)}
                                                         sx={{
                                                             minWidth: 'auto',
-                                                            px: 2,
-                                                            py: 0.5,
+                                                            px: 2.5,
+                                                            py: 0.75,
                                                             backgroundColor: showWarningAlerts ? '#4caf50' : 'transparent',
                                                             color: showWarningAlerts ? 'white' : '#4caf50',
                                                             borderColor: '#4caf50',
+                                                            borderRadius: 2,
+                                                            fontWeight: 600,
+                                                            textTransform: 'none',
+                                                            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                                                             '&:hover': {
                                                                 backgroundColor: showWarningAlerts ? '#388e3c' : 'rgba(76, 175, 80, 0.1)',
+                                                                transform: 'translateY(-1px)',
+                                                                boxShadow: showWarningAlerts ? '0 4px 12px rgba(76, 175, 80, 0.4)' : 'none',
+                                                            },
+                                                            '&:active': {
+                                                                transform: 'translateY(0)',
                                                             }
                                                         }}
                                                     >
@@ -1883,9 +2306,6 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                             </Box>
                                             
                                             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, flexWrap: 'wrap', alignItems: 'flex-end', gap: 4 }}>
-                                                <RevCounter value={avgCritical} label="Critical" />
-                                                <RevCounter value={avgImmediate} label="Immediate" />
-                                                <RevCounter value={avgWarning} label="Warning" />
                                                 {/* Stacked Bar Graph (inline, compact) */}
                                                 <Box sx={{ minWidth: 220, maxWidth: 320, height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
                                                     <Typography variant="caption" sx={{ color: 'error.main', fontWeight: 600, mb: 0.5 }}>
@@ -1920,12 +2340,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                         <Box sx={{ height: 200, mt: 2 }}>
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart
-                                                    data={vmAlertWindow.map(data => ({
-                                                        time: new Date(data.bucket).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                                                            critical: Math.round(parseFloat(data.avg_critical)),
-                                                            immediate: Math.round(parseFloat(data.avg_immediate)),
-                                                            warning: Math.round(parseFloat(data.avg_warning))
-                                                    }))}
+                                                    data={getAveragedAlertWindowData(vmAlertWindow)}
                                                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                                                 >
                                                     <CartesianGrid strokeDasharray="3 3" />
@@ -1948,7 +2363,15 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             position: 'insideLeft',
                                                             style: { textAnchor: 'middle', fontSize: '12px' }
                                                         }}
-                                                            tickFormatter={(value) => Math.round(value).toString()}
+                                                        tickFormatter={(value) => Math.round(value).toString()}
+                                                        domain={[0, 'dataMax + 1']}
+                                                        ticks={(() => {
+                                                            const maxValue = Math.max(
+                                                                ...getAveragedAlertWindowData(vmAlertWindow).flatMap(d => [d.critical, d.immediate, d.warning])
+                                                            );
+                                                            const maxTick = Math.ceil(maxValue) + 1;
+                                                            return Array.from({length: maxTick + 1}, (_, i) => i);
+                                                        })()}
                                                     />
                                                     <RechartsTooltip 
                                                         formatter={(value, name) => [
@@ -2066,7 +2489,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                             }
                                                         }}
                                                     >
-                                                        <CloseIcon fontSize="small" />
+                                                        <IconX size={18} />
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -2097,7 +2520,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 </Box>
                                                     <Box sx={{ mt: 2, p: 1.5, backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.1)' : 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid', borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(25, 118, 210, 0.3)' : 'rgba(25, 118, 210, 0.2)' }}>
                                                         <Typography variant="body2" sx={{ color: (theme) => theme.palette.primary.main, fontWeight: 500 }}>
-                                                            <LightbulbIcon fontSize="small" style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                                            <IconBulb size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                                                             <b>Tip:</b> Use the toggle buttons above the graph to show/hide specific alert types for better analysis!
                                                         </Typography>
                                                     </Box>
@@ -2107,7 +2530,7 @@ const VMDataIndividual: React.FC<VMDataIndividualProps> = ({
                                                 <Button
                                                     size="small"
                                                     onClick={() => setIsAlertInfoVisible(true)}
-                                                    startIcon={<InfoIcon fontSize="small" />}
+                                                    startIcon={<IconInfoCircle size={16} />}
                                                     variant="text"
                                                 >
                                                     Show Alert Graph Explanation
