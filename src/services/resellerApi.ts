@@ -120,7 +120,7 @@ export class ResellerApiService {
 
   constructor(config: ApiConfig = {}) {
     this.config = {
-      baseURL: config.baseURL || 'http://localhost:8003',
+      baseURL: config.baseURL || 'https://dev.backend.test.daas.datacentrix.cloud',
       useRealBackend: config.useRealBackend || false,
       ...config
     };
