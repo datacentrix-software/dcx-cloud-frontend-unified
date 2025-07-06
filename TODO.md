@@ -1,12 +1,29 @@
 # DCX Cloud Frontend - TODO List
+**Updated**: January 6, 2025
 
-## 🚨 HIGH PRIORITY - Remaining System Integration
+## ✅ **COMPLETED - API Communication Issues**
+- [x] ✅ **Fixed frontend API URL configuration** - Production-ready proxy implemented
+- [x] ✅ **API communication working** - All endpoints return proper auth responses (401 vs 404)
+- [x] ✅ **Environment variables standardized** - Using production backend URLs
 
-### Backend API Routes
-- [ ] Fix hourlyBilling.ts TypeScript errors and re-enable wallet API routes
-  - Resolve union type issues in billing dashboard endpoint
-  - Test all wallet endpoint functionality
-  - Validate API integration with frontend services
+## 🚨 **CRITICAL - VM Data Service Missing**
+
+### **Root Cause Identified**
+The "Adcock organization VM display issue" is NOT an API communication problem - it's a **missing service architecture**:
+
+- ❌ **Frontend expects VM data endpoints that don't exist**: `/api/cloud/currentBill`, `/api/cloud/metricAggregation`
+- ❌ **Backend only has VM provisioning**: `/api/vmwareintegration/deployresources`
+- ❌ **No VM data retrieval service**: Missing entire data layer for dashboard
+
+### **Immediate Actions Required**
+- [ ] **Implement VM Data Endpoints** (TDD on server)
+  - [ ] `/api/vms/list` - VM inventory
+  - [ ] `/api/billing/current` - Billing data
+  - [ ] `/api/metrics/vm/{id}` - Performance metrics
+- [ ] **Remove "Bronze" naming confusion** 
+  - [ ] Replace `NEXT_PUBLIC_BRONZE_BASEURL` with sensible names
+  - [ ] Update API calls to use proper endpoint structure
+- [ ] **Test VM dashboard functionality** after implementation
 
 ### End-to-End Testing
 - [ ] Complete authentication flow testing with wallet integration

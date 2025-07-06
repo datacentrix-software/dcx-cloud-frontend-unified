@@ -414,9 +414,9 @@ const CustomerDashboard = () => {
                     // Step 3: Retrieving metrics
                     setLoadingStep(loadingSteps[3]);
                     setLoadingProgress(45);
-                    const metricsResponse = await axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/metricAggregation`, {
+                    const metricsResponse = await axiosServices.get(`/api/metrics/aggregation`, {
                         headers: { Authorization: `Bearer ${token}` },
-                        params: { customer: customerName }
+                        params: { organizationId: customerName }
                     });
                     if (Array.isArray(metricsResponse.data) && metricsResponse.data.length > 0) {
                         setBillingData(metricsResponse.data[0]);
@@ -425,20 +425,31 @@ const CustomerDashboard = () => {
                     // Step 4: Loading VM data
                     setLoadingStep(loadingSteps[4]);
                     setLoadingProgress(60);
-                    const billingResponse = await axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/currentBill`, {
+                    
+                    // First get VM list
+                    const vmListResponse = await axiosServices.get(`/api/vms/list`, {
                         headers: { Authorization: `Bearer ${token}` },
-                        params: { customer: customerName }
+                        params: { organizationId: customerName }
                     });
-                    if (Array.isArray(billingResponse.data)) {
-                        setVmData(billingResponse.data);
+                    if (Array.isArray(vmListResponse.data?.data)) {
+                        setVmData(vmListResponse.data.data);
+                    }
+                    
+                    // Then get billing data
+                    const billingResponse = await axiosServices.get(`/api/billing/current`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                        params: { organizationId: customerName }
+                    });
+                    if (billingResponse.data?.data) {
+                        setBillingData(billingResponse.data.data);
                     }
 
                     // Step 5: Fetching billing history
                     setLoadingStep(loadingSteps[5]);
                     setLoadingProgress(75);
-                    const pastBillsResponse = await axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/afgriPastBills`, {
+                    const pastBillsResponse = await axiosServices.get(`/api/billing/history`, {
                         headers: { Authorization: `Bearer ${token}` },
-                        params: { customer: customerName }
+                        params: { organizationId: customerName }
                     });
                     if (Array.isArray(pastBillsResponse.data)) {
                         setPastBills(pastBillsResponse.data);
@@ -539,29 +550,23 @@ const CustomerDashboard = () => {
 
         try {
             const [telemetryResponse, networkResponse, cpuRamResponse, diskResponse, alertWindowResponse, healthWindowResponse] = await Promise.all([
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmTelemetry`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { uuid: vm.identity_instance_uuid }
+                axiosServices.get(`/api/metrics/vm/${vm.identity_instance_uuid}`, {
+                    headers: { Authorization: `Bearer ${token}` }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmNetworkWindow`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { uuid: vm.identity_instance_uuid }
+                axiosServices.get(`/api/metrics/vm/${vm.identity_instance_uuid}/network`, {
+                    headers: { Authorization: `Bearer ${token}` }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmCpuRamWindow`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { uuid: vm.identity_instance_uuid }
+                axiosServices.get(`/api/metrics/vm/${vm.identity_instance_uuid}/cpu-ram`, {
+                    headers: { Authorization: `Bearer ${token}` }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmDiskWindow`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { uuid: vm.identity_instance_uuid }
+                axiosServices.get(`/api/metrics/vm/${vm.identity_instance_uuid}/disk`, {
+                    headers: { Authorization: `Bearer ${token}` }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmAlertWindow`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { uuid: vm.identity_instance_uuid }
+                axiosServices.get(`/api/monitoring/vm/${vm.identity_instance_uuid}/alerts`, {
+                    headers: { Authorization: `Bearer ${token}` }
                 }),
-                axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmHealthWindow`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { uuid: vm.identity_instance_uuid }
+                axiosServices.get(`/api/monitoring/vm/${vm.identity_instance_uuid}/health`, {
+                    headers: { Authorization: `Bearer ${token}` }
                 })
             ]);
 
@@ -614,7 +619,7 @@ const CustomerDashboard = () => {
         setSelectedMonth(month);
         setLoadingLineItems(true);
         try {
-            const response = await axiosServices.get(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/afgriLineItems`, {
+            const response = await axiosServices.get(`/api/billing/line-items`, {
                 headers: { Authorization: `Bearer ${token}` },
                 params: { month: month }
             });
@@ -665,7 +670,7 @@ const CustomerDashboard = () => {
         setIsPowerActionLoading(true);
         try {
             const newPowerState = !isVMPoweredOn;
-            await axiosServices.post(`${process.env.NEXT_PUBLIC_BRONZE_BASEURL}/api/cloud/vmPower`, {
+            await axiosServices.post(`/api/vms/power-control`, {
                 uuid: selectedVM.identity_instance_uuid,
                 powerState: newPowerState ? 'on' : 'off'
             }, {
