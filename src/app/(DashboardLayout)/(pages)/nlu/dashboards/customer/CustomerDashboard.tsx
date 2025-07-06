@@ -416,7 +416,7 @@ const CustomerDashboard = () => {
                     setLoadingProgress(45);
                     const metricsResponse = await axiosServices.get(`/api/metrics/aggregation`, {
                         headers: { Authorization: `Bearer ${token}` },
-                        params: { organizationId: customerName }
+                        params: { organizationId: primaryOrgId }
                     });
                     if (Array.isArray(metricsResponse.data) && metricsResponse.data.length > 0) {
                         setBillingData(metricsResponse.data[0]);
@@ -429,7 +429,7 @@ const CustomerDashboard = () => {
                     // First get VM list
                     const vmListResponse = await axiosServices.get(`/api/vms/list`, {
                         headers: { Authorization: `Bearer ${token}` },
-                        params: { organizationId: customerName }
+                        params: { organizationId: primaryOrgId }
                     });
                     if (Array.isArray(vmListResponse.data?.data)) {
                         setVmData(vmListResponse.data.data);
@@ -438,7 +438,7 @@ const CustomerDashboard = () => {
                     // Then get billing data
                     const billingResponse = await axiosServices.get(`/api/billing/current`, {
                         headers: { Authorization: `Bearer ${token}` },
-                        params: { organizationId: customerName }
+                        params: { organizationId: primaryOrgId }
                     });
                     if (billingResponse.data?.data) {
                         setBillingData(billingResponse.data.data);
@@ -449,7 +449,7 @@ const CustomerDashboard = () => {
                     setLoadingProgress(75);
                     const pastBillsResponse = await axiosServices.get(`/api/billing/history`, {
                         headers: { Authorization: `Bearer ${token}` },
-                        params: { organizationId: customerName }
+                        params: { organizationId: primaryOrgId }
                     });
                     if (Array.isArray(pastBillsResponse.data)) {
                         setPastBills(pastBillsResponse.data);
