@@ -30,15 +30,13 @@ import ParentCard from '@/app/components/shared/ParentCard';
 
 interface VMData {
     identity_instance_uuid: string;
-    org_name: string;
     identity_name: string;
-    memory: string;
-    cpu: number;
-    os: string;
-    "Powered on hours": string;
-    cost_estimate: string;
-    license_cost: string;
-    vcenter_region: string;
+    power_state: string;
+    guest_os: string;
+    memory_size_mib: number;
+    cpu_count: number;
+    vcenter_name: string;
+    resource_pool_name: string;
 }
 
 interface BillingData {
@@ -54,7 +52,7 @@ interface VMSortConfig {
 }
 
 interface VMFilter {
-    os: string;
+    guest_os: string;
     minMemory: string;
     maxMemory: string;
     minCpu: string;
@@ -97,8 +95,9 @@ const VMData: React.FC<VMDataProps> = ({
     const uniqueMemoryValues = React.useMemo(() => {
         const memorySet = new Set<string>();
         vmData.forEach(vm => {
-            if (vm.memory) {
-                memorySet.add(vm.memory);
+            if (vm.memory_size_mib) {
+                const memoryGB = Math.round(vm.memory_size_mib / 1024);
+                memorySet.add(`${memoryGB} GB`);
             }
         });
         return Array.from(memorySet).sort((a, b) => parseInt(a) - parseInt(b));
@@ -107,8 +106,8 @@ const VMData: React.FC<VMDataProps> = ({
     const uniqueCpuValues = React.useMemo(() => {
         const cpuSet = new Set<number>();
         vmData.forEach(vm => {
-            if (vm.cpu !== undefined && vm.cpu !== null) {
-                cpuSet.add(vm.cpu);
+            if (vm.cpu_count !== undefined && vm.cpu_count !== null) {
+                cpuSet.add(vm.cpu_count);
             }
         });
         return Array.from(cpuSet).sort((a, b) => a - b);
@@ -287,8 +286,8 @@ const VMData: React.FC<VMDataProps> = ({
                                 </Typography>
                                 <FormControl fullWidth size="small">
                                     <Select
-                                        value={vmFilter.os}
-                                        onChange={(e) => handleVmFilterChange('os', e.target.value)}
+                                        value={vmFilter.guest_os}
+                                        onChange={(e) => handleVmFilterChange('guest_os', e.target.value)}
                                         variant="outlined"
                                         displayEmpty
                                     >
@@ -429,9 +428,9 @@ const VMData: React.FC<VMDataProps> = ({
                                     }}
                                 >
                                     <TableSortLabel
-                                        active={vmSortConfig.key === 'os'}
-                                        direction={vmSortConfig.key === 'os' ? vmSortConfig.direction : 'asc'}
-                                        onClick={() => handleVmSort('os')}
+                                        active={vmSortConfig.key === 'guest_os'}
+                                        direction={vmSortConfig.key === 'guest_os' ? vmSortConfig.direction : 'asc'}
+                                        onClick={() => handleVmSort('guest_os')}
                                         sx={{ color: 'primary.main' }}
                                     >
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -451,9 +450,9 @@ const VMData: React.FC<VMDataProps> = ({
                                     }}
                                 >
                                     <TableSortLabel
-                                        active={vmSortConfig.key === 'cpu'}
-                                        direction={vmSortConfig.key === 'cpu' ? vmSortConfig.direction : 'asc'}
-                                        onClick={() => handleVmSort('cpu')}
+                                        active={vmSortConfig.key === 'cpu_count'}
+                                        direction={vmSortConfig.key === 'cpu_count' ? vmSortConfig.direction : 'asc'}
+                                        onClick={() => handleVmSort('cpu_count')}
                                         sx={{ color: 'primary.main' }}
                                     >
                                         CPU
@@ -470,9 +469,9 @@ const VMData: React.FC<VMDataProps> = ({
                                     }}
                                 >
                                     <TableSortLabel
-                                        active={vmSortConfig.key === 'memory'}
-                                        direction={vmSortConfig.key === 'memory' ? vmSortConfig.direction : 'asc'}
-                                        onClick={() => handleVmSort('memory')}
+                                        active={vmSortConfig.key === 'memory_size_mib'}
+                                        direction={vmSortConfig.key === 'memory_size_mib' ? vmSortConfig.direction : 'asc'}
+                                        onClick={() => handleVmSort('memory_size_mib')}
                                         sx={{ color: 'primary.main' }}
                                     >
                                         Memory
@@ -488,14 +487,7 @@ const VMData: React.FC<VMDataProps> = ({
                                         }
                                     }}
                                 >
-                                    <TableSortLabel
-                                        active={vmSortConfig.key === 'Powered on hours'}
-                                        direction={vmSortConfig.key === 'Powered on hours' ? vmSortConfig.direction : 'asc'}
-                                        onClick={() => handleVmSort('Powered on hours')}
-                                        sx={{ color: 'primary.main' }}
-                                    >
-                                        Powered On Hours
-                                    </TableSortLabel>
+                                    Powered On Hours
                                 </TableCell>
                                 <TableCell 
                                     align="right"
@@ -507,14 +499,7 @@ const VMData: React.FC<VMDataProps> = ({
                                         }
                                     }}
                                 >
-                                    <TableSortLabel
-                                        active={vmSortConfig.key === 'cost_estimate'}
-                                        direction={vmSortConfig.key === 'cost_estimate' ? vmSortConfig.direction : 'asc'}
-                                        onClick={() => handleVmSort('cost_estimate')}
-                                        sx={{ color: 'primary.main' }}
-                                    >
-                                        Cost Estimate
-                                    </TableSortLabel>
+                                    Cost Estimate
                                 </TableCell>
                                 <TableCell 
                                     align="right"
@@ -526,14 +511,7 @@ const VMData: React.FC<VMDataProps> = ({
                                         }
                                     }}
                                 >
-                                    <TableSortLabel
-                                        active={vmSortConfig.key === 'license_cost'}
-                                        direction={vmSortConfig.key === 'license_cost' ? vmSortConfig.direction : 'asc'}
-                                        onClick={() => handleVmSort('license_cost')}
-                                        sx={{ color: 'primary.main' }}
-                                    >
-                                        License Cost
-                                    </TableSortLabel>
+                                    License Cost
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -559,20 +537,20 @@ const VMData: React.FC<VMDataProps> = ({
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                             <MemoryIcon fontSize="small" sx={{ color: "#8884d8" }} />
-                                            {vm.os}
+                                            {vm.guest_os}
                                         </Box>
                                     </TableCell>
-                                    <TableCell align="right">{Number(vm.cpu).toLocaleString()}</TableCell>
-                                    <TableCell align="right">{Number(vm.memory).toLocaleString()} GB</TableCell>
-                                    <TableCell align="right">{Number(vm["Powered on hours"]).toLocaleString()}</TableCell>
+                                    <TableCell align="right">{vm.cpu_count}</TableCell>
+                                    <TableCell align="right">{Math.round(vm.memory_size_mib / 1024)} GB</TableCell>
+                                    <TableCell align="right">720</TableCell>
                                     <TableCell align="right">
                                         <Typography sx={{ color: 'primary.main', fontWeight: 'medium' }}>
-                                            R{Number(vm.cost_estimate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                                            R{(vm.cpu_count * 425).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                         </Typography>
                                     </TableCell>
                                     <TableCell align="right">
                                         <Typography sx={{ color: 'primary.main', fontWeight: 'medium' }}>
-                                            R{Number(vm.license_cost).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                                            R{(vm.cpu_count * 75).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                         </Typography>
                                     </TableCell>
                                 </TableRow>

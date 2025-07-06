@@ -153,15 +153,13 @@ interface VMSortConfig {
 
 interface VMDataItem {
     identity_instance_uuid: string;
-    org_name: string;
     identity_name: string;
-    memory: string;
-    cpu: number;
-    os: string;
-    "Powered on hours": string;
-    cost_estimate: string;
-    license_cost: string;
-    vcenter_region: string;
+    power_state: string;
+    guest_os: string;
+    memory_size_mib: number;
+    cpu_count: number;
+    vcenter_name: string;
+    resource_pool_name: string;
 }
 
 interface VMTelemetry {
@@ -244,7 +242,7 @@ interface VMHealthWindow {
 
 interface VMFilter {
     search: string;
-    os: string;
+    guest_os: string;
     minMemory: string;
     maxMemory: string;
     minCpu: string;
@@ -323,7 +321,7 @@ const CustomerDashboard = () => {
     const [vmSortConfig, setVmSortConfig] = useState<VMSortConfig>({ key: 'identity_name', direction: 'asc' });
     const [vmFilter, setVmFilter] = useState<VMFilter>({
         search: '',
-        os: '',
+        guest_os: '',
         minMemory: '',
         maxMemory: '',
         minCpu: '',
@@ -345,7 +343,6 @@ const CustomerDashboard = () => {
     const [isVMPoweredOn, setIsVMPoweredOn] = useState(false);
 
     const { token, user, primaryOrgId } = useAuthStore();
-    console.log("Debug: primaryOrgId=", primaryOrgId, "token=", token);
     const isNewCustomer = !vcenterOrgId;
 
     // Initialize loading progress
@@ -396,7 +393,7 @@ const CustomerDashboard = () => {
     // Fetch initial data
     useEffect(() => {
         const fetchData = async () => {
-            if (!customerName) return; // Don't fetch data until we have the customer name
+            if (!primaryOrgId || !token) return; // Don't fetch data until we have primaryOrgId and token
 
             // Step 2: Loading products
             setLoadingStep(loadingSteps[2]);
@@ -427,12 +424,30 @@ const CustomerDashboard = () => {
             setLoadingStep(loadingSteps[3]);
             setLoadingProgress(45);
             try {
+                console.log('🔥 STARTING METRICS CALL');
                 const metricsResponse = await axiosServices.get(`/api/metrics/aggregation`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { organizationId: primaryOrgId }
+                    headers: { 
+                        Authorization: `Bearer ${token}`,
+                        'Cache-Control': 'no-cache'
+                    },
+                    params: { 
+                        organizationId: primaryOrgId,
+                        _t: Date.now() // Cache buster
+                    }
                 });
-                if (Array.isArray(metricsResponse.data) && metricsResponse.data.length > 0) {
+                console.log('Full metrics response:', metricsResponse);
+                console.log('Metrics response data:', metricsResponse.data);
+                
+                // Check if response has the expected structure: {success: true, data: [...]}
+                if (metricsResponse.data?.success && Array.isArray(metricsResponse.data?.data) && metricsResponse.data.data.length > 0) {
+                    console.log('✅ SUCCESS: Setting metrics aggregation data:', metricsResponse.data.data[0]);
+                    setBillingData(metricsResponse.data.data[0]);
+                    console.log('✅ SUCCESS: billingData should now be set to:', metricsResponse.data.data[0]);
+                } else if (Array.isArray(metricsResponse.data) && metricsResponse.data.length > 0) {
+                    console.log('Setting metrics data (direct array):', metricsResponse.data[0]);
                     setBillingData(metricsResponse.data[0]);
+                } else {
+                    console.log('❌ ERROR: Unexpected metrics response structure:', metricsResponse.data);
                 }
             } catch (error: any) {
                 console.error('Failed to fetch metrics:', error);
@@ -475,15 +490,14 @@ const CustomerDashboard = () => {
                 setVmData([]);
             }
             
-            // Then get billing data
+            // Then get billing data (for other billing purposes, not metrics)
             try {
                 const billingResponse = await axiosServices.get(`/api/billing/current`, {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { organizationId: primaryOrgId }
                 });
-                if (billingResponse.data?.data) {
-                    setBillingData(billingResponse.data.data);
-                }
+                // Note: Don't overwrite billingData - metrics aggregation already set it
+                console.log('Current billing data:', billingResponse.data?.data);
             } catch (error: any) {
                 console.error('Failed to fetch current billing:', error);
                 
@@ -532,10 +546,15 @@ const CustomerDashboard = () => {
             }, 500);
         };
 
-        if (token && customerName) {
+        if (token && primaryOrgId) {
             fetchData();
         }
-    }, [token, customerName, loadingSteps]);
+    }, [token, primaryOrgId, loadingSteps]);
+
+    // Debug: Monitor billingData changes
+    useEffect(() => {
+        console.log('🔄 billingData state changed:', billingData);
+    }, [billingData]);
 
     // Event handlers
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -607,27 +626,40 @@ const CustomerDashboard = () => {
                 })
             ]);
 
-            if (Array.isArray(telemetryResponse.data) && telemetryResponse.data.length > 0) {
+            // Handle success/data response structure from backend
+            if (telemetryResponse.data?.success && telemetryResponse.data?.data) {
+                setVmTelemetry(telemetryResponse.data.data);
+            } else if (Array.isArray(telemetryResponse.data) && telemetryResponse.data.length > 0) {
                 setVmTelemetry(telemetryResponse.data[0]);
             }
 
-            if (Array.isArray(networkResponse.data)) {
+            if (networkResponse.data?.success && networkResponse.data?.data) {
+                setVmNetworkData([networkResponse.data.data]);
+            } else if (Array.isArray(networkResponse.data)) {
                 setVmNetworkData(networkResponse.data);
             }
 
-            if (Array.isArray(cpuRamResponse.data)) {
+            if (cpuRamResponse.data?.success && cpuRamResponse.data?.data) {
+                setVmCpuRamData([cpuRamResponse.data.data]);
+            } else if (Array.isArray(cpuRamResponse.data)) {
                 setVmCpuRamData(cpuRamResponse.data);
             }
 
-            if (Array.isArray(diskResponse.data)) {
+            if (diskResponse.data?.success && diskResponse.data?.data) {
+                setVmDiskData([diskResponse.data.data]);
+            } else if (Array.isArray(diskResponse.data)) {
                 setVmDiskData(diskResponse.data);
             }
 
-            if (Array.isArray(alertWindowResponse.data)) {
+            if (alertWindowResponse.data?.success && alertWindowResponse.data?.data) {
+                setVmAlertWindow(Array.isArray(alertWindowResponse.data.data) ? alertWindowResponse.data.data : []);
+            } else if (Array.isArray(alertWindowResponse.data)) {
                 setVmAlertWindow(alertWindowResponse.data);
             }
 
-            if (Array.isArray(healthWindowResponse.data)) {
+            if (healthWindowResponse.data?.success && healthWindowResponse.data?.data) {
+                setVmHealthWindow([healthWindowResponse.data.data]);
+            } else if (Array.isArray(healthWindowResponse.data)) {
                 setVmHealthWindow(healthWindowResponse.data);
             }
         } catch (error: any) {
@@ -792,39 +824,37 @@ const CustomerDashboard = () => {
             const searchTerm = vmFilter.search.toLowerCase();
             filtered = filtered.filter(vm =>
                 (vm.identity_name?.toLowerCase() || '').includes(searchTerm) ||
-                (vm.os?.toLowerCase() || '').includes(searchTerm) ||
-                (vm.vcenter_region?.toLowerCase() || '').includes(searchTerm) ||
-                (vm.memory?.toLowerCase() || '').includes(searchTerm) ||
-                (vm.cpu?.toString() || '').includes(searchTerm) ||
-                (vm["Powered on hours"]?.toLowerCase() || '').includes(searchTerm) ||
-                (vm.cost_estimate?.toLowerCase() || '').includes(searchTerm) ||
-                (vm.license_cost?.toLowerCase() || '').includes(searchTerm)
+                (vm.guest_os?.toLowerCase() || '').includes(searchTerm) ||
+                (vm.vcenter_name?.toLowerCase() || '').includes(searchTerm) ||
+                (vm.memory_size_mib?.toString() || '').includes(searchTerm) ||
+                (vm.cpu_count?.toString() || '').includes(searchTerm) ||
+                (vm.power_state?.toLowerCase() || '').includes(searchTerm)
             );
         }
 
-        if (vmFilter.os) {
+        if (vmFilter.guest_os) {
             filtered = filtered.filter(vm =>
-                vm.os.toLowerCase().includes(vmFilter.os.toLowerCase())
+                vm.guest_os?.toLowerCase().includes(vmFilter.guest_os.toLowerCase())
             );
         }
         if (vmFilter.minMemory) {
             filtered = filtered.filter(vm =>
-                parseInt(vm.memory) >= parseInt(vmFilter.minMemory)
+                vm.memory_size_mib >= parseInt(vmFilter.minMemory)
             );
         }
         if (vmFilter.maxMemory) {
             filtered = filtered.filter(vm =>
-                parseInt(vm.memory) <= parseInt(vmFilter.maxMemory)
+                vm.memory_size_mib <= parseInt(vmFilter.maxMemory)
             );
         }
         if (vmFilter.minCpu) {
             filtered = filtered.filter(vm =>
-                vm.cpu >= parseInt(vmFilter.minCpu)
+                vm.cpu_count >= parseInt(vmFilter.minCpu)
             );
         }
         if (vmFilter.maxCpu) {
             filtered = filtered.filter(vm =>
-                vm.cpu <= parseInt(vmFilter.maxCpu)
+                vm.cpu_count <= parseInt(vmFilter.maxCpu)
             );
         }
 
@@ -1091,7 +1121,7 @@ const CustomerDashboard = () => {
                     <TabPanel value={currentTab} index={1}>
                         <Billing
                             billingData={billingData}
-                            vmData={vmData}
+                            vmData={[]}
                             pastBills={pastBills}
                             selectedMonth={selectedMonth}
                             lineItems={lineItems}
