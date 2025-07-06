@@ -412,7 +412,7 @@ export default function ResellerDemoPage() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:8003/api/organisation/reseller/customers', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/organisation/reseller/customers`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -428,7 +428,7 @@ export default function ResellerDemoPage() {
         setError(`Backend responded with status: ${response.status}`);
       }
     } catch (err) {
-      setError('Could not connect to backend at http://localhost:8003');
+      setError(`Could not connect to backend at ${process.env.NEXT_PUBLIC_BACK_END_BASEURL}`);
     } finally {
       setLoading(false);
     }
