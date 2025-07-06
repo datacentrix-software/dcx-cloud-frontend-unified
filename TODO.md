@@ -39,6 +39,21 @@ Successfully implemented complete VM data service using Test-Driven Development 
   - ✅ Mock data properly aligned with organization structure
   - ✅ API returns 2 VMs for Adcock organization (d6b48eae-9e2d-47bd-adbe-53e905e966bb)
 
+## ⚠️ **OUTSTANDING ISSUES (Post 6-Hour Marathon)**
+
+### **Critical Dashboard Issues**
+- [ ] **Dashboard Metrics All Showing 0** 
+  - Memory Usage: 0 GB (should aggregate from VM memory_size_mib)
+  - CPU Usage: 0 Cores (should sum VM cpu_count)
+  - Storage Usage: 0 TB (needs storage integration)
+- [ ] **Empty Dashboard Sections**
+  - Billing charts/graphs not displaying data
+  - Performance metrics missing
+  - Historical data not showing
+- [ ] **Missing API Endpoints**
+  - `/api/metrics/aggregation` returns 404
+  - Billing detail endpoints for charts needed
+
 ### End-to-End Testing
 - [ ] Complete authentication flow testing with wallet integration
   - Test login → dashboard → wallet balance display
