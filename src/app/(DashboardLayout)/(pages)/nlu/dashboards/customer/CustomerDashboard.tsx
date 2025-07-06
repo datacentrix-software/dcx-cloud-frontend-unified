@@ -398,10 +398,10 @@ const CustomerDashboard = () => {
         const fetchData = async () => {
             if (!customerName) return; // Don't fetch data until we have the customer name
 
+            // Step 2: Loading products
+            setLoadingStep(loadingSteps[2]);
+            setLoadingProgress(30);
             try {
-                // Step 2: Loading products
-                setLoadingStep(loadingSteps[2]);
-                setLoadingProgress(30);
                 const productsResponse = await axiosServices.get(`/api/products/getproducts`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -409,90 +409,127 @@ const CustomerDashboard = () => {
                 if (Array.isArray(productsResponse.data)) {
                     setProducts(productsResponse.data);
                 }
-
-                try {
-                    // Step 3: Retrieving metrics
-                    setLoadingStep(loadingSteps[3]);
-                    setLoadingProgress(45);
-                    const metricsResponse = await axiosServices.get(`/api/metrics/aggregation`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                        params: { organizationId: primaryOrgId }
-                    });
-                    if (Array.isArray(metricsResponse.data) && metricsResponse.data.length > 0) {
-                        setBillingData(metricsResponse.data[0]);
-                    }
-
-                    // Step 4: Loading VM data
-                    setLoadingStep(loadingSteps[4]);
-                    setLoadingProgress(60);
-                    
-                    // First get VM list
-                    const vmListResponse = await axiosServices.get(`/api/vms/list`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                        params: { organizationId: primaryOrgId }
-                    });
-                    if (Array.isArray(vmListResponse.data?.data)) {
-                        setVmData(vmListResponse.data.data);
-                    }
-                    
-                    // Then get billing data
-                    const billingResponse = await axiosServices.get(`/api/billing/current`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                        params: { organizationId: primaryOrgId }
-                    });
-                    if (billingResponse.data?.data) {
-                        setBillingData(billingResponse.data.data);
-                    }
-
-                    // Step 5: Fetching billing history
-                    setLoadingStep(loadingSteps[5]);
-                    setLoadingProgress(75);
-                    const pastBillsResponse = await axiosServices.get(`/api/billing/history`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                        params: { organizationId: primaryOrgId }
-                    });
-                    if (Array.isArray(pastBillsResponse.data)) {
-                        setPastBills(pastBillsResponse.data);
-                    }
-                } catch (error: any) {
-                    console.error('Failed to fetch billing data:', error);
-                    
-                    // Handle authentication errors
-                    if (error.response?.status === 401) {
-                        console.log('Token expired during billing fetch, stopping load...');
-                        setLoading(false);
-                        // router.push('/auth/login');
-                        return;
-                    }
-                    
-                    // Set empty arrays on error to allow UI to continue
-                    setVmData([]);
-                    setPastBills([]);
-                }
-
-                // Step 6: Finalizing
-                setLoadingStep(loadingSteps[6]);
-                setLoadingProgress(100);
-
-                // Small delay to show the final step
-                setTimeout(() => {
-                    setLoading(false);
-                }, 500);
-
             } catch (error: any) {
-                console.error('Critical error during data fetch:', error);
-                setLoading(false);
+                console.error('Failed to fetch products:', error);
                 
                 // Handle authentication errors
                 if (error.response?.status === 401) {
-                    console.log('Token expired, user needs to login again');
-                    // router.push('/auth/login');
+                    console.log('Token expired during products fetch');
+                    setLoading(false);
                     return;
                 }
                 
-                // Log other errors for debugging
-                console.error('Unexpected error in fetchData:', error);
+                // Set empty array on error but continue with other API calls
+                setProducts([]);
             }
+
+            // Step 3: Retrieving metrics
+            setLoadingStep(loadingSteps[3]);
+            setLoadingProgress(45);
+            try {
+                const metricsResponse = await axiosServices.get(`/api/metrics/aggregation`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { organizationId: primaryOrgId }
+                });
+                if (Array.isArray(metricsResponse.data) && metricsResponse.data.length > 0) {
+                    setBillingData(metricsResponse.data[0]);
+                }
+            } catch (error: any) {
+                console.error('Failed to fetch metrics:', error);
+                
+                // Handle authentication errors
+                if (error.response?.status === 401) {
+                    console.log('Token expired during metrics fetch');
+                    setLoading(false);
+                    return;
+                }
+                
+                // Continue with other API calls even if metrics fail
+                setBillingData(null);
+            }
+
+            // Step 4: Loading VM data
+            setLoadingStep(loadingSteps[4]);
+            setLoadingProgress(60);
+            
+            // First get VM list
+            try {
+                const vmListResponse = await axiosServices.get(`/api/vms/list`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { organizationId: primaryOrgId }
+                });
+                if (Array.isArray(vmListResponse.data?.data)) {
+                    setVmData(vmListResponse.data.data);
+                }
+            } catch (error: any) {
+                console.error('Failed to fetch VM list:', error);
+                
+                // Handle authentication errors
+                if (error.response?.status === 401) {
+                    console.log('Token expired during VM list fetch');
+                    setLoading(false);
+                    return;
+                }
+                
+                // Set empty array on error but continue
+                setVmData([]);
+            }
+            
+            // Then get billing data
+            try {
+                const billingResponse = await axiosServices.get(`/api/billing/current`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { organizationId: primaryOrgId }
+                });
+                if (billingResponse.data?.data) {
+                    setBillingData(billingResponse.data.data);
+                }
+            } catch (error: any) {
+                console.error('Failed to fetch current billing:', error);
+                
+                // Handle authentication errors
+                if (error.response?.status === 401) {
+                    console.log('Token expired during billing fetch');
+                    setLoading(false);
+                    return;
+                }
+                
+                // Continue even if billing fails
+            }
+
+            // Step 5: Fetching billing history
+            setLoadingStep(loadingSteps[5]);
+            setLoadingProgress(75);
+            try {
+                const pastBillsResponse = await axiosServices.get(`/api/billing/history`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { organizationId: primaryOrgId }
+                });
+                if (Array.isArray(pastBillsResponse.data)) {
+                    setPastBills(pastBillsResponse.data);
+                }
+            } catch (error: any) {
+                console.error('Failed to fetch billing history:', error);
+                
+                // Handle authentication errors
+                if (error.response?.status === 401) {
+                    console.log('Token expired during billing history fetch');
+                    setLoading(false);
+                    return;
+                }
+                
+                // Set empty array on error
+                setPastBills([]);
+            }
+
+            // Step 6: Finalizing
+            setLoadingStep(loadingSteps[6]);
+            setLoadingProgress(100);
+
+            // Small delay to show the final step
+            setTimeout(() => {
+                setLoading(false);
+            }, 500);
         };
 
         if (token && customerName) {
@@ -604,7 +641,7 @@ const CustomerDashboard = () => {
             }
             
             // Set empty arrays on error
-            setVmTelemetryData([]);
+            setVmTelemetry(null);
             setVmNetworkData([]);
             setVmCpuRamData([]);
             setVmDiskData([]);
