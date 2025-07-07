@@ -1,60 +1,73 @@
 import axios from 'axios';
 
-const baseURL = process.env.NEXT_PUBLIC_BACK_END_BASEURL || 'https://dev.backend.test.daas.datacentrix.cloud';
-const cloudBaseURL = process.env.NEXT_PUBLIC_CLOUD_BACKEND_BASEURL || 'http://localhost:8003';
-console.log('Axios baseURL:', baseURL);
-console.log('Cloud baseURL:', cloudBaseURL);
+// Single unified backend URL
+const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://dev.backend.test.daas.datacentrix.cloud';
 
+// Create single axios instance for all API calls
 const axiosServices = axios.create({
-  baseURL: baseURL
+  baseURL: baseURL,
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+  }
 });
 
-// Create separate axios instance for cloud endpoints
-const axiosCloudServices = axios.create({
-  baseURL: cloudBaseURL
-});
-
-// interceptor for http
+// Request interceptor for auth tokens
 axiosServices.interceptors.request.use(
-    (config) => {
-        console.log('Making request to:', config.url, 'with baseURL:', config.baseURL);
-        return config;
-    },
-    (error) => {
-        console.error('Request error:', error);
-        return Promise.reject(error);
+  (config) => {
+    // Add auth token if available
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Only log in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`→ ${config.method?.toUpperCase()} ${config.url}`);
+    }
+    
+    return config;
+  },
+  (error) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Request interceptor error:', error);
+    }
+    return Promise.reject(error);
+  }
 );
 
+// Response interceptor for error handling
 axiosServices.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        console.error('API Error:', error.response?.data || error.message);
-        console.error('Full error:', error);
-        return Promise.reject(error);
+  (response) => {
+    // Only log in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`← ${response.status} ${response.config.url}`);
     }
+    return response;
+  },
+  (error) => {
+    // Log errors appropriately
+    if (process.env.NODE_ENV === 'development') {
+      console.error(`✗ API Error [${error.response?.status || 'Network'}]:`, {
+        url: error.config?.url,
+        method: error.config?.method?.toUpperCase(),
+        message: error.response?.data?.message || error.message,
+        status: error.response?.status
+      });
+    } else {
+      // Production: Only log essential error info
+      console.error('API Error:', {
+        status: error.response?.status,
+        message: error.response?.data?.message || 'Request failed'
+      });
+    }
+    
+    return Promise.reject(error);
+  }
 );
 
-// interceptor for cloud endpoints
-axiosCloudServices.interceptors.request.use(
-    (config) => {
-        console.log('Making CLOUD request to:', config.url, 'with baseURL:', config.baseURL);
-        return config;
-    },
-    (error) => {
-        console.error('Cloud request error:', error);
-        return Promise.reject(error);
-    }
-);
-
-axiosCloudServices.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        console.error('Cloud API Error:', error.response?.data || error.message);
-        console.error('Full cloud error:', error);
-        return Promise.reject(error);
-    }
-);
-
+// Export single axios instance (remove axiosCloudServices)
 export default axiosServices;
-export { axiosCloudServices };
+
+// For backward compatibility during transition
+export { axiosServices as axiosCloudServices };

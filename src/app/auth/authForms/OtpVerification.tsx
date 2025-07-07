@@ -31,7 +31,7 @@ const OtpVerification = ({ email, onError, onSuccess }: OtpVerificationProps) =>
     setIsVerifyingOtp(true);
     try {
       const loginResponse = await axiosServices.post(
-        `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/users/login/verify`,
+        `/api/users/login/verify`,
         { email, otp }
       );
       
@@ -41,7 +41,7 @@ const OtpVerification = ({ email, onError, onSuccess }: OtpVerificationProps) =>
 
         const decodedToken = decoder(token);
         const usersResponse = await axiosServices.get(
-          `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/users/getuser?userId=${decodedToken?.id}`,
+          `/api/users/getuser?userId=${decodedToken?.id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 

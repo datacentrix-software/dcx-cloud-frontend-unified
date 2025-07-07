@@ -379,7 +379,7 @@ const CustomerDashboard = () => {
                 
                 // Handle authentication errors
                 if (error.response?.status === 401) {
-                    console.log('Token expired, redirecting to login...');
+                    // Token expired, redirecting to login
                     // Clear auth store and redirect to login
                     // router.push('/auth/login');
                     return;
@@ -414,7 +414,7 @@ const CustomerDashboard = () => {
                 
                 // Handle authentication errors
                 if (error.response?.status === 401) {
-                    console.log('Token expired during products fetch');
+                    // Token expired during products fetch
                     setLoading(false);
                     return;
                 }
@@ -427,7 +427,7 @@ const CustomerDashboard = () => {
             setLoadingStep(loadingSteps[3]);
             setLoadingProgress(45);
             try {
-                console.log('🔥 STARTING METRICS CALL');
+                // Starting metrics aggregation call
                 const metricsResponse = await axiosServices.get(`/api/metrics/aggregation`, {
                     headers: { 
                         Authorization: `Bearer ${token}`,
@@ -438,26 +438,24 @@ const CustomerDashboard = () => {
                         _t: Date.now() // Cache buster
                     }
                 });
-                console.log('Full metrics response:', metricsResponse);
-                console.log('Metrics response data:', metricsResponse.data);
+                // Process metrics response
                 
                 // Check if response has the expected structure: {success: true, data: [...]}
                 if (metricsResponse.data?.success && Array.isArray(metricsResponse.data?.data) && metricsResponse.data.data.length > 0) {
-                    console.log('✅ SUCCESS: Setting metrics aggregation data:', metricsResponse.data.data[0]);
+                    // Successfully received metrics data
                     setBillingData(metricsResponse.data.data[0]);
-                    console.log('✅ SUCCESS: billingData should now be set to:', metricsResponse.data.data[0]);
                 } else if (Array.isArray(metricsResponse.data) && metricsResponse.data.length > 0) {
-                    console.log('Setting metrics data (direct array):', metricsResponse.data[0]);
+                    // Setting metrics data from direct array
                     setBillingData(metricsResponse.data[0]);
                 } else {
-                    console.log('❌ ERROR: Unexpected metrics response structure:', metricsResponse.data);
+                    // Unexpected metrics response structure
                 }
             } catch (error: any) {
                 console.error('Failed to fetch metrics:', error);
                 
                 // Handle authentication errors
                 if (error.response?.status === 401) {
-                    console.log('Token expired during metrics fetch');
+                    // Token expired during metrics fetch
                     setLoading(false);
                     return;
                 }
@@ -484,7 +482,7 @@ const CustomerDashboard = () => {
                 
                 // Handle authentication errors
                 if (error.response?.status === 401) {
-                    console.log('Token expired during VM list fetch');
+                    // Token expired during VM list fetch
                     setLoading(false);
                     return;
                 }
@@ -500,13 +498,13 @@ const CustomerDashboard = () => {
                     params: { organizationId: primaryOrgId }
                 });
                 // Note: Don't overwrite billingData - metrics aggregation already set it
-                console.log('Current billing data:', billingResponse.data?.data);
+                // Process current billing data
             } catch (error: any) {
                 console.error('Failed to fetch current billing:', error);
                 
                 // Handle authentication errors
                 if (error.response?.status === 401) {
-                    console.log('Token expired during billing fetch');
+                    // Token expired during billing fetch
                     setLoading(false);
                     return;
                 }
@@ -530,7 +528,7 @@ const CustomerDashboard = () => {
                 
                 // Handle authentication errors
                 if (error.response?.status === 401) {
-                    console.log('Token expired during billing history fetch');
+                    // Token expired during billing history fetch
                     setLoading(false);
                     return;
                 }
@@ -556,7 +554,7 @@ const CustomerDashboard = () => {
 
     // Debug: Monitor billingData changes
     useEffect(() => {
-        console.log('🔄 billingData state changed:', billingData);
+        // Billing data state updated
     }, [billingData]);
 
     // Event handlers
@@ -676,7 +674,7 @@ const CustomerDashboard = () => {
             
             // Handle authentication errors
             if (error.response?.status === 401) {
-                console.log('Token expired during telemetry fetch');
+                // Token expired during telemetry fetch
                 // router.push('/auth/login');
                 return;
             }
@@ -709,7 +707,7 @@ const CustomerDashboard = () => {
             
             // Handle authentication errors
             if (error.response?.status === 401) {
-                console.log('Token expired during line items fetch');
+                // Token expired during line items fetch
                 // router.push('/auth/login');
                 return;
             }
@@ -760,7 +758,7 @@ const CustomerDashboard = () => {
             
             // Handle authentication errors
             if (error.response?.status === 401) {
-                console.log('Token expired during VM power toggle');
+                // Token expired during VM power toggle
                 // router.push('/auth/login');
                 return;
             }

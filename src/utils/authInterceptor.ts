@@ -41,7 +41,7 @@ export const isTokenExpiring = (token: string): boolean => {
     
     return timeUntilExpiry <= TOKEN_REFRESH_THRESHOLD;
   } catch (error) {
-    console.error('Error checking token expiry:', error);
+    // Token decode error - assume expired for security
     return true; // Assume expired if we can't decode
   }
 };
@@ -59,7 +59,7 @@ export const isTokenExpired = (token: string): boolean => {
     
     return currentTime >= expiryTime;
   } catch (error) {
-    console.error('Error checking token expiry:', error);
+    // Token decode error - assume expired for security
     return true;
   }
 };
@@ -72,14 +72,11 @@ export const refreshToken = async (): Promise<string | null> => {
     const { token, refresh_token } = useAuthStore.getState();
     
     if (!refresh_token) {
-      console.warn('No refresh token available');
       return null;
     }
-
-    console.log('🔄 Refreshing JWT token...');
     
     const response = await axios.post<RefreshTokenResponse>(
-      `${process.env.NEXT_PUBLIC_BACK_END_BASEURL}/api/auth/refresh`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/refresh`,
       { refresh_token },
       {
         headers: {
@@ -103,15 +100,14 @@ export const refreshToken = async (): Promise<string | null> => {
       authStore.setUser(user);
     }
 
-    console.log('✅ JWT token refreshed successfully');
+    // Token refreshed successfully
     return newToken;
 
   } catch (error: any) {
-    console.error('❌ Token refresh failed:', error.message);
+    console.error('Token refresh failed:', error.message);
     
     // If refresh fails, the token is likely invalid - logout user
     if (error.response?.status === 401 || error.response?.status === 403) {
-      console.log('🚪 Refresh token invalid, logging out user');
       redirectToLogin({ reason: 'Refresh token invalid' });
     }
     
@@ -136,7 +132,6 @@ export const setupAuthInterceptors = () => {
 
       // Check if token needs refresh before making request
       if (isTokenExpiring(token)) {
-        console.log('🔄 Token expiring soon, attempting refresh before request');
         const newToken = await refreshToken();
         
         if (newToken) {
@@ -145,7 +140,6 @@ export const setupAuthInterceptors = () => {
           config.headers.Authorization = `Bearer ${newToken}`;
         } else {
           // Refresh failed, redirect to login
-          console.log('🚪 Token refresh failed, redirecting to login');
           redirectToLogin({ reason: 'Token refresh failed during request' });
           return config;
         }
@@ -175,27 +169,22 @@ export const setupAuthInterceptors = () => {
           if (retryCount < MAX_RETRY_ATTEMPTS) {
             originalRequest._retryCount = retryCount + 1;
             
-            console.log(`🔄 401 error, attempting token refresh (attempt ${retryCount + 1}/${MAX_RETRY_ATTEMPTS})`);
-            
             const newToken = await refreshToken();
             
             if (newToken) {
               // Retry the original request with new token
               originalRequest.headers = originalRequest.headers || {};
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              
-              console.log('🔁 Retrying original request with new token');
               return axiosInstance(originalRequest);
             }
           }
           
           // Max retries exceeded or refresh failed
-          console.log('🚪 Max retries exceeded or refresh failed, redirecting to login');
           redirectToLogin({ reason: 'Max retries exceeded or refresh failed' });
         }
 
-        // For development, log API errors  
-        if (process.env.NODE_ENV === 'development') {
+        // Log API errors for debugging
+        if (process.env.NODE_ENV === 'development' || process.env.LOG_API_ERRORS === 'true') {
           console.error('API Error:', error.response?.data || error.message);
         }
 
@@ -208,7 +197,7 @@ export const setupAuthInterceptors = () => {
   setupInterceptor(axios);
   setupInterceptor(axiosServices);
 
-  console.log('✅ Authentication interceptors setup complete');
+  // Authentication interceptors setup complete
 };
 
 /**
@@ -223,18 +212,14 @@ export const validateAndRefreshToken = async (): Promise<boolean> => {
   }
 
   if (isTokenExpired(token)) {
-    console.log('🔄 Token expired, attempting refresh');
     const newToken = await refreshToken();
     return !!newToken;
   }
 
   if (isTokenExpiring(token)) {
-    console.log('🔄 Token expiring soon, refreshing proactively');
     const newToken = await refreshToken();
     return !!newToken;
   }
-
-  console.log('✅ Token is valid');
   return true;
 };
 

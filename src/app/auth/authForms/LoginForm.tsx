@@ -44,15 +44,13 @@ const LoginForm = ({ onOtpSent, onError, onBackToOptions }: LoginFormProps) => {
           router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
         } else {
           onOtpSent(email);
-          // ⚠️ SECURITY WARNING: Development Mode Only! ⚠️
-          // TODO: Remove this block before production deployment
-          // This exposes OTPs in the browser - NEVER use in production!
-          if (data.devOtp) {
-            console.warn('⚠️ DEVELOPMENT MODE: OTP exposed in UI - Remove before production!');
-            console.log('🔑 Development OTP:', data.devOtp);
-            alert(`⚠️ DEVELOPMENT MODE ONLY ⚠️\n\nYour OTP is: ${data.devOtp}\n\nThis feature MUST be removed before production!`);
+          
+          // Development workaround: Show OTP until Mimecast is configured
+          if (process.env.NODE_ENV === 'development' && data.devOtp) {
+            setTimeout(() => {
+              alert(`DEVELOPMENT MODE\n\nOTP Code: ${data.devOtp}\n\nEmail: ${email}\n\nNote: This popup will be removed when Mimecast email is configured.`);
+            }, 500);
           }
-          // router.push(`/auth/verify-otp?email=${encodeURIComponent(email)}`);
         }
       }
     } catch (error: unknown) {
