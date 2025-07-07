@@ -47,9 +47,17 @@ interface LineItem {
 }
 
 interface VMBillingData {
-    cost_estimate: string;
-    license_cost: string;
-    // Siya to check 1
+    cost_estimate: number;
+    license_cost: number;
+    identity_instance_uuid: string;
+    identity_name: string;
+    power_state: string;
+    guest_os: string;
+    memory_size_mib: number;
+    cpu_count: number;
+    vcenter_name: string;
+    resource_pool_name: string;
+    total_cost: number;
 }
 
 interface LineItemSortConfig {
@@ -164,13 +172,13 @@ const Billing: React.FC<BillingProps> = ({
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                         <Typography variant="subtitle1" color="textSecondary">Total Cost</Typography>
                         <Typography variant="subtitle1">
-                            R{vmData.reduce((sum, vm) => sum + parseFloat(vm.cost_estimate), 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                            R{vmData.reduce((sum, vm) => sum + vm.cost_estimate, 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                         </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                         <Typography variant="subtitle1" color="textSecondary">Total License Cost</Typography>
                         <Typography variant="subtitle1">
-                            R{vmData.reduce((sum, vm) => sum + parseFloat(vm.license_cost), 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                            R{vmData.reduce((sum, vm) => sum + vm.license_cost, 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                         </Typography>
                     </Box>
                     <Button

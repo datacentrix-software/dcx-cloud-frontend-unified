@@ -40,7 +40,7 @@ import {
 import ParentCard from '@/app/components/shared/ParentCard';
 import WelcomeCard from './customer-welcome-card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, LineChart, Line, Area } from 'recharts';
-import axiosServices from '@/utils/axios';
+import axiosServices, { axiosCloudServices } from '@/utils/axios';
 import { useAuthStore } from '@/store';
 import { useRouter } from 'next/navigation';
 import VMDataComponent from './components/VMData';
@@ -160,6 +160,9 @@ interface VMDataItem {
     cpu_count: number;
     vcenter_name: string;
     resource_pool_name: string;
+    cost_estimate: number;
+    license_cost: number;
+    total_cost: number;
 }
 
 interface VMTelemetry {
@@ -343,7 +346,7 @@ const CustomerDashboard = () => {
     const [isVMPoweredOn, setIsVMPoweredOn] = useState(false);
 
     const { token, user, primaryOrgId } = useAuthStore();
-    const isNewCustomer = !vcenterOrgId;
+    const isNewCustomer = vmData.length === 0 && !loading;
 
     // Initialize loading progress
     useEffect(() => {
@@ -606,23 +609,29 @@ const CustomerDashboard = () => {
 
         try {
             const [telemetryResponse, networkResponse, cpuRamResponse, diskResponse, alertWindowResponse, healthWindowResponse] = await Promise.all([
-                axiosServices.get(`/api/metrics/vm/${vm.identity_instance_uuid}`, {
-                    headers: { Authorization: `Bearer ${token}` }
+                axiosCloudServices.get(`/api/cloud/vmTelemetry`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { vmId: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`/api/metrics/vm/${vm.identity_instance_uuid}/network`, {
-                    headers: { Authorization: `Bearer ${token}` }
+                axiosCloudServices.get(`/api/cloud/vmNetworkWindow`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { vmId: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`/api/metrics/vm/${vm.identity_instance_uuid}/cpu-ram`, {
-                    headers: { Authorization: `Bearer ${token}` }
+                axiosCloudServices.get(`/api/cloud/vmCpuRamWindow`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { vmId: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`/api/metrics/vm/${vm.identity_instance_uuid}/disk`, {
-                    headers: { Authorization: `Bearer ${token}` }
+                axiosCloudServices.get(`/api/cloud/vmDiskWindow`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { vmId: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`/api/monitoring/vm/${vm.identity_instance_uuid}/alerts`, {
-                    headers: { Authorization: `Bearer ${token}` }
+                axiosCloudServices.get(`/api/cloud/vmAlertWindow`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { vmId: vm.identity_instance_uuid }
                 }),
-                axiosServices.get(`/api/monitoring/vm/${vm.identity_instance_uuid}/health`, {
-                    headers: { Authorization: `Bearer ${token}` }
+                axiosCloudServices.get(`/api/cloud/vmHealthWindow`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { vmId: vm.identity_instance_uuid }
                 })
             ]);
 
@@ -1101,60 +1110,60 @@ const CustomerDashboard = () => {
             ) : (
                 <>
                     <TabPanel value={currentTab} index={0}>
-                        <VMDataComponent
-                            vmData={vmData}
-                            vmFilter={vmFilter}
-                            vmSortConfig={vmSortConfig}
-                            vmPage={vmPage}
-                            vmRowsPerPage={vmRowsPerPage}
-                            paginatedVMs={paginatedVMs}
-                            filteredAndSortedVMs={filteredAndSortedVMs}
-                            billingData={billingData}
-                            onVmSort={handleVmSort}
-                            onVmPageChange={handleVmPageChange}
-                            onVmRowsPerPageChange={handleVmRowsPerPageChange}
-                            onVmFilterChange={handleVmFilterChange}
-                            onVMClick={handleVMClick}
-                        />
-                    </TabPanel>
+                <VMDataComponent
+                    vmData={vmData}
+                    vmFilter={vmFilter}
+                    vmSortConfig={vmSortConfig}
+                    vmPage={vmPage}
+                    vmRowsPerPage={vmRowsPerPage}
+                    paginatedVMs={paginatedVMs}
+                    filteredAndSortedVMs={filteredAndSortedVMs}
+                    billingData={billingData}
+                    onVmSort={handleVmSort}
+                    onVmPageChange={handleVmPageChange}
+                    onVmRowsPerPageChange={handleVmRowsPerPageChange}
+                    onVmFilterChange={handleVmFilterChange}
+                    onVMClick={handleVMClick}
+                />
+            </TabPanel>
 
-                    <TabPanel value={currentTab} index={1}>
-                        <Billing
-                            billingData={billingData}
-                            vmData={[]}
-                            pastBills={pastBills}
-                            selectedMonth={selectedMonth}
-                            lineItems={lineItems}
-                            loadingLineItems={loadingLineItems}
-                            lineItemPage={lineItemPage}
-                            lineItemRowsPerPage={lineItemRowsPerPage}
-                            lineItemSortConfig={lineItemSortConfig}
-                            lineItemFilter={lineItemFilter}
-                            paginatedLineItems={paginatedLineItems}
-                            filteredAndSortedLineItems={filteredAndSortedLineItems}
-                            onMonthClick={handleMonthClick}
-                            onLineItemSort={handleLineItemSort}
-                            onLineItemFilterChange={handleLineItemFilterChange}
-                            onLineItemPageChange={handleLineItemPageChange}
-                            onLineItemRowsPerPageChange={handleLineItemRowsPerPageChange}
-                        />
-                    </TabPanel>
+            <TabPanel value={currentTab} index={1}>
+                <Billing
+                    billingData={billingData}
+                    vmData={vmData}
+                    pastBills={pastBills}
+                    selectedMonth={selectedMonth}
+                    lineItems={lineItems}
+                    loadingLineItems={loadingLineItems}
+                    lineItemPage={lineItemPage}
+                    lineItemRowsPerPage={lineItemRowsPerPage}
+                    lineItemSortConfig={lineItemSortConfig}
+                    lineItemFilter={lineItemFilter}
+                    paginatedLineItems={paginatedLineItems}
+                    filteredAndSortedLineItems={filteredAndSortedLineItems}
+                    onMonthClick={handleMonthClick}
+                    onLineItemSort={handleLineItemSort}
+                    onLineItemFilterChange={handleLineItemFilterChange}
+                    onLineItemPageChange={handleLineItemPageChange}
+                    onLineItemRowsPerPageChange={handleLineItemRowsPerPageChange}
+                />
+            </TabPanel>
 
-                    <TabPanel value={currentTab} index={2}>
-                        <VMDataIndividual
-                            selectedVM={selectedVM}
-                            vmTelemetry={vmTelemetry}
-                            vmNetworkData={vmNetworkData}
-                            vmCpuRamData={vmCpuRamData}
-                            vmDiskData={vmDiskData}
-                            vmAlertWindow={vmAlertWindow}
-                            vmHealthWindow={vmHealthWindow}
-                            loadingTelemetry={loadingTelemetry}
-                            isVMPoweredOn={isVMPoweredOn}
-                            isPowerActionLoading={isPowerActionLoading}
-                            onVMPowerToggle={handleVMPowerToggle}
-                        />
-                    </TabPanel>
+            <TabPanel value={currentTab} index={2}>
+                <VMDataIndividual
+                    selectedVM={selectedVM}
+                    vmTelemetry={vmTelemetry}
+                    vmNetworkData={vmNetworkData}
+                    vmCpuRamData={vmCpuRamData}
+                    vmDiskData={vmDiskData}
+                    vmAlertWindow={vmAlertWindow}
+                    vmHealthWindow={vmHealthWindow}
+                    loadingTelemetry={loadingTelemetry}
+                    isVMPoweredOn={isVMPoweredOn}
+                    isPowerActionLoading={isPowerActionLoading}
+                    onVMPowerToggle={handleVMPowerToggle}
+                />
+            </TabPanel>
                 </>
             )}
         </>
