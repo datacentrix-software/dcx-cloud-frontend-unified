@@ -109,9 +109,9 @@ export default function WalletStatement({ organizationId, organizationName }: Pr
         const transformedData = {
           organization: result.data.organization,
           wallet: result.data.wallet,
-          transactions: result.data.transactions.filter(tx => 
-            filterType === 'all' || tx.type === filterType
-          ),
+          transactions: result.data.transactions
+            .filter(tx => filterType === 'all' || tx.type === filterType)
+            .reverse(), // Show newest transactions first
           summary: result.data.summary
         };
         setWalletData(transformedData);

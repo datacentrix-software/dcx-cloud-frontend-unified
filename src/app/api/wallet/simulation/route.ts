@@ -172,9 +172,11 @@ function generateVMLifecycleEvents(organizationId: string, startDate: Date, endD
         totalHours: 0
       });
 
-      // Check for low balance and trigger top-up for credit card customers
-      if (profile.billingType === 'credit_card' && currentBalance < 10000) {
-        const topupAmount = Math.max(50000, Math.abs(currentBalance) + 20000 + Math.random() * 30000); // Ensure positive balance
+      // CRITICAL: Check for low balance and trigger top-up for credit card customers
+      // Credit card customers must NEVER have negative balances
+      if (profile.billingType === 'credit_card' && currentBalance < 50000) { // Top up when below R500
+        const deficit = Math.abs(Math.min(0, currentBalance)); // How much we're in the red
+        const topupAmount = deficit + 100000 + Math.random() * 50000; // Deficit + R1000-1500 buffer
         currentBalance += topupAmount;
         transactions.push({
           id: `tx-${String(transactionId++).padStart(4, '0')}`,
@@ -183,7 +185,7 @@ function generateVMLifecycleEvents(organizationId: string, startDate: Date, endD
           description: profile.name.includes('University') ? 
             'Manual top-up via Credit Card ****1234' : 
             'Auto top-up via Credit Card ****5678',
-          createdAt: new Date(provisionDate.getTime() + 3600000).toISOString(), // 1 hour later
+          createdAt: new Date(provisionDate.getTime() + Math.random() * 7200000).toISOString(), // Within 2 hours
           balanceAfter: currentBalance,
           category: 'auto_topup'
         });
@@ -306,6 +308,29 @@ function generateVMLifecycleEvents(organizationId: string, startDate: Date, endD
     runningBalance += tx.amount;
     tx.balanceAfter = runningBalance;
   });
+
+  // FINAL VALIDATION: Credit card customers must NEVER end with negative balance
+  if (profile.billingType === 'credit_card' && runningBalance < 0) {
+    const finalTopupAmount = Math.abs(runningBalance) + 50000 + Math.random() * 30000; // Ensure positive final balance
+    const finalTopup = {
+      id: `tx-${String(transactionId++).padStart(4, '0')}`,
+      amount: finalTopupAmount,
+      type: 'credit' as const,
+      description: 'Emergency auto top-up via Credit Card ****5678 - Balance correction',
+      createdAt: endDate.toISOString(),
+      balanceAfter: runningBalance + finalTopupAmount,
+      category: 'auto_topup' as const,
+      formattedAmount: `R${(finalTopupAmount / 100).toFixed(2)}`,
+      amountColor: 'success' as const,
+      relativeTime: 'Today'
+    };
+    
+    sortedTransactions.push(finalTopup);
+    runningBalance += finalTopupAmount;
+    
+    // Update the last transaction's balance
+    sortedTransactions[sortedTransactions.length - 1].balanceAfter = runningBalance;
+  }
 
   return sortedTransactions;
 }
