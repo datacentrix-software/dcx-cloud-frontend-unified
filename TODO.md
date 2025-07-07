@@ -1,5 +1,5 @@
 # DCX Cloud Frontend - TODO List
-**Updated**: July 7, 2025 - Comprehensive Codebase Analysis Complete
+**Updated**: July 7, 2025 - Dashboard Metrics Investigation In Progress
 
 ## ✅ **COMPLETED - API Communication Issues**
 - [x] ✅ **Fixed frontend API URL configuration** - Production-ready proxy implemented
@@ -147,6 +147,31 @@ Successfully implemented complete VM data service using Test-Driven Development 
 - [x] ✅ **API Design Patterns REVIEWED** - Consistency issues identified, standardization plan created
 - [x] ✅ **Performance Analysis COMPLETE** - Bundle size, loading optimization opportunities documented
 - [x] ✅ **Security Assessment FINISHED** - Authentication system excellent, minor improvements identified
+
+---
+
+## 🔍 **CURRENT INVESTIGATION - DASHBOARD METRICS DISPLAY ISSUE**
+
+### **⚠️ NEW ISSUE IDENTIFIED**
+- **Problem**: Dashboard shows outdated VM metrics (Memory: 12GB, CPU: 6 cores, Storage: 1TB)
+- **Reality**: API returns correct data (Memory: 116GB, CPU: 46 cores, Storage: 1.03TB)
+- **Root Cause**: Frontend React state management issue, not backend problem
+
+### **🔧 INVESTIGATION PROGRESS**
+- [x] ✅ **Backend Verification Complete** - API `/api/metrics/aggregation` returns accurate data
+- [x] ✅ **Database Verification Complete** - 6 live wallets, proper VM data structure confirmed  
+- [x] ✅ **API Response Confirmed** - `{"success":true,"data":[{"org_name":"Adcock","Memory GB":"116","CPU Cores":46,"Disk Capacity TB":"1.03"}]}`
+- [x] ✅ **Debug Logging Added** - Comprehensive logging in CustomerDashboard.tsx and VMData.tsx
+- [x] ✅ **Band-aid Solutions Rejected** - Avoided manual refresh button, pursuing elegant fix
+
+### **🎯 PENDING INVESTIGATION**
+- [ ] 🔄 **Console Log Analysis** - Awaiting user browser console output to identify state timing issue
+- [ ] 🔄 **Root Cause Identification** - Determine if race condition, caching, or state persistence issue
+- [ ] 🔄 **Elegant Fix Implementation** - Address actual root cause once identified through logging analysis
+
+### **📋 INVESTIGATION FILES CREATED**
+- [x] ✅ **Investigation Documentation** - `/DASHBOARD_METRICS_INVESTIGATION.md` with complete analysis
+- [x] ✅ **Debug Logging Ready** - Console logs will reveal exact point where correct data becomes incorrect UI display
 - [x] ✅ **Improvement Roadmap CREATED** - Detailed 8-week plan with measurable outcomes
 
 ## 🔥 **PHASE 1: CRITICAL FIXES - PRODUCTION READY (48 HOURS)**

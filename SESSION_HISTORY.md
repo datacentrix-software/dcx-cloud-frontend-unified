@@ -1,5 +1,5 @@
 # DCX Cloud Platform - Development Session History
-**Last Updated**: July 7, 2025 - PRODUCTION READINESS TRANSFORMATION COMPLETE
+**Last Updated**: July 7, 2025 - DASHBOARD METRICS INVESTIGATION IN PROGRESS
 **Consolidated from**: Development Session Tracker, Session Completion docs, Bronze DB Integration, Codebase Analysis
 
 ---
@@ -48,6 +48,48 @@
 - **API Endpoints Standardized**: 8 telemetry endpoints updated
 - **Configuration Files Centralized**: 6 config modules created
 - **Environment Variables Cleaned**: 2 .env files reorganized
+
+---
+
+## 🔍 **JULY 7, 2025 - DASHBOARD METRICS INVESTIGATION SESSION**
+
+### **Issue Identified: Dashboard Metrics Display Mismatch**
+- **Problem**: Dashboard shows outdated metrics (Memory: 12GB, CPU: 6 cores, Storage: 1TB)
+- **API Reality**: Backend returns correct data (Memory: 116GB, CPU: 46 cores, Storage: 1.03TB)
+- **Status**: 🔄 **Investigation In Progress** - Added debugging to identify root cause
+
+### **Investigation Progress**
+1. **✅ Verified Backend & Database Integrity**
+   - Confirmed wallet system 100% operational with 6 live wallets
+   - API `/api/metrics/aggregation` returns correct data: `{"success":true,"data":[{"org_name":"Adcock","Memory GB":"116","CPU Cores":46,"Disk Capacity TB":"1.03"}]}`
+   - Backend running on port 8003 with proper authentication
+
+2. **✅ Identified Frontend State Issue**
+   - Dashboard fetches from `/api/metrics/aggregation` in `CustomerDashboard.tsx:446`
+   - API returns correct data but UI displays old cached values
+   - Issue is React state management, not backend/database
+
+3. **✅ Added Comprehensive Debug Logging**
+   - Added logging in `CustomerDashboard.tsx` to track API responses
+   - Added logging in `VMData.tsx` component to track received props
+   - Rejected manual refresh button approach as inelegant band-aid solution
+
+### **Root Cause Hypotheses**
+1. **State Race Condition**: Multiple useEffects overwriting billingData
+2. **Browser Caching**: Stale HTTP responses being cached
+3. **React State Timing**: billingData being overwritten after initial set
+4. **Component Remounting**: State reset during navigation
+
+### **Technical Investigation Details**
+- **Files Modified**: `CustomerDashboard.tsx`, `VMData.tsx`
+- **Debug Logging Added**: API response tracking, component prop tracking
+- **API Verification**: Confirmed `/api/metrics/aggregation` returns fresh data
+- **State Flow Mapping**: Identified setBillingData calls and potential conflicts
+
+### **Next Steps**
+- **Awaiting Console Logs**: User to provide browser console output
+- **Identify State Issue**: Analyze timing and race conditions in logs
+- **Implement Elegant Fix**: Address root cause rather than symptoms
 
 ### **Production Ready Status**
 - **Email Service**: Ready for Mimecast production SMTP

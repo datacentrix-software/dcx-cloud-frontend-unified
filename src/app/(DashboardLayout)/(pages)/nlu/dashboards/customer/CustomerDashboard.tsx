@@ -34,6 +34,7 @@ import {
     // IconDatabase,
     // IconDownload,
     IconPlus,
+    IconRefresh,
     // IconInfoCircle,
     // IconPower
 } from '@tabler/icons-react';
@@ -449,6 +450,8 @@ const CustomerDashboard = () => {
                     setBillingData(metricsResponse.data[0]);
                 } else {
                     // Unexpected metrics response structure
+                    console.log('❌ Unexpected metrics response structure:', metricsResponse.data);
+                    setBillingData(null);
                 }
             } catch (error: any) {
                 console.error('Failed to fetch metrics:', error);
@@ -690,6 +693,7 @@ const CustomerDashboard = () => {
             setLoadingTelemetry(false);
         }
     };
+
 
     const handleMonthClick = async (month: string) => {
         setSelectedMonth(month);
@@ -1062,6 +1066,7 @@ const CustomerDashboard = () => {
         <>
             <WelcomeCard />
             <Box sx={{ mb: 4 }} />
+
 
             {!isNewCustomer && (
                 <Tabs
