@@ -99,8 +99,8 @@ function generateVMLifecycleEvents(organizationId: string, startDate: Date, endD
 
   // Opening deposit
   const openingDeposit = profile.billingType === 'credit_card' ? 
-    (Math.random() * 50000 + 10000) : // R100-600 for credit card
-    (Math.random() * 500000 + 100000); // R1000-6000 for invoice
+    (Math.random() * 50000 + 100000) : // R1000-1500 for credit card
+    (Math.random() * 200000 + 500000); // R5000-7000 for invoice
 
   currentBalance += openingDeposit;
   transactions.push({
@@ -173,8 +173,8 @@ function generateVMLifecycleEvents(organizationId: string, startDate: Date, endD
       });
 
       // Check for low balance and trigger top-up for credit card customers
-      if (profile.billingType === 'credit_card' && currentBalance < 5000) {
-        const topupAmount = 50000 + Math.random() * 50000; // R500-1000
+      if (profile.billingType === 'credit_card' && currentBalance < 10000) {
+        const topupAmount = Math.max(50000, Math.abs(currentBalance) + 20000 + Math.random() * 30000); // Ensure positive balance
         currentBalance += topupAmount;
         transactions.push({
           id: `tx-${String(transactionId++).padStart(4, '0')}`,
@@ -238,9 +238,9 @@ function generateVMLifecycleEvents(organizationId: string, startDate: Date, endD
       const terminateDate = new Date(monthStart.getTime() + Math.random() * (monthEnd.getTime() - monthStart.getTime()));
       
       // Partial refund for unused monthly allocation
-      const daysUsed = (terminateDate.getTime() - vmData.provisionedAt.getTime()) / (1000 * 60 * 60 * 24);
+      const daysUsed = Math.max(1, (terminateDate.getTime() - vmData.provisionedAt.getTime()) / (1000 * 60 * 60 * 24));
       const monthlyDays = new Date(current.getFullYear(), current.getMonth() + 1, 0).getDate();
-      const refundRatio = Math.max(0, (monthlyDays - daysUsed) / monthlyDays);
+      const refundRatio = Math.max(0, Math.min(0.95, (monthlyDays - daysUsed) / monthlyDays)); // Cap at 95%
       const refundAmount = (vmData.costs.monthlyCost - vmData.costs.diskCost) * refundRatio * 100;
       
       if (refundAmount > 100) { // Only refund if > R1
@@ -254,7 +254,7 @@ function generateVMLifecycleEvents(organizationId: string, startDate: Date, endD
           balanceAfter: currentBalance,
           category: 'refund',
           vmId: vmId,
-          metadata: { daysUsed, refundRatio }
+          metadata: { daysUsed: Math.round(daysUsed), refundRatio }
         });
       }
 
@@ -297,7 +297,17 @@ function generateVMLifecycleEvents(organizationId: string, startDate: Date, endD
     current.setDate(current.getDate() + 1);
   }
 
-  return transactions.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  // Sort transactions chronologically and recalculate running balances
+  const sortedTransactions = transactions.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  
+  // Recalculate balances to ensure accuracy
+  let runningBalance = 0;
+  sortedTransactions.forEach(tx => {
+    runningBalance += tx.amount;
+    tx.balanceAfter = runningBalance;
+  });
+
+  return sortedTransactions;
 }
 
 function getVMEventsForMonth(profile: any, month: number): { provision: number, resize: number, terminate: number } {
