@@ -37,6 +37,9 @@ interface VMData {
     cpu_count: number;
     vcenter_name: string;
     resource_pool_name: string;
+    cost_estimate: number;
+    license_cost: number;
+    total_cost: number;
 }
 
 interface BillingData {
@@ -545,12 +548,12 @@ const VMData: React.FC<VMDataProps> = ({
                                     <TableCell align="right">720</TableCell>
                                     <TableCell align="right">
                                         <Typography sx={{ color: 'primary.main', fontWeight: 'medium' }}>
-                                            R{(vm.cpu_count * 425).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                                            R{vm.cost_estimate.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                         </Typography>
                                     </TableCell>
                                     <TableCell align="right">
                                         <Typography sx={{ color: 'primary.main', fontWeight: 'medium' }}>
-                                            R{(vm.cpu_count * 75).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                                            R{vm.license_cost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                                         </Typography>
                                     </TableCell>
                                 </TableRow>

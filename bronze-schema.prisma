@@ -1,0 +1,121 @@
+// This file should be moved to: dcx-cloud-backend-unified/src/prisma/bronze/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../generated/client-bronze"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("BRONZE_DATABASE_URL")
+}
+
+// VM Data Models based on Bronze database investigation
+
+model VcenterVmDataVms {
+  identity_instance_uuid String  @unique
+  vm_name               String
+  cpu_count             Int
+  memory_size_mib       Int
+  power_state           String
+  guest_os_full_name    String?
+  resource_pool_name    String
+  is_current            Boolean @default(true)
+  run_id                Int
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  @@map("vcenter_vm_data_vms")
+}
+
+model VcenterVmDataDisks {
+  identity_instance_uuid String
+  disk_name             String
+  total_disk_capacity   BigInt
+  used_disk_capacity    BigInt?
+  run_id                Int
+  created_at            DateTime @default(now())
+
+  @@map("vcenter_vm_data_disks")
+}
+
+model VcenterVmDataAudit {
+  run_id     Int      @id @default(autoincrement())
+  start_time DateTime
+  end_time   DateTime?
+  status     String
+  vm_count   Int?
+  created_at DateTime @default(now())
+
+  @@map("vcenter_vm_data_audit")
+}
+
+model VcenterOrgs {
+  id       Int    @id @default(autoincrement())
+  org_name String @unique
+
+  @@map("vcenter_orgs")
+}
+
+model VcenterResourcePoolsOrganizations {
+  resource_pool_name String
+  org_id             Int
+
+  @@map("vcenter_resource_pools_organizations")
+}
+
+model VmCpuMemory3day30minAvg {
+  identity_instance_uuid     String
+  timestamp                  DateTime
+  avg_cpu_usage_percent      Float?
+  avg_memory_usage_percent   Float?
+  max_cpu_usage_percent      Float?
+  max_memory_usage_percent   Float?
+
+  @@map("vm_cpu_memory_3day_30min_avg")
+}
+
+model VmDisk3day30minAvg {
+  identity_instance_uuid String
+  timestamp              DateTime
+  avg_disk_usage_percent Float?
+  max_disk_usage_percent Float?
+  disk_read_iops         Float?
+  disk_write_iops        Float?
+
+  @@map("vm_disk_3day_30min_avg")
+}
+
+model VmNetwork3day30minAvg {
+  identity_instance_uuid String
+  timestamp              DateTime
+  network_rx_rate_kbps   Float?
+  network_tx_rate_kbps   Float?
+  network_rx_packets     Int?
+  network_tx_packets     Int?
+
+  @@map("vm_network_3day_30min_avg")
+}
+
+model VmHealth3daySummary {
+  identity_instance_uuid String
+  timestamp              DateTime
+  health_score           Float?
+  workload_score         Float?
+  efficiency_score       Float?
+  status                 String?
+
+  @@map("vm_health_3day_summary")
+}
+
+model VmwareAriaVmStatsCurrent {
+  identity_instance_uuid String   @unique
+  vm_name               String
+  cpu_usage_percent     Float?
+  memory_usage_percent  Float?
+  disk_usage_percent    Float?
+  network_usage_kbps    Float?
+  last_updated          DateTime @default(now())
+
+  @@map("vmware_aria_vm_stats_current")
+}

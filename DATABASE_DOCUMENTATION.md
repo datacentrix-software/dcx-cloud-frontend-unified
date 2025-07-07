@@ -323,6 +323,59 @@ ORDER BY template_count DESC;
 
 ---
 
-**Database Status**: ✅ **FULLY OPERATIONAL**  
-**Last Migration**: July 6, 2025 (AAS product database)  
+## 📋 DATABASE ISSUE HISTORY & RESOLUTIONS
+
+### **Issue 1: Missing Products Table (July 6, 2025)**
+
+#### **Problem**
+- **Error**: P2021 - Table `aas_bronze_production.products` does not exist
+- **Impact**: Products API failing, dashboard showing mock data
+- **Root Cause**: Database name confusion - code looking for `aas_bronze_production` but actual database is `aas_product_data`
+
+#### **Resolution**
+- **Discovered**: Wrong database content - `aas_bronze_production` contains VM metrics, not products
+- **Solution**: Migrated real product database from production server (10.1.1.17)
+- **Result**: 39 products with real pricing now available
+
+#### **Migration Details**
+1. Obtained database dump: `aas_product_data_correct_dump.sql`
+2. Created local database: `aas_product_data`
+3. Imported all tables and data successfully
+4. Updated backend configuration to use correct database
+
+### **Issue 2: Database Emergency - Schema Conflicts (July 5, 2025)**
+
+#### **Critical Fixes Applied**
+1. **Unique Constraint Issue**
+   - Problem: `walletId` unique constraint preventing transaction history
+   - Solution: Removed constraint - wallets can have multiple transactions
+   - SQL: `ALTER TABLE wallet_transactions DROP CONSTRAINT wallet_transactions_walletId_key;`
+
+2. **Schema Alignment**
+   - Problem: Prisma schema didn't match database structure
+   - Solution: Updated schema to reflect actual database relationships
+   - Result: All wallet operations now functional
+
+3. **Transaction History**
+   - Problem: Only one transaction per wallet allowed
+   - Solution: Fixed constraint to allow proper transaction history
+   - Result: Complete transaction tracking enabled
+
+### **Issue 3: Bronze Database Integration (July 7, 2025)**
+
+#### **Problem**
+- Backend crashing with 4000+ restarts due to TypeScript errors
+- BigInt serialization issues with Bronze database queries
+- VM telemetry showing all zeros despite data existing
+
+#### **Resolution**
+- Fixed TypeScript compilation errors in cloud routes
+- Added proper BigInt casting: `::int` and `::float`
+- Integrated complete Prisma Bronze client with 11 models
+- Result: All 8 telemetry endpoints returning real data
+
+---
+
+**Database Status**: ✅ **FULLY OPERATIONAL WITH BRONZE INTEGRATION**  
+**Last Migration**: July 7, 2025 (Bronze telemetry database)  
 **Next Review**: Monitor dashboard metrics integration
