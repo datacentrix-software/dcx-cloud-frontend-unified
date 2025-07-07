@@ -9,7 +9,9 @@
 **Current Status**: ✅ **COMPLETE SUCCESS** - Bronze database connected, real VM data flowing, telemetry backend fully operational
 
 **Latest Issue**: ✅ **RESOLVED** - Dashboard metrics now displaying correctly (116GB/46 cores)  
-**Investigation Status**: ✅ **COMPLETE** - React state management issue resolved through debug logging and hot reload
+**Investigation Status**: ✅ **COMPLETE** - API parameter mismatch resolved (UUID vs name issue fixed)
+
+**New Issue**: 🔄 **IN PROGRESS** - VM individual telemetry showing zeros/NaN values instead of real data
 
 ### **🎉 PRODUCTION READY: UNIFIED BACKEND WITH BRONZE DATABASE + PRODUCTION IMPROVEMENTS**
 
@@ -279,6 +281,92 @@ Based on yesterday's Slack conversation:
 - **Backend**: Unified backend with Bronze database integration ✅
 - **Frontend**: Real-time metrics display working correctly ✅
 - **Dashboard**: Accurate VM metrics (116GB Memory, 46 CPU cores, 1.03TB storage) ✅
+
+## 📋 **CRITICAL ARCHITECTURE UNDERSTANDING - USER-ORGANIZATION MODEL**
+
+### **🔑 KEY LEARNINGS FROM JULY 7, 2025 INVESTIGATION**
+
+**✅ CONFIRMED: Single-Organization-Per-User Model**
+- **Database Reality**: Every user belongs to exactly ONE organization (confirmed via database query)
+- **No Multi-Tenant Users**: No user has access to multiple organizations (all users show `org_count = 1`)
+- **Clean Hierarchy**: Users are properly isolated to their own organizations
+- **Business Model**: Users like Chand belong to customer organizations (e.g., Adcock), not Datacentrix
+
+**Database Structure:**
+```sql
+-- User table has NO organisationId field
+-- Users connected to organizations ONLY through UserRole table
+SELECT COUNT(DISTINCT ur.orgId) FROM UserRole ur WHERE userId = 'user-id'
+-- Result: Always 1 for all users in system
+```
+
+**Frontend Implications:**
+- **Current frontend logic `primaryOrgId = orgIds[0]` is unnecessary complexity**
+- **Should simplify to single organization assumption**
+- **No need for organization selector UI**
+- **User sessions are inherently single-organization scoped**
+
+**Chand's Profile:**
+- **Organization**: Adcock (`d6b48eae-9e2d-47bd-adbe-53e905e966bb`)
+- **Role**: Root
+- **Access Scope**: Only Adcock organization data
+- **User Type**: Customer user, not Datacentrix admin
+
+**System Design Validation:**
+- ✅ **Database design is correct** for intended business model
+- ✅ **User isolation working properly**
+- ✅ **No security concerns** regarding cross-organization access
+- ✅ **Clean single-tenant-per-user architecture**
+
+**Action Items:**
+- **Simplify frontend auth logic** to assume single organization
+- **Remove unnecessary multi-org complexity** from session management
+- ✅ **COMPLETED**: Fixed API parameter mismatch (UUID vs organization name issue)
+
+## 🚨 **CRITICAL API DESIGN ISSUE IDENTIFIED & PARTIALLY RESOLVED - JULY 7, 2025**
+
+### **🔍 Major API Design Flaw Discovery**
+**Issue**: Backend APIs were using organization **names** instead of **UUIDs** for data lookups
+- **Frontend sent**: `organizationId: "d6b48eae-9e2d-47bd-adbe-53e905e966bb"` (UUID)
+- **Backend expected**: `customer: "Adcock"` (organization name)
+- **Problem**: Organization names are not unique, mutable, and insecure
+
+### **✅ COMPLETED FIXES**
+**Dashboard Metrics API (`/api/metrics/aggregation`)**:
+- ✅ **Backend updated** to accept `organizationId` (UUID) parameter
+- ✅ **UUID validation** added - verifies organization exists in main database
+- ✅ **Frontend restored** to send proper UUID parameter
+- ✅ **Result**: Dashboard shows correct metrics (116GB/46 cores/1.03TB)
+
+### **🔧 TECHNICAL IMPLEMENTATION**
+```typescript
+// BEFORE (broken):
+const { customer } = req.query;  // Expected org name
+WHERE LOWER(vo.org_name) LIKE LOWER('%Adcock%')  // Fuzzy name matching
+
+// AFTER (fixed):
+const { organizationId } = req.query;  // Expects UUID
+const org = await prisma.organisation.findUnique({ where: { id: organizationId } });
+WHERE vo.org_name = ${org.organisation_name}  // Exact verified name
+```
+
+### **⚠️ REMAINING ISSUES**
+**Bronze Database Design Limitation**:
+- Main database uses UUIDs correctly
+- Bronze database appears to use organization names for lookups
+- Current implementation: UUID → Main DB → Get Name → Bronze DB Query
+- **Still problematic**: Final query uses name matching in Bronze DB
+
+**VM Telemetry APIs Still Affected**:
+- Individual VM telemetry endpoints likely have same UUID vs name issues
+- VM details page showing zeros/NaN values for all metrics
+- Need to audit and fix all telemetry endpoints
+
+### **🎯 NEXT PRIORITIES**
+1. **Fix remaining VM telemetry APIs** to use UUID-based lookups
+2. **Investigate Bronze database schema** - check if UUID references available
+3. **Eliminate all name-based queries** if possible
+4. **Standardize API parameter handling** across all endpoints
 
 ### **📊 API ENDPOINTS STANDARDIZED**
 ```typescript

@@ -150,29 +150,39 @@ Successfully implemented complete VM data service using Test-Driven Development 
 
 ---
 
-## 🔍 **CURRENT INVESTIGATION - DASHBOARD METRICS DISPLAY ISSUE**
+## ✅ **RESOLVED - DASHBOARD METRICS API PARAMETER MISMATCH (JULY 7, 2025)**
 
-### **⚠️ NEW ISSUE IDENTIFIED**
-- **Problem**: Dashboard shows outdated VM metrics (Memory: 12GB, CPU: 6 cores, Storage: 1TB)
-- **Reality**: API returns correct data (Memory: 116GB, CPU: 46 cores, Storage: 1.03TB)
-- **Root Cause**: Frontend React state management issue, not backend problem
+### **✅ ISSUE COMPLETELY RESOLVED**
+- **Problem**: Dashboard showed wrong VM metrics (Memory: 12GB, CPU: 6 cores, Storage: 1TB)
+- **Root Cause**: API parameter mismatch - Frontend sent UUID, Backend expected organization name
+- **Solution**: Fixed backend to accept organizationId (UUID) parameter properly
+- **Result**: Dashboard now shows correct data (Memory: 116GB, CPU: 46 cores, Storage: 1.03TB)
 
-### **🔧 INVESTIGATION PROGRESS**
-- [x] ✅ **Backend Verification Complete** - API `/api/metrics/aggregation` returns accurate data
-- [x] ✅ **Database Verification Complete** - 6 live wallets, proper VM data structure confirmed  
-- [x] ✅ **API Response Confirmed** - `{"success":true,"data":[{"org_name":"Adcock","Memory GB":"116","CPU Cores":46,"Disk Capacity TB":"1.03"}]}`
-- [x] ✅ **Debug Logging Added** - Comprehensive logging in CustomerDashboard.tsx and VMData.tsx
-- [x] ✅ **Band-aid Solutions Rejected** - Avoided manual refresh button, pursuing elegant fix
+### **✅ TECHNICAL RESOLUTION**
+- [x] ✅ **API Parameter Fixed** - Backend now accepts `organizationId` (UUID) instead of `customer` (name)
+- [x] ✅ **UUID Validation Added** - Backend validates organization exists before querying data
+- [x] ✅ **Frontend Parameter Restored** - Frontend sends proper UUID parameter
+- [x] ✅ **Testing Verified** - Direct API test returns correct Adcock data
+- [x] ✅ **Production Ready** - No more fallback data, real metrics displayed
 
-### **🎯 PENDING INVESTIGATION**
-- [ ] 🔄 **Console Log Analysis** - Awaiting user browser console output to identify state timing issue
-- [ ] 🔄 **Root Cause Identification** - Determine if race condition, caching, or state persistence issue
-- [ ] 🔄 **Elegant Fix Implementation** - Address actual root cause once identified through logging analysis
+## 🔄 **CURRENT INVESTIGATION - VM INDIVIDUAL TELEMETRY ZERO DATA**
 
-### **📋 INVESTIGATION FILES CREATED**
-- [x] ✅ **Investigation Documentation** - `/DASHBOARD_METRICS_INVESTIGATION.md` with complete analysis
-- [x] ✅ **Debug Logging Ready** - Console logs will reveal exact point where correct data becomes incorrect UI display
-- [x] ✅ **Improvement Roadmap CREATED** - Detailed 8-week plan with measurable outcomes
+### **⚠️ NEW HIGH PRIORITY ISSUE**
+- **Problem**: VM details page shows all zeros/NaN values for telemetry data
+- **Affected**: CPU Usage (0%), Memory Usage (0%), Disk Usage (0%), Health Scores (NaN%)
+- **Likely Cause**: Same UUID vs name parameter issue affecting individual VM telemetry APIs
+
+### **🔧 INVESTIGATION STATUS**
+- [x] ✅ **Dashboard Metrics Fixed** - Main aggregation API working correctly  
+- [x] ✅ **VM Details Page Loading** - Individual VM pages now load without "Failed to load" errors
+- [ ] 🔄 **VM Telemetry APIs** - Individual telemetry endpoints returning zero/empty data
+- [ ] 🔄 **API Parameter Audit** - Need to check if other endpoints have UUID vs name issues
+
+### **🎯 NEXT STEPS**
+- [ ] **Audit VM telemetry APIs** - Check if they expect organization names vs UUIDs
+- [ ] **Fix parameter mismatches** - Apply same UUID fix to all telemetry endpoints  
+- [ ] **Test individual VM data** - Verify real telemetry data loads correctly
+- [ ] **Bronze DB schema investigation** - Check if UUID references available to eliminate name-based queries
 
 ## 🔥 **PHASE 1: CRITICAL FIXES - PRODUCTION READY (48 HOURS)**
 

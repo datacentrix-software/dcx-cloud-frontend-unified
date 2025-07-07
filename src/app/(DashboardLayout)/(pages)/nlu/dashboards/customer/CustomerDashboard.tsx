@@ -349,6 +349,17 @@ const CustomerDashboard = () => {
     const { token, user, primaryOrgId } = useAuthStore();
     const isNewCustomer = vmData.length === 0 && !loading;
 
+    // Debug: Log user and organization info
+    console.log('🔍 Auth Debug - User:', user);
+    console.log('🔍 Auth Debug - Primary Org ID:', primaryOrgId);
+    console.log('🔍 Auth Debug - User Roles:', user?.roles);
+    console.log('🔍 Auth Debug - Org IDs from roles:', user?.roles?.map(r => r.orgId));
+    console.log('🔍 Auth Debug - API call will use org ID:', primaryOrgId);
+    
+    // Debug: Track what organization name is being sent to API
+    console.log('🔍 API Debug - Customer name for API:', customerName);
+    console.log('🔍 API Debug - Should be Adcock for Chand');
+
     // Initialize loading progress
     useEffect(() => {
         if (loading) {
@@ -428,6 +439,8 @@ const CustomerDashboard = () => {
             setLoadingStep(loadingSteps[3]);
             setLoadingProgress(45);
             try {
+                console.log('🔍 API Debug - Using organization ID for metrics API:', primaryOrgId);
+                
                 // Starting metrics aggregation call
                 const metricsResponse = await axiosServices.get(`/api/metrics/aggregation`, {
                     headers: { 
@@ -636,41 +649,64 @@ const CustomerDashboard = () => {
                 })
             ]);
 
-            // Handle success/data response structure from backend
+            // Handle telemetry response - direct object format
             if (telemetryResponse.data?.success && telemetryResponse.data?.data) {
+                // Standard success response format
                 setVmTelemetry(telemetryResponse.data.data);
             } else if (Array.isArray(telemetryResponse.data) && telemetryResponse.data.length > 0) {
+                // Array response format
                 setVmTelemetry(telemetryResponse.data[0]);
+            } else if (telemetryResponse.data && typeof telemetryResponse.data === 'object') {
+                // Direct object response format (current backend format)
+                setVmTelemetry(telemetryResponse.data);
+            } else {
+                // Fallback to null if no valid data
+                setVmTelemetry(null);
             }
 
+            // Handle network response
             if (networkResponse.data?.success && networkResponse.data?.data) {
                 setVmNetworkData([networkResponse.data.data]);
             } else if (Array.isArray(networkResponse.data)) {
                 setVmNetworkData(networkResponse.data);
+            } else if (networkResponse.data && typeof networkResponse.data === 'object') {
+                setVmNetworkData([networkResponse.data]);
             }
 
+            // Handle CPU/RAM response
             if (cpuRamResponse.data?.success && cpuRamResponse.data?.data) {
                 setVmCpuRamData([cpuRamResponse.data.data]);
             } else if (Array.isArray(cpuRamResponse.data)) {
                 setVmCpuRamData(cpuRamResponse.data);
+            } else if (cpuRamResponse.data && typeof cpuRamResponse.data === 'object') {
+                setVmCpuRamData([cpuRamResponse.data]);
             }
 
+            // Handle disk response
             if (diskResponse.data?.success && diskResponse.data?.data) {
                 setVmDiskData([diskResponse.data.data]);
             } else if (Array.isArray(diskResponse.data)) {
                 setVmDiskData(diskResponse.data);
+            } else if (diskResponse.data && typeof diskResponse.data === 'object') {
+                setVmDiskData([diskResponse.data]);
             }
 
+            // Handle alert response
             if (alertWindowResponse.data?.success && alertWindowResponse.data?.data) {
                 setVmAlertWindow(Array.isArray(alertWindowResponse.data.data) ? alertWindowResponse.data.data : []);
             } else if (Array.isArray(alertWindowResponse.data)) {
                 setVmAlertWindow(alertWindowResponse.data);
+            } else if (alertWindowResponse.data && typeof alertWindowResponse.data === 'object') {
+                setVmAlertWindow([alertWindowResponse.data]);
             }
 
+            // Handle health response
             if (healthWindowResponse.data?.success && healthWindowResponse.data?.data) {
                 setVmHealthWindow([healthWindowResponse.data.data]);
             } else if (Array.isArray(healthWindowResponse.data)) {
                 setVmHealthWindow(healthWindowResponse.data);
+            } else if (healthWindowResponse.data && typeof healthWindowResponse.data === 'object') {
+                setVmHealthWindow([healthWindowResponse.data]);
             }
         } catch (error: any) {
             console.error('Failed to fetch VM telemetry data:', error);
