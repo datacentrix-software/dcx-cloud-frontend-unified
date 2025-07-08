@@ -209,7 +209,7 @@ function generateVMLifecycleEvents(organizationId: string, startDate: Date, endD
         currentBalance -= costDifference;
         transactions.push({
           id: `tx-${String(transactionId++).padStart(4, '0')}`,
-          amount: -Math.abs(costDifference),
+          amount: -costDifference, // Remove Math.abs() - we want the actual signed amount
           type: costDifference > 0 ? 'debit' : 'credit',
           description: `VM Resize - ${vmData.type} → ${newVmType} - ${vmId} - ${costDifference > 0 ? 'Upgrade' : 'Downgrade'} adjustment`,
           createdAt: resizeDate.toISOString(),

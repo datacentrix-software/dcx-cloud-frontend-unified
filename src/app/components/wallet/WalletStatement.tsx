@@ -51,7 +51,11 @@ interface Transaction {
   formattedAmount: string;
   amountColor: 'success' | 'error';
   relativeTime: string;
-  status?: 'failed';
+  status?: 'failed' | 'completed';
+  category?: 'deposit' | 'vm_provision' | 'vm_hourly' | 'vm_resize' | 'vm_terminate' | 'disk_provision' | 'auto_topup' | 'invoice_payment' | 'rollover_credit' | 'penalty' | 'refund';
+  vmId?: string;
+  vmType?: string;
+  metadata?: any;
 }
 
 interface WalletData {
@@ -60,6 +64,8 @@ interface WalletData {
     billingType: 'credit_card' | 'invoice';
     paymentMethod: string | null;
     paymentTerms?: string;
+    sector?: string;
+    pattern?: string;
   };
   wallet: {
     currentBalance: number;
@@ -75,6 +81,13 @@ interface WalletData {
     totalCredits: string;
     totalDebits: string;
     netMovement: string;
+    vmStats?: {
+      provisioned: number;
+      resized: number;
+      terminated: number;
+      activeEstimate: number;
+    };
+    simulationPeriod?: string;
   };
 }
 
@@ -100,21 +113,22 @@ export default function WalletStatement({ organizationId, organizationName }: Pr
     setError(null);
 
     try {
-      // Use simulation API for richer data
-      const response = await fetch(`/api/wallet/simulation?organizationId=${organizationId}&months=6`);
+      // Use enhanced statement API (now powered by simulation engine)
+      const queryParams = new URLSearchParams({
+        organizationId,
+        months: '6',
+        limit: '100' // Get more transactions for better filtering
+      });
+      
+      if (filterType !== 'all') {
+        queryParams.append('type', filterType);
+      }
+      
+      const response = await fetch(`/api/wallet/statement?${queryParams}`);
       const result = await response.json();
 
       if (result.success) {
-        // Transform simulation data to match WalletData interface
-        const transformedData = {
-          organization: result.data.organization,
-          wallet: result.data.wallet,
-          transactions: result.data.transactions
-            .filter(tx => filterType === 'all' || tx.type === filterType)
-            .reverse(), // Show newest transactions first
-          summary: result.data.summary
-        };
-        setWalletData(transformedData);
+        setWalletData(result.data);
       } else {
         setError(result.error || 'Failed to fetch wallet statement');
       }
