@@ -114,6 +114,7 @@ export default function WalletStatement({ organizationId, organizationName }: Pr
 
     try {
       // Use enhanced statement API (now powered by simulation engine)
+      console.log('WalletStatement - Fetching for organizationId:', organizationId);
       const queryParams = new URLSearchParams({
         organizationId,
         months: '6',
@@ -129,13 +130,15 @@ export default function WalletStatement({ organizationId, organizationName }: Pr
 
       if (result.success) {
         // Debug: Log first few transactions to verify order in frontend
-        console.log('WalletStatement - First 3 transactions received:', 
-          result.data.transactions.slice(0, 3).map(tx => ({
-            id: tx.id,
-            date: tx.createdAt,
-            description: tx.description.substring(0, 50)
-          }))
-        );
+        const firstThree = result.data.transactions.slice(0, 3).map(tx => ({
+          id: tx.id,
+          date: tx.createdAt,
+          description: tx.description.substring(0, 50)
+        }));
+        console.log('WalletStatement - First 3 transactions received:');
+        firstThree.forEach((tx, i) => {
+          console.log(`  ${i + 1}. ${tx.id} - ${tx.date} - ${tx.description}`);
+        });
         setWalletData(result.data);
       } else {
         setError(result.error || 'Failed to fetch wallet statement');
