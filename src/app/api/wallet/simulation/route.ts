@@ -412,6 +412,9 @@ export async function GET(request: NextRequest) {
                      transactions.filter(t => t.category === 'vm_terminate').length
     };
 
+    // For display purposes, reverse to show newest transactions first (bank statement standard)
+    const displayTransactions = [...transactions].reverse();
+
     return NextResponse.json({
       success: true,
       data: {
@@ -432,7 +435,7 @@ export async function GET(request: NextRequest) {
           formattedBalance: `R${(Math.abs(currentBalance) / 100).toFixed(2)}`,
           balanceStatus: currentBalance >= 0 ? 'positive' : 'negative'
         },
-        transactions: transactions.map(tx => ({
+        transactions: displayTransactions.map(tx => ({
           ...tx,
           formattedAmount: `R${(Math.abs(tx.amount) / 100).toFixed(2)}`,
           amountColor: tx.type === 'credit' ? 'success' : 'error',
