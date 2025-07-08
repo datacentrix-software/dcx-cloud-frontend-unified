@@ -135,17 +135,21 @@ export default function WalletStatement({ organizationId, organizationName }: Pr
           date: tx.createdAt,
           description: tx.description.substring(0, 50)
         }));
-        console.log('WalletStatement - Transaction Order Check:');
-        console.log('Total transactions received:', result.data.transactions.length);
-        firstThree.forEach((tx, i) => {
-          console.log(`  ${i + 1}. ${tx.id} - ${tx.date} - ${tx.description}`);
-        });
+        // Simple debug - force display in console
+        console.log('=== TRANSACTION ORDER DEBUG ===');
+        console.log('Total transactions:', result.data.transactions.length);
+        const first = result.data.transactions[0];
+        const second = result.data.transactions[1]; 
+        const third = result.data.transactions[2];
+        console.log('1st transaction:', first?.id, first?.createdAt, first?.description?.substring(0, 30));
+        console.log('2nd transaction:', second?.id, second?.createdAt, second?.description?.substring(0, 30));
+        console.log('3rd transaction:', third?.id, third?.createdAt, third?.description?.substring(0, 30));
         
-        // Verify dates are in descending order (newest first)
-        const dateCheck = result.data.transactions.slice(0, 5).map(tx => new Date(tx.createdAt).getTime());
-        const isNewestFirst = dateCheck.every((date, i) => i === 0 || date <= dateCheck[i - 1]);
-        console.log('Are transactions in newest-first order?', isNewestFirst);
-        console.log('First 5 timestamps:', dateCheck.map(ts => new Date(ts).toISOString()));
+        // Check order
+        const firstDate = new Date(first?.createdAt).getTime();
+        const secondDate = new Date(second?.createdAt).getTime();
+        console.log('Is 1st newer than 2nd?', firstDate > secondDate);
+        console.log('================================');
         setWalletData(result.data);
       } else {
         setError(result.error || 'Failed to fetch wallet statement');
