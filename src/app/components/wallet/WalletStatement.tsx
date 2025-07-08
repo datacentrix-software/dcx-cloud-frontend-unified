@@ -125,7 +125,7 @@ export default function WalletStatement({ organizationId, organizationName }: Pr
         queryParams.append('type', filterType);
       }
       
-      const response = await fetch(`/api/wallet/statement?${queryParams}`);
+      const response = await fetch(`/api/wallet/statement?${queryParams}&_t=${Date.now()}`);
       const result = await response.json();
 
       if (result.success) {
@@ -135,10 +135,17 @@ export default function WalletStatement({ organizationId, organizationName }: Pr
           date: tx.createdAt,
           description: tx.description.substring(0, 50)
         }));
-        console.log('WalletStatement - First 3 transactions received:');
+        console.log('WalletStatement - Transaction Order Check:');
+        console.log('Total transactions received:', result.data.transactions.length);
         firstThree.forEach((tx, i) => {
           console.log(`  ${i + 1}. ${tx.id} - ${tx.date} - ${tx.description}`);
         });
+        
+        // Verify dates are in descending order (newest first)
+        const dateCheck = result.data.transactions.slice(0, 5).map(tx => new Date(tx.createdAt).getTime());
+        const isNewestFirst = dateCheck.every((date, i) => i === 0 || date <= dateCheck[i - 1]);
+        console.log('Are transactions in newest-first order?', isNewestFirst);
+        console.log('First 5 timestamps:', dateCheck.map(ts => new Date(ts).toISOString()));
         setWalletData(result.data);
       } else {
         setError(result.error || 'Failed to fetch wallet statement');
