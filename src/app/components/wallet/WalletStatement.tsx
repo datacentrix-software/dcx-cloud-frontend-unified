@@ -128,6 +128,14 @@ export default function WalletStatement({ organizationId, organizationName }: Pr
       const result = await response.json();
 
       if (result.success) {
+        // Debug: Log first few transactions to verify order in frontend
+        console.log('WalletStatement - First 3 transactions received:', 
+          result.data.transactions.slice(0, 3).map(tx => ({
+            id: tx.id,
+            date: tx.createdAt,
+            description: tx.description.substring(0, 50)
+          }))
+        );
         setWalletData(result.data);
       } else {
         setError(result.error || 'Failed to fetch wallet statement');

@@ -60,8 +60,17 @@ export async function GET(request: NextRequest) {
       transactions = transactions.filter(tx => tx.type === transactionType);
     }
 
-    // Sort transactions by date (most recent first)
+    // Sort transactions by date (most recent first) - ensuring newest at top
     transactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
+    // Debug: Log first few transactions to verify order
+    console.log('Statement API - First 3 transactions:', 
+      transactions.slice(0, 3).map(tx => ({
+        id: tx.id,
+        date: tx.createdAt,
+        description: tx.description.substring(0, 50)
+      }))
+    );
 
     // Apply pagination
     const paginatedTransactions = transactions.slice(offset, offset + limit);
@@ -86,7 +95,7 @@ export async function GET(request: NextRequest) {
     const creditUsed = organizationData.billingType === 'invoice' && walletData.currentBalance < 0 
       ? Math.abs(walletData.currentBalance) : 0;
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       data: {
         organization: {
@@ -137,6 +146,13 @@ export async function GET(request: NextRequest) {
         }
       }
     });
+
+    // Add cache-busting headers to ensure fresh data
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    
+    return response;
 
   } catch (error) {
     console.error('Wallet statement API error:', error);
