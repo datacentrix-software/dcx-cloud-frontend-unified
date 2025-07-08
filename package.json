@@ -15,7 +15,12 @@
     "test:database": "jest --testPathPatterns=database",
     "security:audit": "npm audit --audit-level=moderate",
     "security:lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "security:full": "npm run security:audit && npm run security:lint && npm run test:security"
+    "security:full": "npm run security:audit && npm run security:lint && npm run test:security",
+    "automation": "tsx scripts/run-automation.ts",
+    "automation:dashboard": "tsx scripts/run-automation.ts --type=dashboard",
+    "automation:wallet": "tsx scripts/run-automation.ts --type=wallet",
+    "automation:vm": "tsx scripts/run-automation.ts --type=vm-inventory",
+    "automation:full": "tsx scripts/run-automation.ts --type=comprehensive"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
@@ -67,6 +72,7 @@
     "mui-tiptap": "^1.18.0",
     "next": "15.3.4",
     "next-auth": "^4.24.11",
+    "puppeteer": "^24.12.0",
     "react": "19.1.0",
     "react-apexcharts": "^1.4.1",
     "react-datepicker": "^8.0.0",
@@ -102,6 +108,7 @@
     "@types/lodash": "^4.14.199",
     "@types/node": "^20.19.0",
     "@types/node-fetch": "^2.6.12",
+    "@types/puppeteer": "^5.4.7",
     "@types/react": "19.1.8",
     "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "19.1.6",
@@ -115,7 +122,8 @@
     "jest-html-reporters": "^3.1.7",
     "node-fetch": "^3.3.2",
     "npm-audit-ci": "^1.2.1",
-    "ts-jest": "^29.4.0"
+    "ts-jest": "^29.4.0",
+    "tsx": "^4.20.3"
   },
   "overrides": {
     "@types/react": "19.1.8",
